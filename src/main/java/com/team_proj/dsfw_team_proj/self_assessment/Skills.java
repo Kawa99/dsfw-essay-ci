@@ -1,7 +1,9 @@
 package com.team_proj.dsfw_team_proj.self_assessment;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "skills")
 public class Skills {
@@ -20,38 +22,4 @@ public class Skills {
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id")
     private Category category;
-
-    //Getters and setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
 }

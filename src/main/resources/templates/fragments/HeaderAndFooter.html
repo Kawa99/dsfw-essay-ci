@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang = "en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Fragments</title>
+</head>
+<body>
+
+<div th:fragment="mainHeader">
+    <header>
+        <h1>Digital Skills for Wales</h1>
+        <nav>
+            <a th:href="@{/}">User_Explanation(not added yet)</a> |
+            <a th:href="@{/self-assessment}">Self Assessment</a> |
+            <a th:href="@{/admin/self-assessment}">Admin</a>
+        </nav>
+    </header>
+    <hr>
+</div>
+
+<div th:fragment="mainFooter">
+    <hr>
+    <footer>
+        <p>2025 Digital Skills for Wales Team Project</p>
+    </footer>
+</div>
+
+</body>
+</html>

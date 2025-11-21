@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Self Assessment</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
+
+<div>
+    <h1>Digital Skills Self-Assessment</h1>
+
+    <form action="#" method="post">
+        <div th:each="entry : ${assessmentData}">
+            <h2 th:text="${entry.key.name}">Category Name</h2>
+
+            <div th:each="skill : ${entry.value}">
+                <p th:text="${skill.name}">Question Text</p>
+
+                <div>
+                    <label>
+                        I do not know this skill - <input type="radio" th:name="'skill_' + ${skill.id}" value="1" required>
+
+                    </label>
+                    &nbsp;
+                    <label>
+                        1 <input type="radio" th:name="'skill_' + ${skill.id}" value="1">
+                    </label>
+                    &nbsp;
+                    <label>
+                        2 <input type="radio" th:name="'skill_' + ${skill.id}" value="2">
+                    </label>
+                    &nbsp;
+                    <label>
+                        3 <input type="radio" th:name="'skill_' + ${skill.id}" value="3">
+                    </label>
+                    &nbsp;
+                    <label>
+                        4 <input type="radio" th:name="'skill_' + ${skill.id}" value="4">
+                    </label>
+                    &nbsp;
+                    <label>
+                        5 <input type="radio" th:name="'skill_' + ${skill.id}" value="5">
+                        - I am proficient in this skill
+                    </label>
+                </div>
+            </div>
+            <hr>
+        </div>
+
+        <button type="submit">Submit Assessment</button>
+    </form>
+</div>
+
+<div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
+
+</body>
+</html>
