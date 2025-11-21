@@ -1,5 +1,10 @@
-package com.team_proj.dsfw_team_proj.Self_Assessment;
+package com.team_proj.dsfw_team_proj.admin;
 
+import com.team_proj.dsfw_team_proj.self_assessment.Category;
+import com.team_proj.dsfw_team_proj.self_assessment.CategoryRepository;
+import com.team_proj.dsfw_team_proj.self_assessment.SkillRepository;
+import com.team_proj.dsfw_team_proj.self_assessment.Skills;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -7,13 +12,13 @@ import java.util.*;
 
 @Service
 @Transactional
-public class SA_ServiceImpl implements SA_Service {
+public class AdminServiceImpl implements AdminService {
 
     private final CategoryRepository categoryRepository;
     private final SkillRepository skillRepository;
 
-    public SA_ServiceImpl(CategoryRepository categoryRepository,
-                          SkillRepository skillRepository) {
+    public AdminServiceImpl(CategoryRepository categoryRepository,
+                            SkillRepository skillRepository) {
         this.categoryRepository = categoryRepository;
         this.skillRepository = skillRepository;
     }
@@ -75,8 +80,12 @@ public class SA_ServiceImpl implements SA_Service {
     public Skills addSkill(String name, Long categoryId) {
         validateText(name, "Skill/question text");
 
+        if (skillRepository.existsByName(name.trim())) {
+            throw new IllegalArgumentException("This question already exists.");
+        }
+
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Category not found: " + categoryId));
 
         Skills skill = new Skills();
         skill.setName(name.trim());

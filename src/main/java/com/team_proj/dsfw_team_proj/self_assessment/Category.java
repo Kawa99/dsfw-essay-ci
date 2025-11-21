@@ -1,4 +1,4 @@
-package com.team_proj.dsfw_team_proj.Self_Assessment;
+package com.team_proj.dsfw_team_proj.self_assessment;
 
 import jakarta.persistence.*;
 

@@ -1,5 +1,10 @@
-package com.team_proj.dsfw_team_proj.Self_Assessment;
+package com.team_proj.dsfw_team_proj.admin;
 
+import com.team_proj.dsfw_team_proj.self_assessment.Category;
+import com.team_proj.dsfw_team_proj.self_assessment.CategoryRepository;
+import com.team_proj.dsfw_team_proj.self_assessment.SkillRepository;
+import com.team_proj.dsfw_team_proj.self_assessment.Skills;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,17 +13,17 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class SA_ServiceImplTest {
+public class AdminServiceImplTest {
 
     private CategoryRepository categoryRepository;
     private SkillRepository skillRepository;
-    private SA_ServiceImpl service;
+    private AdminServiceImpl service;
 
     @BeforeEach
     void setup() {
         categoryRepository = mock(CategoryRepository.class);
         skillRepository = mock(SkillRepository.class);
-        service = new SA_ServiceImpl(categoryRepository, skillRepository);
+        service = new AdminServiceImpl(categoryRepository, skillRepository);
     }
 
     // Adding a Category
@@ -97,4 +102,14 @@ public class SA_ServiceImplTest {
         assertFalse(skill.isActive());
         verify(skillRepository).save(skill);
     }
+
+    @Test
+    void addSkill_ShouldThrow_WhenCategoryDoesNotExist() {
+        when(categoryRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            service.addSkill("Test Skill", 999L);
+        });
+    }
+
 }

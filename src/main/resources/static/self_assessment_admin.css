@@ -118,3 +118,13 @@ form.inline {
 .mt-1 {
     margin-top: 1rem;
 }
+
+.error-box {
+    background-color: #fdd300;
+    color: #00313f;
+    padding: 10px;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+}
+

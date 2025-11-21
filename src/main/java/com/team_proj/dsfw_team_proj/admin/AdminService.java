@@ -1,9 +1,12 @@
-package com.team_proj.dsfw_team_proj.Self_Assessment;
+package com.team_proj.dsfw_team_proj.admin;
+
+import com.team_proj.dsfw_team_proj.self_assessment.Category;
+import com.team_proj.dsfw_team_proj.self_assessment.Skills;
 
 import java.util.List;
 import java.util.Map;
 
-public interface SA_Service {
+public interface AdminService {
 
     // Categories
     List<Category> getActiveCategories();

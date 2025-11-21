@@ -1,4 +1,4 @@
-package com.team_proj.dsfw_team_proj.Self_Assessment;
+package com.team_proj.dsfw_team_proj.self_assessment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,4 +9,6 @@ public interface SkillRepository extends JpaRepository<Skills, Long> {
     List<Skills> findByIsActiveTrue();
 
     List<Skills> findByIsActiveTrueAndCategory_Id(Long categoryId);
+
+    boolean existsByName(String name);
 }

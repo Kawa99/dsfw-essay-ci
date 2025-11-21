@@ -13,6 +13,11 @@
 
 <main>
 
+<!--  For showing error message  -->
+    <div th:if="${error}" class="error-box">
+        <p th:text="${error}"></p>
+    </div>
+
     <!-- Categories Section -->
     <div class="section">
         <h2>Categories</h2>
