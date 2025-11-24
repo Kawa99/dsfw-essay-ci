@@ -17,7 +17,7 @@ public class SA_Controller {
 
     @GetMapping
     public String showAssessmentPage(Model model) {
-        model.addAttribute("assessmentData", saService.getMockAssessmentData());
+        model.addAttribute("assessmentData", saService.getAssessmentData());
         return "self_assessment";
     }
 }

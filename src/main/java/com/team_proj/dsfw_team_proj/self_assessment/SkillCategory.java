@@ -18,7 +18,7 @@ public class SkillCategory {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    // Getters and settors
+    // Getters and setters
 
     public Long getId() {
         return id;

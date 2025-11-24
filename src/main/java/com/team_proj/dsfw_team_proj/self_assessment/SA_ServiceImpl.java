@@ -1,6 +1,5 @@
 package com.team_proj.dsfw_team_proj.self_assessment;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,24 +7,25 @@ import java.util.Map;
 @Service
 public class SA_ServiceImpl implements SA_Service {
 
+    private final CategoryRepository categoryRepository;
+    private final SkillRepository skillRepository;
+    public SA_ServiceImpl(CategoryRepository categoryRepository, SkillRepository skillRepository) {
+        this.categoryRepository = categoryRepository;
+        this.skillRepository = skillRepository;
+    }
+
     @Override
-    public Map<Category, List<Skills>> getMockAssessmentData() {
+    public Map<Category, List<Skills>> getAssessmentData() {
         Map<Category, List<Skills>> data = new LinkedHashMap<>();
 
-        for (int i = 1; i <= 5; i++) {
-            Category category = new Category();
-            category.setId((long) i);
-            category.setName("Category " + i);
+        List<Category> currentCategories = categoryRepository.findByIsActiveTrue();
 
-            List<Skills> skills = new ArrayList<>();
-            for (int j = 1; j <= 6; j++) {
-                Skills skill = new Skills();
-                skill.setId((long) (i * 100 + j));
-                skill.setName("Question " + j + ": Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
-                skill.setCategory(category);
-                skills.add(skill);
+
+        for (Category category : currentCategories) {
+            List<Skills>skills = skillRepository.findByIsActiveTrueAndCategory_Id(category.getId());
+            if(!skills.isEmpty()) {
+                data.put(category, skills);
             }
-            data.put(category, skills);
         }
         return data;
     }

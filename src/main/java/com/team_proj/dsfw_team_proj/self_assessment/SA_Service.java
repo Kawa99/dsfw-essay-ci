@@ -4,5 +4,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface SA_Service {
-    Map<Category, List<Skills>> getMockAssessmentData();
+    Map<Category, List<Skills>> getAssessmentData();
 }
