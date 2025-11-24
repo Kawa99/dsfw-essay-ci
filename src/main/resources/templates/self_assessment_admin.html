@@ -3,11 +3,12 @@
 <head>
     <title>Self-Assessment Admin</title>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/self-assessment.css}" />
 </head>
 
 <body>
 
-<div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
+<div th:replace="~{'fragments/HeaderAndFooter' :: mainHeader}"></div>
 
 <main>
 
@@ -99,7 +100,7 @@
 
 </main>
 
-<div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
+<div th:replace="~{'fragments/HeaderAndFooter' :: mainFooter}"></div>
 
 </body>
 </html>
