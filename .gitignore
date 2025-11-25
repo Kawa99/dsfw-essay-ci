@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+## Extra ##
+*.sql.dump
+*.sql.backup
+*.db
