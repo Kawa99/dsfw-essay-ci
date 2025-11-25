@@ -1,7 +1,7 @@
 package com.team_proj.dsfw_team_proj.admin;
 
-import com.team_proj.dsfw_team_proj.self_assessment.Category;
-import com.team_proj.dsfw_team_proj.self_assessment.Skills;
+import com.team_proj.dsfw_team_proj.selfassessment.Category;
+import com.team_proj.dsfw_team_proj.selfassessment.Skills;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

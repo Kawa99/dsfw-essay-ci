@@ -1,4 +1,4 @@
-package com.team_proj.dsfw_team_proj.self_assessment;
+package com.team_proj.dsfw_team_proj.selfassessment;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,11 +13,11 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/self-assessment")
-public class SA_Controller {
+public class SelfAssessmentController {
 
-    private final SA_Service saService;
+    private final SelfAssessmentService saService;
 
-    public SA_Controller(SA_Service saService) {
+    public SelfAssessmentController(SelfAssessmentService saService) {
         this.saService = saService;
     }
 
@@ -25,20 +25,22 @@ public class SA_Controller {
     public String showAssessmentPage(Model model) {
         model.addAttribute("assessmentData", saService.getAssessmentData());
         model.addAttribute("assessmentForm", new SelfAssessmentForm());
-        return "self_assessment";
+        return "self-assessment/self-assessment";
     }
 
 
     @PostMapping("/submit")
     public ModelAndView saveAssessment(@ModelAttribute("assessmentData") SelfAssessmentForm form) {
+        ModelAndView mav;
         Map<Long, Integer> answers = form.getAnswers();
         saService.saveSubmission(answers);
-        return new ModelAndView("redirect:/self-assessment/results");
+        mav = new ModelAndView("redirect:/self-assessment/results");
+        return mav;
     }
 
     @GetMapping("/results")
     public ModelAndView showAssessmentResults() {
-        ModelAndView mav = new ModelAndView("SA/SA_Results");
+        ModelAndView mav = new ModelAndView("self-assessment/self-assessment-results");
         List<Map<Long, Integer>> answers = saService.getAllSubmissions();
         mav.addObject("assessmentData", answers);
         return mav;

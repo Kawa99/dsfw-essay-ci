@@ -1,9 +1,9 @@
-package com.team_proj.dsfw_team_proj.self_assessment;
+package com.team_proj.dsfw_team_proj.selfassessment;
 
 import java.util.List;
 import java.util.Map;
 
-public interface SA_Service {
+public interface SelfAssessmentService {
     Map<Category, List<Skills>> getAssessmentData();
 
     void saveSubmission(Map<Long, Integer> userAnswers);

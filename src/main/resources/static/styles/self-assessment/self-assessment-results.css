@@ -1,0 +1,8 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sans-serif;
+    background-color: var(--grey-bg);
+    color: var(--grey-text);
+    line-height: 1.5;
+}

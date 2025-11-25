@@ -1,4 +1,4 @@
-package com.team_proj.dsfw_team_proj.self_assessment;
+package com.team_proj.dsfw_team_proj.selfassessment;
 
 import lombok.Data;
 
