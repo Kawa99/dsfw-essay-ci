@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Fragments</title>
+</head>
+<body>
+
+<div th:fragment="mainHeader">
+    <header>
+        <div class="container">
+            <a th:href="@{/}">
+                <img th:src="@{/images/thumbnail_image252147.png}" alt="Digital Skills for Wales Logo" class="header-logo" />
+            </a>
+
+            <nav>
+                <a th:href="@{/}">Home</a>
+                <a th:href="@{/self-assessment}">Self Assessment</a>
+                <a th:href="@{/admin/self-assessment}">Admin</a>
+            </nav>
+        </div>
+    </header>
+</div>
+<div th:fragment="mainFooter">
+    <footer>
+        <p>2025 Digital Skills for Wales Team Project</p>
+    </footer>
+</div>
+
+</body>
+</html>
