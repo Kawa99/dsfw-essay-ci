@@ -1,4 +1,4 @@
-package com.team_proj.dsfw_team_proj.self_assessment;
+package com.team_proj.dsfw_team_proj.selfassessment;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,11 +9,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/self-assessment")
-public class SA_API_Controller {
+public class SelfAssessmentAPIController {
 
-    private final SA_Service saService;
+    private final SelfAssessmentService saService;
 
-    public SA_API_Controller(SA_Service saService) {
+    public SelfAssessmentAPIController(SelfAssessmentService saService) {
         this.saService = saService;
     }
 

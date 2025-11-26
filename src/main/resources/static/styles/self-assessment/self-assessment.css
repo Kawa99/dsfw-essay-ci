@@ -1,10 +1,7 @@
-/* File: src/main/resources/static/self_assessment.css */
-
-/* === VARIABLES: Welsh Govt Palette === */
 :root {
-    --cdps-blue: #003761;            /* Deep Blue */
+    --cdps-blue: #003761;
     --cdps-blue-dark: #002a4a;
-    --powder-blue: #6068ff;          /* Bright Blue/Purple Action Colour */
+    --powder-blue: #6068ff;
     --powder-blue-light: #8089ff;
     --grey-text: #0b0c0c;
     --grey-bg: #f3f2f1;
@@ -12,7 +9,6 @@
     --border-color: #b1b4b6;
 }
 
-/* === GLOBAL DEFAULTS === */
 body {
     margin: 0;
     padding: 0;
@@ -22,21 +18,18 @@ body {
     line-height: 1.5;
 }
 
-/* === HEADER === */
 header {
     background-color: var(--white);
     border-bottom: 5px solid var(--cdps-blue);
     padding: 20px 0;
 }
 
-/* Container to center content */
 .container {
     max-width: 960px;
     margin: 0 auto;
     padding: 0 15px;
 }
 
-/* Flex container for the header content specifically */
 header .container {
     display: flex;
     justify-content: space-between;
@@ -67,7 +60,6 @@ header nav a:hover {
     text-decoration-thickness: 2px;
 }
 
-/* === MAIN CONTENT === */
 main {
     margin-top: 40px;
     margin-bottom: 60px;
@@ -81,7 +73,13 @@ main h1 {
     line-height: 1.1;
 }
 
-/* === FORM STYLING === */
+/* Added Class for Intro Text */
+.intro-text {
+    margin-bottom: 30px;
+    font-size: 1.2rem;
+    color: #555;
+}
+
 form {
     background-color: var(--white);
     padding: 40px;
@@ -89,7 +87,6 @@ form {
     border: 1px solid var(--border-color);
 }
 
-/* Category Headers */
 .category-section {
     margin-bottom: 40px;
     border-bottom: 1px solid var(--border-color);
@@ -102,7 +99,6 @@ form {
     margin: 0 0 20px 0;
 }
 
-/* Question Blocks */
 .question-block {
     margin-bottom: 30px;
     padding: 20px;
@@ -123,17 +119,24 @@ form {
     margin-bottom: 15px;
 }
 
-/* Radio Button Group */
 .radio-group {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    align-items: center;
 }
 
-/* Individual Radio Option (The box look) */
+.scale-text {
+    font-weight: bold;
+    color: var(--cdps-blue);
+    font-size: 0.9rem;
+    margin: 0 5px;
+}
+
 .radio-option {
     display: flex;
     align-items: center;
+    justify-content: center;
     cursor: pointer;
     padding: 10px 15px;
     border: 2px solid var(--border-color);
@@ -148,7 +151,6 @@ form {
     background-color: #eef1f3;
 }
 
-/* Style the label when the radio inside is checked (requires modern browser) */
 .radio-option:has(input:checked) {
     border-color: var(--cdps-blue);
     background-color: var(--cdps-blue);
@@ -162,7 +164,6 @@ form {
     height: 18px;
 }
 
-/* Submit Button */
 button[type="submit"] {
     background-color: var(--powder-blue);
     color: var(--white);
@@ -170,10 +171,10 @@ button[type="submit"] {
     font-weight: 700;
     padding: 15px 35px;
     border: none;
-    border-radius: 50px; /* Pill shape */
+    border-radius: 50px;
     cursor: pointer;
     margin-top: 20px;
-    box-shadow: 0 4px 0 #4a52cc; /* 3D effect */
+    box-shadow: 0 4px 0 #4a52cc;
     transition: transform 0.1s, box-shadow 0.1s;
 }
 
@@ -188,7 +189,6 @@ button[type="submit"]:active {
     box-shadow: none;
 }
 
-/* Footer */
 footer {
     background-color: var(--cdps-blue);
     color: var(--white);
