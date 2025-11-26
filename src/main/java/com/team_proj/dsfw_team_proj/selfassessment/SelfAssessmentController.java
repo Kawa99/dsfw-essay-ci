@@ -24,13 +24,13 @@ public class SelfAssessmentController {
     @GetMapping
     public String showAssessmentPage(Model model) {
         model.addAttribute("assessmentData", saService.getAssessmentData());
-        model.addAttribute("assessmentForm", new SelfAssessmentForm());
+        model.addAttribute("assessmentForm", new ResultsFormDTO());
         return "self-assessment/self-assessment";
     }
 
 
     @PostMapping("/submit")
-    public ModelAndView saveAssessment(@ModelAttribute("assessmentData") SelfAssessmentForm form) {
+    public ModelAndView saveAssessment(@ModelAttribute("assessmentData") ResultsFormDTO form) {
         ModelAndView mav;
         Map<Long, Integer> answers = form.getAnswers();
         saService.saveSubmission(answers);
