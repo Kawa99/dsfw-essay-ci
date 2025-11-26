@@ -1,9 +1,10 @@
 package com.team_proj.dsfw_team_proj.admin;
 
-import com.team_proj.dsfw_team_proj.self_assessment.Category;
-import com.team_proj.dsfw_team_proj.self_assessment.CategoryRepository;
-import com.team_proj.dsfw_team_proj.self_assessment.SkillRepository;
-import com.team_proj.dsfw_team_proj.self_assessment.Skills;
+
+import com.team_proj.dsfw_team_proj.selfassessment.Category;
+import com.team_proj.dsfw_team_proj.selfassessment.CategoryRepository;
+import com.team_proj.dsfw_team_proj.selfassessment.SkillRepository;
+import com.team_proj.dsfw_team_proj.selfassessment.Skills;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,7 +1,7 @@
 package com.team_proj.dsfw_team_proj.admin;
 
-import com.team_proj.dsfw_team_proj.self_assessment.Category;
-import com.team_proj.dsfw_team_proj.self_assessment.Skills;
+import com.team_proj.dsfw_team_proj.selfassessment.Category;
+import com.team_proj.dsfw_team_proj.selfassessment.Skills;
 
 import java.util.List;
 import java.util.Map;

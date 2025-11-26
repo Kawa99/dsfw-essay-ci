@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Self Assessment</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
+
+<div>
+    <h1>Digital Skills Self-Assessment</h1>
+    <p style="margin-bottom: 30px; font-size: 1.2rem; color: #555;">
+        Rate your confidence level for each skill statement below.
+    </p>
+    <form th:action="@{/self-assessment/submit}" th:object="${assessmentForm}" method="post">
+
+        <div th:each="entry : ${assessmentData}">
+            <h2 th:text="${entry.key.name}">Category Name</h2>
+
+            <div th:each="skill : ${entry.value}" class="question-block">
+                <p class="question-text" th:text="${skill.name}">Question Text</p>
+
+                <div class="radio-group">
+                    <label class="radio-option">
+                        I do not know this skill - <input type="radio" th:field="*{answers[__${skill.id}__]}" value="1" required>
+
+                    </label>
+                    &nbsp;
+                    <label class="radio-option">
+                        1 <input type="radio" th:field="*{answers[__${skill.id}__]}" value="1">
+                    </label>
+                    &nbsp;
+                    <label class="radio-option">
+                        2 <input type="radio" th:field="*{answers[__${skill.id}__]}" value="2">
+                    </label>
+                    &nbsp;
+                    <label class="radio-option">
+                        3 <input type="radio" th:field="*{answers[__${skill.id}__]}" value="3">
+                    </label>
+                    &nbsp;
+                    <label class="radio-option">
+                        4 <input type="radio" th:field="*{answers[__${skill.id}__]}" value="4">
+                    </label>
+                    &nbsp;
+                    <label class="radio-option">
+                        5 <input type="radio" th:field="*{answers[__${skill.id}__]}" value="5">
+                        - I am proficient in this skill
+                    </label>
+                </div>
+            </div>
+            <hr>
+        </div>
+
+        <button type="submit">Submit Assessment</button>
+    </form>
+</div>
+
+<div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
+
+</body>
+</html>

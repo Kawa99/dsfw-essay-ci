@@ -1,7 +1,7 @@
 package com.team_proj.dsfw_team_proj.admin;
 
-import com.team_proj.dsfw_team_proj.self_assessment.Category;
-import com.team_proj.dsfw_team_proj.self_assessment.Skills;
+import com.team_proj.dsfw_team_proj.selfassessment.Category;
+import com.team_proj.dsfw_team_proj.selfassessment.Skills;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,7 @@ public class AdminController {
         model.addAttribute("categories", categories);
         model.addAttribute("skillsByCategory", skillsByCategory);
 
-        return "self_assessment_admin";
+        return "self-assessment/self-assessment-admin";
     }
 
     // Category related actions
