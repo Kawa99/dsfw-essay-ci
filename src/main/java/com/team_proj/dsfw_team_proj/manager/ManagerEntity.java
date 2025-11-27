@@ -1,8 +1,8 @@
-package com.team_proj.dsfw_team_proj.manager.entity;
+package com.team_proj.dsfw_team_proj.manager;
 import jakarta.persistence.*;
 
 @Entity
-public class Manager {
+public class ManagerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -11,8 +11,8 @@ public class Manager {
     private int results;
 
     // Constructors
-    public Manager() {}
-    public Manager(String name, int results) {
+    public ManagerEntity() {}
+    public ManagerEntity(String name, int results) {
         this.name = name;
         this.results = results;
     }
