@@ -1,0 +1,36 @@
+@import url("/styles/govuk-frontend.css");
+
+:root {
+    --dsfw-brand: #1d70b8;
+    --dsfw-brand-dark: #003078;
+}
+
+body.govuk-template__body {
+    background-color: #f3f2f1;
+}
+
+.dsfw-page main.govuk-main-wrapper {
+    margin-top: 2rem;
+}
+
+.dsfw-page .govuk-heading-xl {
+    margin-bottom: 1rem;
+}
+
+.dsfw-page .govuk-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #b1b4b6;
+}
+
+.dsfw-page .govuk-header__link {
+    color: #0b0c0c;
+}
+
+.dsfw-page .govuk-header__link:visited {
+    color: #0b0c0c;
+}
+
+.dsfw-page .govuk-header__menu-button {
+    color: #0b0c0c;
+    border-color: #0b0c0c;
+}
