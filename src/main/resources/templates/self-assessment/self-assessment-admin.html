@@ -3,104 +3,189 @@
 <head>
     <title>Self-Assessment Admin</title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" th:href="@{/styles/self-assessment/self-assessment.css}" />
+    <link rel="stylesheet" th:href="@{/styles/css.css}" />
+    <link rel="stylesheet" th:href="@{/styles/self-assessment/self-assessment-admin.css}" />
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}" />
 </head>
 
 <body>
 
 <div th:replace="~{'fragments/HeaderAndFooter' :: mainHeader}"></div>
 
-<main>
+<div class="admin-page-wrapper">
+    <main class="admin-main-content">
+        <h1 class="page-title">Self-Assessment Configuration</h1>
 
-    <h1>Self-Assessment Configuration</h1>
+        <!-- Alert box for messages -->
+        <div id="alertBox" class="alert"></div>
 
-    <div th:if="${error}">
-        <p th:text="${error}" style="color: red;"></p>
-    </div>
-
-    <div>
-        <h2>Categories</h2>
-
-        <table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;">
-            <thead>
-            <tr>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr th:each="category : ${categories}">
-                <td>
-                    <form th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/edit'}" method="post" style="display:inline;">
-                        <input type="text" name="name" th:value="${category.name}" />
-                        <button type="submit">Save</button>
-                    </form>
-                </td>
-                <td>
-                    <form th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/deactivate'}" method="post" style="display:inline;">
-                        <button type="submit">Deactivate</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-        <div style="margin-top: 10px;">
-            <form th:action="@{'/admin/self-assessment/categories/add'}" method="post">
-                <input type="text" name="name" placeholder="New category name" required />
-                <button type="submit">Add Category</button>
-            </form>
+        <!-- Error message from server -->
+        <div th:if="${error}" class="error-message">
+            <p th:text="${error}"></p>
         </div>
-    </div>
 
-    <hr>
+        <div class="settings-container">
+            <!-- Sidebar Navigation -->
+            <div class="settings-nav">
+                <h3>Categories</h3>
+                <div class="nav-item"
+                     th:each="category : ${categories}"
+                     th:data-category-id="${category.id}"
+                     th:text="${category.name}">
+                </div>
+                <div class="nav-divider"></div>
+                <div class="nav-item" data-category-id="manage">Manage Categories</div>
+            </div>
 
-    <div>
-        <h2>Skills / Questions</h2>
+            <!-- Main Content Area -->
+            <div class="settings-content">
+                <!-- Individual Category Sections -->
+                <div th:each="category : ${categories}"
+                     class="category-section"
+                     th:data-category-id="${category.id}">
 
-        <div th:each="category : ${categories}" style="margin-bottom: 20px;">
-            <h3 th:text="${category.name}"></h3>
+                    <div class="section-header">
+                        <div>
+                            <h2>
+                                <span th:id="'cat-name-' + ${category.id}" th:text="${category.name}"></span>
 
-            <table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;">
-                <thead>
-                <tr>
-                    <th>Skill / Question Text</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
+                                <!-- Inline edit form for category name -->
+                                <form th:id="'cat-edit-' + ${category.id}"
+                                      th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/edit'}"
+                                      method="post"
+                                      class="inline-edit-form">
+                                    <input type="text" name="name" th:value="${category.name}" required />
+                                    <button type="submit" class="btn-primary btn-small">Save</button>
+                                    <button type="button"
+                                            class="btn-link btn-small cancel-edit-category"
+                                            th:data-category-id="${category.id}">Cancel</button>
+                                </form>
+                            </h2>
+                        </div>
+                        <div class="action-buttons">
+                            <form th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/deactivate'}"
+                                  method="post"
+                                  style="display:inline;"
+                                  class="deactivate-form"
+                                  data-item-type="category">
+                            </form>
+                        </div>
+                    </div>
 
-                <tbody>
-                <tr th:each="skill : ${skillsByCategory[category.id]}">
-                    <td>
-                        <form th:action="@{'/admin/self-assessment/skills/' + ${skill.id} + '/edit'}" method="post" style="display:inline;">
-                            <input type="text" name="name" th:value="${skill.name}" style="width: 300px;" />
-                            <button type="submit">Save</button>
+                    <!-- Skills Table -->
+                    <table>
+                        <thead>
+                        <tr>
+                            <th style="width: 70%;">Skill / Question Text</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="skill : ${skillsByCategory[category.id]}">
+                            <td>
+                                <span th:id="'skill-name-' + ${skill.id}" th:text="${skill.name}"></span>
+
+                                <!-- Inline edit form for skill -->
+                                <form th:id="'skill-edit-' + ${skill.id}"
+                                      th:action="@{'/admin/self-assessment/skills/' + ${skill.id} + '/edit'}"
+                                      method="post"
+                                      class="inline-edit-form">
+                                    <input type="text" name="name" th:value="${skill.name}" required />
+                                    <button type="submit" class="btn-primary btn-small">Save</button>
+                                    <button type="button"
+                                            class="btn-link btn-small cancel-edit-skill"
+                                            th:data-skill-id="${skill.id}">Cancel</button>
+                                </form>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button type="button"
+                                            class="btn-secondary btn-small edit-skill-btn"
+                                            th:data-skill-id="${skill.id}">Edit</button>
+                                    <form th:action="@{'/admin/self-assessment/skills/' + ${skill.id} + '/deactivate'}"
+                                          method="post"
+                                          style="display:inline;"
+                                          class="deactivate-form"
+                                          data-item-type="skill">
+                                        <button type="submit" class="btn-danger btn-small">Deactivate</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(skillsByCategory[category.id])}">
+                            <td colspan="2" style="text-align: center; color: #999;">No skills in this category yet</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Add New Skill -->
+                    <div class="add-new-section">
+                        <h3>Add New Skill/Question</h3>
+                        <form th:action="@{'/admin/self-assessment/skills/add'}" method="post" class="add-form">
+                            <input type="hidden" name="categoryId" th:value="${category.id}" />
+                            <input type="text" name="name" placeholder="Enter new skill or question text" required />
+                            <button type="submit" class="btn-primary">Add Skill</button>
                         </form>
-                    </td>
+                    </div>
+                </div>
 
-                    <td>
-                        <form th:action="@{'/admin/self-assessment/skills/' + ${skill.id} + '/deactivate'}" method="post" style="display:inline;">
-                            <button type="submit">Deactivate</button>
+                <!-- Manage Categories Section -->
+                <div class="category-section manage-categories-section" data-category-id="manage">
+                    <div class="section-header">
+                        <h2>Manage Categories</h2>
+                    </div>
+
+                    <table>
+                        <thead>
+                        <tr>
+                            <th style="width: 60%;">Category Name</th>
+                            <th>Skill Count</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="category : ${categories}">
+                            <td th:text="${category.name}"></td>
+                            <td th:text="${#lists.size(skillsByCategory[category.id])}"></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button type="button"
+                                            class="btn-secondary btn-small edit-category-btn"
+                                            th:data-category-id="${category.id}"
+                                            onclick="document.querySelector('[data-category-id=\'' + this.dataset.categoryId + '\'].nav-item').click();">
+                                        View/Edit
+                                    </button>
+                                    <form th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/deactivate'}"
+                                          method="post"
+                                          style="display:inline;"
+                                          class="deactivate-form"
+                                          data-item-type="category">
+                                        <button type="submit" class="btn-danger btn-small">Deactivate</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Add New Category -->
+                    <div class="add-new-section">
+                        <h3>Add New Category</h3>
+                        <form th:action="@{'/admin/self-assessment/categories/add'}" method="post" class="add-form">
+                            <input type="text" name="name" placeholder="Enter new category name" required />
+                            <button type="submit" class="btn-primary">Add Category</button>
                         </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div style="margin-top: 5px;">
-                <form th:action="@{'/admin/self-assessment/skills/add'}" method="post">
-                    <input type="hidden" name="categoryId" th:value="${category.id}" />
-                    <input type="text" name="name" placeholder="New skill/question" required style="width: 300px;" />
-                    <button type="submit">Add Skill</button>
-                </form>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-</main>
+    </main>
+</div>
 
 <div th:replace="~{'fragments/HeaderAndFooter' :: mainFooter}"></div>
+
+<script th:src="@{/scripts/self-assessment-admin.js}"></script>
 
 </body>
 </html>
