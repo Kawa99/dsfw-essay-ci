@@ -1,4 +1,7 @@
 package com.team_proj.dsfw_team_proj.manager;
 
-public class ManagerService {
+import java.util.List;
+
+public interface ManagerService {
+    List<FakeOverviewDTO> getFakeManagerDataForOverview();
 }
