@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f3f4f6;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+
+<div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
+
+  <div class="p-8">
+
+    <div th:if="${message}" class="mb-6 p-4 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-2">
+      <i class="fa-solid fa-circle-info"></i>
+      <p th:text="${message}" class="text-sm font-medium"></p>
+    </div>
+
+    <form id="register-form" th:action="@{/register}" th:object="${user}" method="POST" class="space-y-6" onsubmit="handleRegister(event)">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+          <i class="fa-solid fa-user-plus text-xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">Create Account</h2>
+        <p class="text-sm text-gray-500 mt-2">Join us for free today.</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <i class="fa-regular fa-user"></i>
+            </span>
+          <input type="text" th:field="*{firstName}" required class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="John">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <i class="fa-regular fa-user"></i>
+            </span>
+          <input type="text" th:field="*{lastName}" required class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="Doe">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <i class="fa-regular fa-envelope"></i>
+            </span>
+          <input type="email" th:field="*{email}" required class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" placeholder="you@example.com">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <i class="fa-solid fa-lock"></i>
+            </span>
+          <input
+                  type="password"
+                  id="reg-password"
+                  th:field="*{password}"
+                  required
+                  minlength="9"
+                  oninput="checkPassword()"
+                  class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  placeholder="More than 8 characters">
+
+          <button type="button" onclick="togglePasswordVisibility('reg-password')" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none">
+            <i class="fa-regular fa-eye" id="eye-icon-reg"></i>
+          </button>
+        </div>
+
+        <div class="mt-2 space-y-1">
+          <p id="length-feedback" class="text-xs text-gray-500 flex items-center gap-1 transition-colors duration-300">
+            <i class="fa-solid fa-circle text-[6px]"></i> Must be more than 8 characters
+          </p>
+        </div>
+      </div>
+
+      <button type="submit" id="reg-submit-btn" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-transform transform active:scale-95 opacity-50 cursor-not-allowed">
+        Create Account
+      </button>
+
+      <div class="text-center mt-4">
+        <p class="text-sm text-gray-500">
+          Already registered?
+          <a th:href="@{/login}" class="text-indigo-600 font-medium hover:underline hover:text-indigo-700">Login here</a>
+        </p>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<script>
+  // --- Password Validation Logic ---
+  function checkPassword() {
+      const passwordInput = document.getElementById('reg-password');
+      const feedbackText = document.getElementById('length-feedback');
+      const submitBtn = document.getElementById('reg-submit-btn');
+      const password = passwordInput.value;
+
+      // Condition: Must be STRICTLY greater than 8 characters (so length >= 9)
+      const isValid = password.length > 8;
+
+      if (isValid) {
+          // Visual Success State
+          feedbackText.classList.remove('text-gray-500', 'text-red-500');
+          feedbackText.classList.add('text-green-600');
+          feedbackText.innerHTML = '<i class="fa-solid fa-check"></i> Length requirement met';
+
+          passwordInput.classList.remove('focus:ring-indigo-500', 'border-red-500', 'focus:ring-red-500');
+          passwordInput.classList.add('border-green-500', 'focus:ring-green-500');
+
+          submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          submitBtn.disabled = false;
+      } else {
+          // Visual Error/Default State
+          if (password.length > 0) {
+              feedbackText.classList.remove('text-gray-500', 'text-green-600');
+              feedbackText.classList.add('text-red-500');
+              passwordInput.classList.add('border-red-500', 'focus:ring-red-500');
+              passwordInput.classList.remove('focus:ring-indigo-500', 'border-green-500', 'focus:ring-green-500');
+          } else {
+              feedbackText.classList.remove('text-red-500', 'text-green-600');
+              feedbackText.classList.add('text-gray-500');
+              passwordInput.classList.remove('border-red-500', 'focus:ring-red-500', 'border-green-500', 'focus:ring-green-500');
+              passwordInput.classList.add('focus:ring-indigo-500');
+          }
+
+          feedbackText.innerHTML = `<i class="fa-solid fa-circle text-[6px]"></i> Must be more than 8 characters (Current: ${password.length})`;
+
+          submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          submitBtn.disabled = true;
+      }
+  }
+
+  function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      const icon = input.parentElement.querySelector('i.fa-eye') || input.parentElement.querySelector('i.fa-eye-slash');
+
+      if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+      } else {
+          input.type = "password";
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+      }
+  }
+
+  function handleRegister(e) {
+      const password = document.getElementById('reg-password').value;
+      if(password.length <= 8) {
+          e.preventDefault(); // Block submission if invalid
+          alert("Password must be more than 8 characters!");
+      }
+  }
+
+  // Initialize validation on load (in case browser auto-fills)
+  checkPassword();
+</script>
+</body>
+</html>
