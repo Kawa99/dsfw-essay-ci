@@ -1,0 +1,65 @@
+:root {
+    --cdps-blue: #003761;
+    --cdps-blue-dark: #002a4a;
+    --white: #ffffff;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: var(--white);
+    border-bottom: 5px solid var(--cdps-blue);
+    padding: 20px 0;
+}
+
+header .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-logo {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
+header nav {
+    display: flex;
+    gap: 20px;
+}
+
+header nav a {
+    text-decoration: none;
+    color: var(--cdps-blue);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+
+footer {
+    background-color: var(--cdps-blue);
+    color: var(--white);
+    text-align: center;
+    padding: 40px 0;
+    margin-top: auto;
+}
+
+footer p {
+    margin: 0;
+}
