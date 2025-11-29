@@ -5,7 +5,7 @@ import com.team_proj.dsfw_team_proj.selfassessment.Skills;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes; // Import this!
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class AdminController {
 
     @PostMapping("/categories/add")
     public String addCategory(@RequestParam("name") String name,
-                              RedirectAttributes redirectAttributes) { // Add this parameter
+                              RedirectAttributes redirectAttributes) {
         try {
             // This calls the service.
             // If the category is new -> Creates it.
