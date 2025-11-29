@@ -5,6 +5,7 @@ import com.team_proj.dsfw_team_proj.selfassessment.Skills;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; // Import this!
 
 import java.util.List;
 import java.util.Map;
@@ -33,21 +34,46 @@ public class AdminController {
     // Category related actions
 
     @PostMapping("/categories/add")
-    public String addCategory(@RequestParam("name") String name) {
-        saService.addCategory(name);
+    public String addCategory(@RequestParam("name") String name,
+                              RedirectAttributes redirectAttributes) { // Add this parameter
+        try {
+            // This calls the service.
+            // If the category is new -> Creates it.
+            // If it is inactive -> Reactivates it.
+            // If it is active/duplicate -> Throws Exception.
+            saService.addCategory(name);
+
+            redirectAttributes.addFlashAttribute("success", "Category added successfully");
+
+        } catch (IllegalArgumentException e) {
+            // This catches the "Category already exists" error from the service
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+
+        } catch (Exception e) {
+            // This catches any unexpected database crashes
+            redirectAttributes.addFlashAttribute("error", "An unexpected error occurred.");
+        }
+
         return "redirect:/admin/self-assessment";
     }
 
     @PostMapping("/categories/{id}/edit")
     public String editCategory(@PathVariable Long id,
-                               @RequestParam("name") String name) {
-        saService.updateCategory(id, name);
+                               @RequestParam("name") String name,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            saService.updateCategory(id, name);
+            redirectAttributes.addFlashAttribute("success", "Category updated successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not update category.");
+        }
         return "redirect:/admin/self-assessment";
     }
 
     @PostMapping("/categories/{id}/deactivate")
-    public String deactivateCategory(@PathVariable Long id) {
+    public String deactivateCategory(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         saService.deactivateCategory(id);
+        redirectAttributes.addFlashAttribute("success", "Category deactivated.");
         return "redirect:/admin/self-assessment";
     }
 
@@ -56,27 +82,30 @@ public class AdminController {
     @PostMapping("/skills/add")
     public String addSkill(@RequestParam("categoryId") Long categoryId,
                            @RequestParam("name") String name,
-                           Model model) {
+                           RedirectAttributes redirectAttributes) {
 
         try {
             saService.addSkill(name, categoryId);
-            return "redirect:/admin/self-assessment";
+            redirectAttributes.addFlashAttribute("success", "Skill added successfully");
         } catch (IllegalArgumentException e) {
-            model.addAttribute("error", e.getMessage());
-            return showConfigPage(model);
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
+        return "redirect:/admin/self-assessment";
     }
 
     @PostMapping("/skills/{id}/edit")
     public String editSkill(@PathVariable Long id,
-                            @RequestParam("name") String name) {
+                            @RequestParam("name") String name,
+                            RedirectAttributes redirectAttributes) {
         saService.updateSkill(id, name);
+        redirectAttributes.addFlashAttribute("success", "Skill updated successfully");
         return "redirect:/admin/self-assessment";
     }
 
     @PostMapping("/skills/{id}/deactivate")
-    public String deactivateSkill(@PathVariable Long id) {
+    public String deactivateSkill(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         saService.deactivateSkill(id);
+        redirectAttributes.addFlashAttribute("success", "Skill deactivated.");
         return "redirect:/admin/self-assessment";
     }
 }
