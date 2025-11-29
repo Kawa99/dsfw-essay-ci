@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Home - Digital Skills for Wales</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/govuk-assets/images/govuk-logotype-crown.svg}">
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/govuk-assets/images/govuk-apple-touch-icon-180x180.png}">
+    <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
+    <meta name="theme-color" content="#0b0c0c">
+    <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+</head>
+<body class="govuk-template__body">
+<script>
+    document.body.className = document.body.className
+        ? document.body.className + ' js-enabled govuk-frontend-supported'
+        : 'js-enabled govuk-frontend-supported';
+</script>
+
+<a class="govuk-skip-link" href="#main-content">Skip to main content</a>
+
+<div class="dsfw-page">
+    <header class="govuk-header" role="banner" data-module="govuk-header">
+        <div class="govuk-header__container govuk-width-container">
+            <div class="govuk-header__logo">
+                <a class="govuk-header__link govuk-header__link--homepage" th:href="@{/}">
+                    <img th:src="@{/images/thumbnail_image252147.png}"
+                         alt="Digital Skills for Wales"
+                         class="govuk-header__logotype-crown"
+                         style="height: 72px; width: auto; max-width: 260px;">
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <span class="govuk-caption-l">Public sector digital capability</span>
+                    <h1 class="govuk-heading-xl">Digital Skills for Wales</h1>
+
+                    <p class="govuk-body">
+                        Use this service to sign in with your public sector work email and join your manager’s team.
+                        Once signed in, you will be able to complete a digital skills self assessment and see where
+                        you and your team have strengths and gaps.
+                    </p>
+
+                    <div class="govuk-button-group">
+                        <a class="govuk-button"
+                           data-module="govuk-button"
+                           th:href="@{/login}">
+                            Sign in
+                        </a>
+
+                        <a class="govuk-button govuk-button--secondary"
+                           data-module="govuk-button"
+                           th:href="@{/teams/join}">
+                            Join your manager’s team
+                        </a>
+                    </div>
+
+                    <div class="govuk-inset-text">
+                        <p class="govuk-body">
+                            You will need a valid public sector work email address to use this service.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="govuk-grid-column-one-third">
+                    <div class="govuk-notification-banner" role="region"
+                         aria-labelledby="service-status-title"
+                         data-module="govuk-notification-banner">
+                        <div class="govuk-notification-banner__header">
+                            <h2 class="govuk-notification-banner__title" id="service-status-title">
+                                About this service
+                            </h2>
+                        </div>
+                        <div class="govuk-notification-banner__content">
+                            <p class="govuk-body">
+                                This tool helps teams across the Welsh public sector understand their existing digital
+                                skills and identify where support or training is needed.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="govuk-!-margin-top-6">
+                <h2 class="govuk-heading-m">What you will need</h2>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>A public sector work email address (for example, NHS, local authority or Welsh Government)</li>
+                    <li>The name or code of your team so you can join your manager’s team</li>
+                    <li>Around 10 minutes to answer simple yes/no questions about your work</li>
+                </ul>
+            </section>
+
+            <section class="govuk-!-margin-top-6">
+                <h2 class="govuk-heading-m">How it works</h2>
+                <ol class="govuk-list govuk-list--number">
+                    <li>Sign in using your work email.</li>
+                    <li>Join your manager’s team using the code or link they provide.</li>
+                    <li>Complete the digital skills self assessment.</li>
+                    <li>View your results and recommended resources to help fill any skill gaps.</li>
+                </ol>
+            </section>
+        </main>
+    </div>
+
+    <footer class="govuk-footer" role="contentinfo">
+        <div class="govuk-width-container">
+            <div class="govuk-footer__meta">
+                <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+                    <h2 class="govuk-visually-hidden">Support links</h2>
+                    <ul class="govuk-footer__inline-list">
+                        <li class="govuk-footer__inline-list-item">
+                            <a class="govuk-footer__link" th:href="@{/}">Home</a>
+                        </li>
+                        <li class="govuk-footer__inline-list-item">
+                            <a class="govuk-footer__link" th:href="@{/admin/self-assessment}">Admin</a>
+                        </li>
+                    </ul>
+                    <span class="govuk-footer__licence-description">
+                        2025 Digital Skills for Wales Team Project
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script th:src="@{/scripts/govuk-frontend.js}"></script>
+<script>
+    if (window.GOVUKFrontend && typeof GOVUKFrontend.initAll === "function") {
+        GOVUKFrontend.initAll();
+    }
+</script>
+
+</body>
+</html>
