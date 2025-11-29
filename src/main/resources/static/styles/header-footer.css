@@ -1,65 +1,36 @@
-:root {
-    --cdps-blue: #003761;
-    --cdps-blue-dark: #002a4a;
-    --white: #ffffff;
+.header-logo-image {
+    height: 72px;
+    width: auto;
+    max-width: 260px;
 }
 
-body {
+.navigation-bar {
+    background-color: #e0e0e0;
+    border-bottom: 1px solid #b1b4b6;
+    padding: 10px 0;
+}
+
+.navigation-list {
     margin: 0;
     padding: 0;
-    font-family: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sans-serif;
-    line-height: 1.5;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-header {
-    background-color: var(--white);
-    border-bottom: 5px solid var(--cdps-blue);
-    padding: 20px 0;
-}
-
-header .container {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header-logo {
-    height: 60px;
-    width: auto;
-    display: block;
-}
-
-header nav {
+    list-style: none;
     display: flex;
     gap: 20px;
 }
 
-header nav a {
+.navigation-item {
+    display: inline-block;
+}
+
+.navigation-link {
+    color: #0b0c0c;
     text-decoration: none;
-    color: var(--cdps-blue);
-    font-weight: 600;
-    font-size: 1rem;
+    font-size: 19px;
+    font-family: "GDS Transport", arial, sans-serif;
+    font-weight: 700;
 }
 
-header nav a:hover {
+.navigation-link:hover {
     text-decoration: underline;
-    text-decoration-thickness: 2px;
-}
-
-footer {
-    background-color: var(--cdps-blue);
-    color: var(--white);
-    text-align: center;
-    padding: 40px 0;
-    margin-top: auto;
-}
-
-footer p {
-    margin: 0;
+    color: #1d70b8;
 }
