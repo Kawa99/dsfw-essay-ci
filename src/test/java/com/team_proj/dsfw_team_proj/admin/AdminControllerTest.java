@@ -1,7 +1,7 @@
 //package com.team_proj.dsfw_team_proj.admin;
 //
 //import com.team_proj.dsfw_team_proj.selfassessment.Category;
-//import com.team_proj.dsfw_team_proj.selfassessment.Skills;
+//import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,7 +31,7 @@
 //        category.setId(1L);
 //        category.setName("Content Design");
 //
-//        Skills skill = new Skills();
+//        SkillsEntity skill = new SkillsEntity();
 //        skill.setId(2L);
 //        skill.setName("Writes accessible content");
 //

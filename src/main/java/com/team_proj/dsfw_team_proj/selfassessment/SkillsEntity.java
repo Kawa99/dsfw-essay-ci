@@ -3,21 +3,23 @@ package com.team_proj.dsfw_team_proj.selfassessment;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity
 @Data
-@Table(name = "skills_category")
-public class SkillsAndCategoriesLink {
+@Entity
+@Table(name = "skills")
+public class SkillsEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "skill_id")
-    private SkillsEntity skill;
+    // The skill / question text
+    @Column(nullable = false, unique = true, length = 255)
+    private String name;
+
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive = true;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id")
     private Category category;
-
 }

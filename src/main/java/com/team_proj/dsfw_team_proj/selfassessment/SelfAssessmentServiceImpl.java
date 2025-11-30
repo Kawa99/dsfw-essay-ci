@@ -19,14 +19,14 @@ public class SelfAssessmentServiceImpl implements SelfAssessmentService {
     }
 
     @Override
-    public Map<Category, List<Skills>> getAssessmentData() {
-        Map<Category, List<Skills>> data = new LinkedHashMap<>();
+    public Map<Category, List<SkillsEntity>> getAssessmentData() {
+        Map<Category, List<SkillsEntity>> data = new LinkedHashMap<>();
 
         List<Category> currentCategories = categoryRepository.findByIsActiveTrue();
 
 
         for (Category category : currentCategories) {
-            List<Skills>skills = skillRepository.findByIsActiveTrueAndCategory_Id(category.getId());
+            List<SkillsEntity>skills = skillRepository.findByIsActiveTrueAndCategory_Id(category.getId());
             if(!skills.isEmpty()) {
                 data.put(category, skills);
             }

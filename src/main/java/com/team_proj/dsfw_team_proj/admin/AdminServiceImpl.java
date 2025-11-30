@@ -3,7 +3,7 @@ package com.team_proj.dsfw_team_proj.admin;
 import com.team_proj.dsfw_team_proj.selfassessment.Category;
 import com.team_proj.dsfw_team_proj.selfassessment.CategoryRepository;
 import com.team_proj.dsfw_team_proj.selfassessment.SkillRepository;
-import com.team_proj.dsfw_team_proj.selfassessment.Skills;
+import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,15 +78,15 @@ public class AdminServiceImpl implements AdminService {
         categoryRepository.save(category);
     }
 
-    // Skills related methods
+    // SkillsEntity related methods
 
     @Override
-    public Map<Long, List<Skills>> getActiveSkillsGroupedByCategory() {
-        Map<Long, List<Skills>> result = new HashMap<>();
+    public Map<Long, List<SkillsEntity>> getActiveSkillsGroupedByCategory() {
+        Map<Long, List<SkillsEntity>> result = new HashMap<>();
         List<Category> categories = getActiveCategories();
 
         for (Category category : categories) {
-            List<Skills> skills =
+            List<SkillsEntity> skills =
                     skillRepository.findByIsActiveTrueAndCategory_Id(category.getId());
             result.put(category.getId(), skills);
         }
@@ -95,7 +95,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Skills addSkill(String name, Long categoryId) {
+    public SkillsEntity addSkill(String name, Long categoryId) {
         validateText(name, "Skill/question text");
 
         if (skillRepository.existsByName(name.trim())) {
@@ -105,7 +105,7 @@ public class AdminServiceImpl implements AdminService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found: " + categoryId));
 
-        Skills skill = new Skills();
+        SkillsEntity skill = new SkillsEntity();
         skill.setName(name.trim());
         skill.setActive(true);
         skill.setCategory(category);
@@ -114,10 +114,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Skills updateSkill(Long id, String newName) {
+    public SkillsEntity updateSkill(Long id, String newName) {
         validateText(newName, "Skill/question text");
 
-        Skills skill = skillRepository.findById(id)
+        SkillsEntity skill = skillRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Skill not found"));
 
         skill.setName(newName.trim());
@@ -126,7 +126,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void deactivateSkill(Long id) {
-        Skills skill = skillRepository.findById(id)
+        SkillsEntity skill = skillRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Skill not found"));
 
         skill.setActive(false);

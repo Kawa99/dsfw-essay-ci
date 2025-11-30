@@ -18,7 +18,7 @@ public class SelfAssessmentAPIController {
     }
 
     @GetMapping
-    public Map<Category, List<Skills>> getAssessmentData() {
+    public Map<Category, List<SkillsEntity>> getAssessmentData() {
         return saService.getAssessmentData();
     }
 }
