@@ -36,6 +36,13 @@ public class SecurityConfig {
 
                         // everything else locked e.g. admin pages
                         .anyRequest().authenticated()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/home")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll() // allows all to access /logout
                 );
 
         // Allow frames for H2 Console (if you are using it)
