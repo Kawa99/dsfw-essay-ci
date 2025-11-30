@@ -3,7 +3,7 @@ package com.team_proj.dsfw_team_proj.admin;
 import com.team_proj.dsfw_team_proj.selfassessment.Category;
 import com.team_proj.dsfw_team_proj.selfassessment.CategoryRepository;
 import com.team_proj.dsfw_team_proj.selfassessment.SkillRepository;
-import com.team_proj.dsfw_team_proj.selfassessment.Skills;
+import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,23 +75,23 @@ public class AdminServiceImplTest {
 
         when(categoryRepository.findById(5L)).thenReturn(Optional.of(category));
 
-        Skills saved = new Skills();
+        SkillsEntity saved = new SkillsEntity();
         saved.setId(10L);
         saved.setName("UserEntity Research Experience");
         saved.setCategory(category);
 
-        when(skillRepository.save(any(Skills.class))).thenReturn(saved);
+        when(skillRepository.save(any(SkillsEntity.class))).thenReturn(saved);
 
-        Skills result = service.addSkill("UserEntity Research Experience", 5L);
+        SkillsEntity result = service.addSkill("UserEntity Research Experience", 5L);
 
         assertEquals("UserEntity Research Experience", result.getName());
-        verify(skillRepository).save(any(Skills.class));
+        verify(skillRepository).save(any(SkillsEntity.class));
     }
 
     // Deactivating a skills
     @Test
     void deactivateSkill_ShouldSetInactive() {
-        Skills skill = new Skills();
+        SkillsEntity skill = new SkillsEntity();
         skill.setId(3L);
         skill.setActive(true);
 

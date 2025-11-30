@@ -1,7 +1,7 @@
 package com.team_proj.dsfw_team_proj.admin;
 
 import com.team_proj.dsfw_team_proj.selfassessment.Category;
-import com.team_proj.dsfw_team_proj.selfassessment.Skills;
+import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,7 @@ public class AdminController {
     @GetMapping
     public String showConfigPage(Model model) {
         List<Category> categories = saService.getActiveCategories();
-        Map<Long, List<Skills>> skillsByCategory = saService.getActiveSkillsGroupedByCategory();
+        Map<Long, List<SkillsEntity>> skillsByCategory = saService.getActiveSkillsGroupedByCategory();
 
         model.addAttribute("categories", categories);
         model.addAttribute("skillsByCategory", skillsByCategory);

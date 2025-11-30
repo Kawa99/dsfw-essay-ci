@@ -1,7 +1,7 @@
 package com.team_proj.dsfw_team_proj.admin;
 
 import com.team_proj.dsfw_team_proj.selfassessment.Category;
-import com.team_proj.dsfw_team_proj.selfassessment.Skills;
+import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -14,9 +14,9 @@ public interface AdminService {
     Category updateCategory(Long id, String newName);
     void deactivateCategory(Long id);
 
-    // Skills
-    Map<Long, List<Skills>> getActiveSkillsGroupedByCategory();
-    Skills addSkill(String name, Long categoryId);
-    Skills updateSkill(Long id, String newName);
+    // SkillsEntity
+    Map<Long, List<SkillsEntity>> getActiveSkillsGroupedByCategory();
+    SkillsEntity addSkill(String name, Long categoryId);
+    SkillsEntity updateSkill(Long id, String newName);
     void deactivateSkill(Long id);
 }

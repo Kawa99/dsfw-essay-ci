@@ -4,11 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface SkillRepository extends JpaRepository<Skills, Long> {
+public interface SkillRepository extends JpaRepository<SkillsEntity, Long> {
 
-    List<Skills> findByIsActiveTrue();
+    List<SkillsEntity> findByIsActiveTrue();
 
-    List<Skills> findByIsActiveTrueAndCategory_Id(Long categoryId);
+    List<SkillsEntity> findByIsActiveTrueAndCategory_Id(Long categoryId);
 
     boolean existsByName(String name);
 }
