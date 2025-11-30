@@ -1,191 +1,311 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Self-Assessment Admin</title>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" th:href="@{/styles/css.css}" />
-    <link rel="stylesheet" th:href="@{/styles/self-assessment/self-assessment-admin.css}" />
-    <link rel="stylesheet" th:href="@{/styles/header-footer.css}" />
+    <meta name="theme-color" content="#0b0c0c">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
+    <link rel="stylesheet" th:href="@{/styles/self-assessment/self-assessment-admin.css}">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
+    <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
 </head>
 
-<body>
+<body class="govuk-template__body dsfw-page">
 
 <div th:replace="~{'fragments/HeaderAndFooter' :: mainHeader}"></div>
 
-<div class="admin-page-wrapper">
-    <main class="admin-main-content">
-        <h1 class="page-title">Self-Assessment Configuration</h1>
+<div class="govuk-width-container dsfw-page">
+    <a href="/" class="govuk-back-link">Back to home</a>
 
-        <!-- Alert box for messages -->
-        <div id="alertBox" class="alert"></div>
+    <main class="govuk-main-wrapper" id="main-content" role="main">
 
-        <!-- Error message from server -->
-        <div th:if="${error}" class="error-message">
-            <p th:text="${error}"></p>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Self-Assessment Configuration</h1>
+            </div>
         </div>
 
-        <div class="settings-container">
-            <!-- Sidebar Navigation -->
-            <div class="settings-nav">
-                <h3>Categories</h3>
-                <div class="nav-item"
-                     th:each="category : ${categories}"
-                     th:data-category-id="${category.id}"
-                     th:text="${category.name}">
-                </div>
-                <div class="nav-divider"></div>
-                <div class="nav-item" data-category-id="manage">Manage Categories</div>
+        <div id="alertBox" class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" style="display:none;">
+            <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                    Notification
+                </h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+                <p class="govuk-notification-banner__heading" id="alertMessage"></p>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a href="#" th:text="${error}"></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Success message from server -->
+        <div th:if="${success}" class="govuk-notification-banner" role="alert" style="border-color: #00703c;">
+            <div class="govuk-notification-banner__header" style="background-color: #00703c;">
+                <h2 class="govuk-notification-banner__title">Success</h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+                <p class="govuk-body" th:text="${success}"></p>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row settings-layout">
+            <div class="govuk-grid-column-one-quarter">
+                <nav class="sub-navigation" aria-label="Secondary navigation">
+                    <h3 class="govuk-heading-s">Categories</h3>
+                    <ul class="sub-navigation__list">
+                        <li class="sub-navigation__item"
+                            th:each="category : ${categories}"
+                            th:data-category-id="${category.id}">
+                            <a class="sub-navigation__link" href="#" aria-current="false" th:text="${category.name}">Category Name</a>
+                        </li>
+                        <li class="sub-navigation__item nav-divider-item">
+                            <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+                        </li>
+                        <li class="sub-navigation__item" data-category-id="manage">
+                            <a class="sub-navigation__link" href="#">Manage Categories</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
 
-            <!-- Main Content Area -->
-            <div class="settings-content">
-                <!-- Individual Category Sections -->
+            <div class="govuk-grid-column-three-quarters settings-content">
+
                 <div th:each="category : ${categories}"
                      class="category-section"
                      th:data-category-id="${category.id}">
 
-                    <div class="section-header">
-                        <div>
-                            <h2>
+                    <div class="section-header-group">
+                        <span class="govuk-caption-l">Category</span>
+                        <div class="flex-between">
+                            <h2 class="govuk-heading-l govuk-!-margin-bottom-2">
                                 <span th:id="'cat-name-' + ${category.id}" th:text="${category.name}"></span>
 
-                                <!-- Inline edit form for category name -->
                                 <form th:id="'cat-edit-' + ${category.id}"
                                       th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/edit'}"
                                       method="post"
                                       class="inline-edit-form">
-                                    <input type="text" name="name" th:value="${category.name}" required />
-                                    <button type="submit" class="btn-primary btn-small">Save</button>
-                                    <button type="button"
-                                            class="btn-link btn-small cancel-edit-category"
-                                            th:data-category-id="${category.id}">Cancel</button>
+                                    <div class="govuk-form-group govuk-!-margin-bottom-0">
+                                        <input class="govuk-input govuk-!-width-full" type="text" name="name" th:value="${category.name}" required />
+                                    </div>
+                                    <div class="button-group">
+                                        <button type="submit" class="govuk-button govuk-!-margin-bottom-0">Save</button>
+                                        <button type="button" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0 cancel-edit-category"
+                                                th:data-category-id="${category.id}">Cancel</button>
+                                    </div>
                                 </form>
                             </h2>
                         </div>
-                        <div class="action-buttons">
-                            <form th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/deactivate'}"
-                                  method="post"
-                                  style="display:inline;"
-                                  class="deactivate-form"
-                                  data-item-type="category">
-                            </form>
-                        </div>
                     </div>
 
-                    <!-- Skills Table -->
-                    <table>
-                        <thead>
-                        <tr>
-                            <th style="width: 70%;">Skill / Question Text</th>
-                            <th>Actions</th>
+                    <table class="govuk-table">
+                        <caption class="govuk-table__caption govuk-table__caption--m">Questions / Skills</caption>
+                        <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header" style="width: 70%;">Skill / Question Text</th>
+                            <th scope="col" class="govuk-table__header">Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr th:each="skill : ${skillsByCategory[category.id]}">
-                            <td>
-                                <span th:id="'skill-name-' + ${skill.id}" th:text="${skill.name}"></span>
+                        <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row" th:each="skill : ${skillsByCategory[category.id]}">
+                            <td class="govuk-table__cell">
+                                <span th:id="'skill-name-' + ${skill.id}" class="govuk-body" th:text="${skill.name}"></span>
 
-                                <!-- Inline edit form for skill -->
                                 <form th:id="'skill-edit-' + ${skill.id}"
                                       th:action="@{'/admin/self-assessment/skills/' + ${skill.id} + '/edit'}"
                                       method="post"
-                                      class="inline-edit-form">
-                                    <input type="text" name="name" th:value="${skill.name}" required />
-                                    <button type="submit" class="btn-primary btn-small">Save</button>
-                                    <button type="button"
-                                            class="btn-link btn-small cancel-edit-skill"
-                                            th:data-skill-id="${skill.id}">Cancel</button>
+                                      class="inline-edit-form govuk-inset-text govuk-!-margin-top-0">
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label" th:for="'input-skill-' + ${skill.id}">Edit question text</label>
+                                        <input class="govuk-input" th:id="'input-skill-' + ${skill.id}" type="text" name="name" th:value="${skill.name}" required />
+                                    </div>
+                                    <div class="govuk-button-group">
+                                        <button type="submit" class="govuk-button govuk-!-margin-bottom-0">Save</button>
+                                        <button type="button"
+                                                class="govuk-button govuk-button--warning cancel-edit-skill"
+                                                th:data-skill-id="${skill.id}">Cancel</button>
+                                    </div>
                                 </form>
                             </td>
-                            <td>
+                            <td class="govuk-table__cell">
                                 <div class="action-buttons">
                                     <button type="button"
-                                            class="btn-secondary btn-small edit-skill-btn"
+                                            class="govuk-link govuk-link--no-visited-state btn-link edit-skill-btn"
                                             th:data-skill-id="${skill.id}">Edit</button>
+
+                                    <span class="separator">|</span>
+
                                     <form th:action="@{'/admin/self-assessment/skills/' + ${skill.id} + '/deactivate'}"
                                           method="post"
                                           style="display:inline;"
                                           class="deactivate-form"
                                           data-item-type="skill">
-                                        <button type="submit" class="btn-danger btn-small">Deactivate</button>
+                                        <button type="submit" class="btn-link text-red">Deactivate</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
-                        <tr th:if="${#lists.isEmpty(skillsByCategory[category.id])}">
-                            <td colspan="2" style="text-align: center; color: #999;">No skills in this category yet</td>
+                        <tr class="govuk-table__row" th:if="${#lists.isEmpty(skillsByCategory[category.id])}">
+                            <td colspan="2" class="govuk-table__cell govuk-!-text-align-center text-grey">
+                                No skills configured for this category yet.
+                            </td>
                         </tr>
                         </tbody>
                     </table>
 
-                    <!-- Add New Skill -->
-                    <div class="add-new-section">
-                        <h3>Add New Skill/Question</h3>
-                        <form th:action="@{'/admin/self-assessment/skills/add'}" method="post" class="add-form">
-                            <input type="hidden" name="categoryId" th:value="${category.id}" />
-                            <input type="text" name="name" placeholder="Enter new skill or question text" required />
-                            <button type="submit" class="btn-primary">Add Skill</button>
-                        </form>
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h3 class="govuk-summary-card__title">Add new skill</h3>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <form th:action="@{'/admin/self-assessment/skills/add'}" method="post">
+                                <input type="hidden" name="categoryId" th:value="${category.id}" />
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label">Question text</label>
+                                    <div id="skill-hint" class="govuk-hint">
+                                        Enter the text as it should appear to the user.
+                                    </div>
+                                    <div class="flex-row">
+                                        <input class="govuk-input" type="text" name="name" aria-describedby="skill-hint" required />
+                                        <button type="submit" class="govuk-button govuk-!-margin-bottom-0">Add</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Manage Categories Section -->
                 <div class="category-section manage-categories-section" data-category-id="manage">
-                    <div class="section-header">
-                        <h2>Manage Categories</h2>
-                    </div>
+                    <span class="govuk-caption-l">Configuration</span>
+                    <h2 class="govuk-heading-l">Manage Categories</h2>
 
-                    <table>
-                        <thead>
-                        <tr>
-                            <th style="width: 60%;">Category Name</th>
-                            <th>Skill Count</th>
-                            <th>Actions</th>
+                    <p class="govuk-body">View and manage all top-level categories. Deactivating a category will hide all associated skills.</p>
+
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Category Name</th>
+                            <th scope="col" class="govuk-table__header">Skill Count</th>
+                            <th scope="col" class="govuk-table__header">Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr th:each="category : ${categories}">
-                            <td th:text="${category.name}"></td>
-                            <td th:text="${#lists.size(skillsByCategory[category.id])}"></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button type="button"
-                                            class="btn-secondary btn-small edit-category-btn"
-                                            th:data-category-id="${category.id}"
-                                            onclick="document.querySelector('[data-category-id=\'' + this.dataset.categoryId + '\'].nav-item').click();">
-                                        View/Edit
-                                    </button>
-                                    <form th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/deactivate'}"
-                                          method="post"
-                                          style="display:inline;"
-                                          class="deactivate-form"
-                                          data-item-type="category">
-                                        <button type="submit" class="btn-danger btn-small">Deactivate</button>
-                                    </form>
-                                </div>
+                        <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row" th:each="category : ${categories}">
+                            <td class="govuk-table__cell">
+                                <span th:id="'cat-manage-name-' + ${category.id}" th:text="${category.name}"></span>
+
+                                <!-- Inline edit form for category in manage section -->
+                                <form th:id="'cat-manage-edit-' + ${category.id}"
+                                      th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/edit'}"
+                                      method="post"
+                                      class="inline-edit-form govuk-inset-text">
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label">Category Name</label>
+                                        <input type="text" name="name" th:value="${category.name}" required class="govuk-input" />
+                                    </div>
+                                    <div class="flex-row">
+                                        <button type="submit" class="govuk-link govuk-link--no-visited-state btn-link">Save</button>
+                                        <span class="separator">|</span>
+                                        <button type="button"
+                                                class="govuk-link govuk-link--no-visited-state btn-link cancel-edit-category-manage"
+                                                th:data-category-id="${category.id}">Cancel</button>
+                                    </div>
+                                </form>
+                            </td>
+                            <td class="govuk-table__cell" th:text="${#lists.size(skillsByCategory[category.id])}"></td>
+                            <td class="govuk-table__cell">
+                                <button type="button"
+                                        class="govuk-link govuk-link--no-visited-state btn-link edit-category-manage-btn"
+                                        th:data-category-id="${category.id}">
+                                    Edit
+                                </button>
+                                <span class="separator">|</span>
+                                <form th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/deactivate'}"
+                                      method="post"
+                                      style="display:inline;"
+                                      class="deactivate-form"
+                                      data-item-type="category">
+                                    <button type="submit" class="govuk-link govuk-link--no-visited-state btn-link text-red">Deactivate</button>
+                                </form>
                             </td>
                         </tr>
                         </tbody>
                     </table>
 
-                    <!-- Add New Category -->
-                    <div class="add-new-section">
-                        <h3>Add New Category</h3>
-                        <form th:action="@{'/admin/self-assessment/categories/add'}" method="post" class="add-form">
-                            <input type="text" name="name" placeholder="Enter new category name" required />
-                            <button type="submit" class="btn-primary">Add Category</button>
-                        </form>
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h3 class="govuk-summary-card__title">Create new category</h3>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <form th:action="@{'/admin/self-assessment/categories/add'}" method="post">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label">Category Name</label>
+                                    <div class="flex-row">
+                                        <input class="govuk-input govuk-!-width-two-thirds" type="text" name="name" required />
+                                        <button type="submit" class="govuk-button govuk-!-margin-bottom-0">Add</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </main>
 </div>
 
 <div th:replace="~{'fragments/HeaderAndFooter' :: mainFooter}"></div>
 
 <script th:src="@{/scripts/self-assessment-admin.js}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const navItems = document.querySelectorAll('.sub-navigation__item');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Ignore divider
+                if(this.classList.contains('nav-divider-item')) return;
+
+                // Toggle active state visuals
+                navItems.forEach(n => {
+                    const link = n.querySelector('a');
+                    if(link) link.setAttribute('aria-current', 'false');
+                });
+
+                const link = this.querySelector('a');
+                if(link) link.setAttribute('aria-current', 'page');
+            });
+        });
+
+        // Initialize first item as active
+        if(navItems.length > 0 && navItems[0].querySelector('a')) {
+            navItems[0].querySelector('a').setAttribute('aria-current', 'page');
+        }
+    });
+</script>
+
+<script th:src="@{/scripts/govuk-frontend.js}"></script>
+<script>
+    if (window.GOVUKFrontend?.initAll) {
+        GOVUKFrontend.initAll();
+    }
+</script>
 
 </body>
 </html>

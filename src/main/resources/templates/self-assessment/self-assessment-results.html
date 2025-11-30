@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Assessment Results</title>
-  <link rel="stylesheet" th:href="@{/styles/header-footer.css}" />
-  <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Self-Assessment Result</title>
+
+    <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
+    <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
+    <meta name="theme-color" content="#0b0c0c">
+
+    <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
+    <link rel="stylesheet" th:href="@{/styles/self-assessment/self-assessment-results.css}">
 </head>
 
-<body class="govuk-template__body">
+<body class="govuk-template__body dsfw-page">
 
   <div th:replace="~{'fragments/HeaderAndFooter' :: mainHeader}"></div>
 
