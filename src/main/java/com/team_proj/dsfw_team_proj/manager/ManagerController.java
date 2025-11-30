@@ -25,7 +25,7 @@ public class ManagerController {
 
         model.addAttribute("employees", employees);
 
-        return "manager_templates/overview";
+        return "manager/overview";
     }
 
     @GetMapping("/homepage")
