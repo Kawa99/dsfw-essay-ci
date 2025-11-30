@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Manager Overview - Digital Skills for Wales</title>
+
+    <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/govuk-assets/images/govuk-logotype-crown.svg}">
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/govuk-assets/images/govuk-apple-touch-icon-180x180.png}">
+    <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
+    <meta name="theme-color" content="#0b0c0c">
+
+    <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
+    <link rel="stylesheet" th:href="@{/styles/manager/overview.css}">
+</head>
+
+<body class="govuk-template__body">
+
+<a class="govuk-skip-link" href="#main-content">Skip to main content</a>
+
+<div class="dsfw-page">
+
+    <div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
+
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h1 class="govuk-heading-xl">Team Self-Assessment Overview</h1>
+
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header col-id">User ID</th>
+                            <th scope="col" class="govuk-table__header col-name">Name</th>
+                            <th scope="col" class="govuk-table__header col-status">Status</th>
+                            <th scope="col" class="govuk-table__header col-action">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row" th:each="emp : ${employees}">
+                            <td class="govuk-table__cell" th:text="${emp.userID}"></td>
+
+                            <td class="govuk-table__cell govuk-!-font-weight-bold" th:text="${emp.name}"></td>
+
+                            <td class="govuk-table__cell">
+                                <div th:if="${emp.submissionDate != null}">
+                                    <strong class="govuk-tag govuk-tag--green">Submitted</strong>
+                                    <span class="govuk-body-s submission-metadata"
+                                          th:text="'on ' + ${#temporals.format(emp.submissionDate, 'dd MMM yyyy')} + ' at ' + ${#temporals.format(emp.submissionDate, 'HH:mm')}">
+                                            </span>
+                                </div>
+                                <div th:if="${emp.submissionDate == null}">
+                                    <strong class="govuk-tag govuk-tag--yellow">Pending</strong>
+                                </div>
+                            </td>
+
+                            <td class="govuk-table__cell">
+                                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                                    View Results
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="govuk-button-group govuk-!-margin-top-6">
+                        <a href="#" class="govuk-button" data-module="govuk-button">See all results</a>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
+</div>
+
+<script th:src="@{/scripts/govuk-frontend.js}"></script>
+<script th:src="@{/scripts/gov-init.js}"></script>
+
+</body>
+</html>
