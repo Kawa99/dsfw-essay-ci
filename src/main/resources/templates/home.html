@@ -44,11 +44,34 @@
                             Sign in
                         </a>
 
-                        <a class="govuk-button govuk-button--secondary"
+                        <a class="govuk-button"
                            data-module="govuk-button"
-                           th:href="@{/teams/join}">
-                            Join your manager’s team
+                           th:href="@{/teams/create}">
+                            Create Team
                         </a>
+                    </div>
+
+                    <div class="govuk-form-group govuk-!-margin-top-6">
+                        <form th:action="@{/teams/join}" method="post">
+                            <label class="govuk-label govuk-label--m" for="join-code">
+                                Enter join code here:
+                            </label>
+                            <div id="join-code-hint" class="govuk-hint">
+                                If you have been given a team code, enter it below.
+                            </div>
+
+                            <div style="display: flex; align-items: flex-start; gap: 10px;">
+                                <input class="govuk-input govuk-input--width-10"
+                                       id="join-code"
+                                       name="joinCode"
+                                       type="text"
+                                       aria-describedby="join-code-hint">
+
+                                <button class="govuk-button" data-module="govuk-button" type="submit">
+                                    Join
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
                     <div class="govuk-inset-text">
