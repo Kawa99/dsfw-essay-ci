@@ -4,36 +4,25 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Home - Digital Skills for Wales</title>
+
     <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
     <link rel="icon" type="image/svg+xml" th:href="@{/govuk-assets/images/govuk-logotype-crown.svg}">
     <link rel="apple-touch-icon" sizes="180x180" th:href="@{/govuk-assets/images/govuk-apple-touch-icon-180x180.png}">
     <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
     <meta name="theme-color" content="#0b0c0c">
+
     <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
     <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
 </head>
+
 <body class="govuk-template__body">
-<script>
-    document.body.className = document.body.className
-        ? document.body.className + ' js-enabled govuk-frontend-supported'
-        : 'js-enabled govuk-frontend-supported';
-</script>
 
 <a class="govuk-skip-link" href="#main-content">Skip to main content</a>
 
 <div class="dsfw-page">
-    <header class="govuk-header" role="banner" data-module="govuk-header">
-        <div class="govuk-header__container govuk-width-container">
-            <div class="govuk-header__logo">
-                <a class="govuk-header__link govuk-header__link--homepage" th:href="@{/}">
-                    <img th:src="@{/images/thumbnail_image252147.png}"
-                         alt="Digital Skills for Wales"
-                         class="govuk-header__logotype-crown"
-                         style="height: 72px; width: auto; max-width: 260px;">
-                </a>
-            </div>
-        </div>
-    </header>
+
+    <div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
 
     <div class="govuk-width-container">
         <main class="govuk-main-wrapper" id="main-content" role="main">
@@ -55,11 +44,34 @@
                             Sign in
                         </a>
 
-                        <a class="govuk-button govuk-button--secondary"
+                        <a class="govuk-button"
                            data-module="govuk-button"
-                           th:href="@{/teams/join}">
-                            Join your manager’s team
+                           th:href="@{/teams/create}">
+                            Create Team
                         </a>
+                    </div>
+
+                    <div class="govuk-form-group govuk-!-margin-top-6">
+                        <form th:action="@{/teams/join}" method="post">
+                            <label class="govuk-label govuk-label--m" for="join-code">
+                                Enter join code here:
+                            </label>
+                            <div id="join-code-hint" class="govuk-hint">
+                                If you have been given a team code, enter it below.
+                            </div>
+
+                            <div style="display: flex; align-items: flex-start; gap: 10px;">
+                                <input class="govuk-input govuk-input--width-10"
+                                       id="join-code"
+                                       name="joinCode"
+                                       type="text"
+                                       aria-describedby="join-code-hint">
+
+                                <button class="govuk-button" data-module="govuk-button" type="submit">
+                                    Join
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
                     <div class="govuk-inset-text">
@@ -109,34 +121,11 @@
         </main>
     </div>
 
-    <footer class="govuk-footer" role="contentinfo">
-        <div class="govuk-width-container">
-            <div class="govuk-footer__meta">
-                <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
-                    <h2 class="govuk-visually-hidden">Support links</h2>
-                    <ul class="govuk-footer__inline-list">
-                        <li class="govuk-footer__inline-list-item">
-                            <a class="govuk-footer__link" th:href="@{/}">Home</a>
-                        </li>
-                        <li class="govuk-footer__inline-list-item">
-                            <a class="govuk-footer__link" th:href="@{/admin/self-assessment}">Admin</a>
-                        </li>
-                    </ul>
-                    <span class="govuk-footer__licence-description">
-                        2025 Digital Skills for Wales Team Project
-                    </span>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
 </div>
 
 <script th:src="@{/scripts/govuk-frontend.js}"></script>
-<script>
-    if (window.GOVUKFrontend && typeof GOVUKFrontend.initAll === "function") {
-        GOVUKFrontend.initAll();
-    }
-</script>
+<script th:src="@{/scripts/gov-init.js}"></script>
 
 </body>
 </html>

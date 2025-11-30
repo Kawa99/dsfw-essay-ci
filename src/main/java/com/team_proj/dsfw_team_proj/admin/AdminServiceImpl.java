@@ -1,6 +1,5 @@
 package com.team_proj.dsfw_team_proj.admin;
 
-
 import com.team_proj.dsfw_team_proj.selfassessment.Category;
 import com.team_proj.dsfw_team_proj.selfassessment.CategoryRepository;
 import com.team_proj.dsfw_team_proj.selfassessment.SkillRepository;
@@ -34,9 +33,27 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Category addCategory(String name) {
         validateText(name, "Category name");
+        String trimmedName = name.trim();
 
+        // Check if category already exists (active or inactive)
+        Optional<Category> existingCategory = categoryRepository.findByName(trimmedName);
+
+        if (existingCategory.isPresent()) {
+            Category category = existingCategory.get();
+
+            // If it exists and is active, we can't add it again
+            if (category.isActive()) {
+                throw new IllegalArgumentException("Category '" + trimmedName + "' already exists.");
+            }
+
+            // If it exists but is inactive (soft deleted), reactivate it
+            category.setActive(true);
+            return categoryRepository.save(category);
+        }
+
+        // If it doesn't exist, create a new one
         Category category = new Category();
-        category.setName(name.trim());
+        category.setName(trimmedName);
         category.setActive(true);
         return categoryRepository.save(category);
     }
