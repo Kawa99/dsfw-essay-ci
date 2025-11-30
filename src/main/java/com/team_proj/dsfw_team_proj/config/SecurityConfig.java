@@ -14,12 +14,32 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity in development
+        HttpSecurity httpSecurity = http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Allow all requests so your existing LoginController works
-                )
-                .headers(headers -> headers.frameOptions(frameOptions ->frameOptions.disable())); // Allow H2 console frames
+                        // allows static resources
+                        .requestMatchers(
+                                "/styles/**",
+                                "/scripts/**",
+                                "/images/**",
+                                "/govuk-assets.assets/**"
+                        ).permitAll()
+
+                        // allows public pages
+                        .requestMatchers(
+                                "/",
+                                "/home",
+                                "/login",
+                                "/register",
+                                "/error"
+                        ).permitAll()
+
+                        // everything else locked e.g. admin pages
+                        .anyRequest().authenticated()
+                );
+
+        // Allow frames for H2 Console (if you are using it)
+                //.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
 
         return http.build();
     }

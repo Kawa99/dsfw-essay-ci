@@ -1,6 +1,6 @@
 package com.team_proj.dsfw_team_proj.auth.controller;
 
-import org.h2.engine.Mode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import com.team_proj.dsfw_team_proj.auth.service.UserService;
@@ -19,12 +19,10 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    // --- REGISTER HANDLERS ---
-
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
         model.addAttribute("user", new User());
-        return "register_form"; // Ensure this matches your HTML filename
+        return "register_form";
     }
 
     @PostMapping("/register")
@@ -43,20 +41,17 @@ public class LoginController {
         userService.save(user);
 
         // auto-login after registration
-        //session.setAttribute("currentUser", user);
+        session.setAttribute("currentUser", user);
 
-        // 3. redirect to dashboard with success message
         redirectAttributes.addFlashAttribute("message", "Account created successfully!");
-        return "redirect:/dashboard";
+        return "redirect:/home";
     }
-
-    // --- LOGIN HANDLERS ---
 
     @GetMapping("/login")
     public String showLoginPage(Model model, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser != null && !Objects.equals(currentUser.getEmail(), "")) {
-            return "redirect:/dashboard";
+            return "redirect:/home";
         }
         model.addAttribute("user", new User());
         return "login";
@@ -72,7 +67,7 @@ public class LoginController {
         if (validUser != null) {
             redirectAttributes.addFlashAttribute("message", "Login successful!");
             session.setAttribute("currentUser", validUser);
-            return "redirect:/dashboard";
+            return "redirect:/home";
         } else {
             redirectAttributes.addFlashAttribute("error", "Invalid email or password.");
             return "redirect:/login";
@@ -89,6 +84,6 @@ public class LoginController {
         }
 
         model.addAttribute("user", currentUser);
-        return "dashboard";
+        return "home";
     }
 }

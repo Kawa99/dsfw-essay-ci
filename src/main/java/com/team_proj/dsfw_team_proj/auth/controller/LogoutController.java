@@ -14,6 +14,6 @@ public class LogoutController {
         if (session != null) {
             session.invalidate();
         }
-        return "redirect:/register";
+        return "redirect:/home";
     }
 }
