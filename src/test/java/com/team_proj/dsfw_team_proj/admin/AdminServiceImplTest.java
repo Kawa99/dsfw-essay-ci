@@ -77,14 +77,14 @@ public class AdminServiceImplTest {
 
         Skills saved = new Skills();
         saved.setId(10L);
-        saved.setName("User Research Experience");
+        saved.setName("UserEntity Research Experience");
         saved.setCategory(category);
 
         when(skillRepository.save(any(Skills.class))).thenReturn(saved);
 
-        Skills result = service.addSkill("User Research Experience", 5L);
+        Skills result = service.addSkill("UserEntity Research Experience", 5L);
 
-        assertEquals("User Research Experience", result.getName());
+        assertEquals("UserEntity Research Experience", result.getName());
         verify(skillRepository).save(any(Skills.class));
     }
 
