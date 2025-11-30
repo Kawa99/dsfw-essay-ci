@@ -20,7 +20,6 @@ public class LoginController {
 
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
-        // We use "UserEntity" now, not "User"
         model.addAttribute("user", new UserEntity());
         return "register_form";
     }
