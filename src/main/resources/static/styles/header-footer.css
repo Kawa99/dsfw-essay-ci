@@ -1,4 +1,5 @@
 .header-logo-image {
+    display: block;
     height: 72px;
     width: auto;
     max-width: 260px;
@@ -33,4 +34,8 @@
 .navigation-link:hover {
     text-decoration: underline;
     color: #1d70b8;
+}
+
+.govuk-header__link--homepage {
+    display: inline-block; /* Makes the link wrap around the image */
 }

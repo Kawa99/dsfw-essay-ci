@@ -3,6 +3,8 @@
 :root {
     --dsfw-brand: #1d70b8;
     --dsfw-brand-dark: #003078;
+    --grey-bg: #f3f2f1;
+    --grey-text: #0b0c0c;
 }
 
 body.govuk-template__body {
