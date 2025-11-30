@@ -1,53 +1,90 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Self-Assessment Result</title>
-  <link href="styles/self-assessment/self-assessment-results.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <title>Assessment Results</title>
+  <link rel="stylesheet" th:href="@{/styles/header-footer.css}" />
+  <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}" />
 </head>
-<body>
 
- <div class="container">
+<body class="govuk-template__body">
 
-    <h1>Assessment Results</h1>
+  <div th:replace="~{'fragments/HeaderAndFooter' :: mainHeader}"></div>
 
-    <div class="card mb-3" th:each="submission, rowStat : ${assessmentData}">
+  <div class="govuk-width-container dsfw-page">
+    <main class="govuk-main-wrapper" id="main-content" role="main">
 
-      <div class="card-header">
-        <h4>Submission #<span th:text="${rowStat.count}">1</span></h4>
+      <h1 class="govuk-heading-xl">Assessment Results</h1>
+
+      <div th:if="${assessmentData.empty}" class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+          <span class="govuk-warning-text__assistive">Warning</span>
+          No submissions found yet. Please take the assessment first.
+        </strong>
       </div>
 
-      <div class="card-body">
+      <div th:each="submission, rowStat : ${assessmentData}" class="govuk-summary-card">
 
-        <table class="table table-bordered">
+        <div class="govuk-summary-card__title-wrapper">
+          <h2 class="govuk-summary-card__title">
+            Submission #<span th:text="${rowStat.count}">1</span>
+          </h2>
+        </div>
 
-          <thead>
-          <tr>
-            <th>Question ID</th>
-            <th>Score Given</th>
-          </tr>
-          </thead>
+        <div class="govuk-summary-card__content">
 
-          <tbody>
-          <!-- Using iterStat for now until we fix database issues -->
-          <tr th:each="entry, iterStat : ${submission}">
-            <td th:text="'Question ' + ${iterStat.count}">Question 101</td>
+          <table class="govuk-table">
 
-            <td>
-              <span th:text="${entry.value}">5</span> / 5
-            </td>
-          </tr>
-          </tbody>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header">Question</th>
+              <th scope="col" class="govuk-table__header govuk-table__header--numeric">Score Given</th>
+            </tr>
+            </thead>
 
-        </table>
 
+            <tbody class="govuk-table__body">
+            <tr th:each="entry, iterStat : ${submission}" class="govuk-table__row">
+
+              <td class="govuk-table__cell" th:text="'Question ' + ${iterStat.count}">
+                Question 1
+              </td>
+
+              <td class="govuk-table__cell govuk-table__cell--numeric">
+                <strong class="govuk-tag" th:classappend="${entry.value >= 4 ? 'govuk-tag--green' : (entry.value >= 3 ? 'govuk-tag--yellow' : 'govuk-tag--red')}">
+
+                  <span th:text="${entry.value}">5</span> / 5
+
+                </strong>
+              </td>
+
+            </tr>
+            </tbody>
+
+
+          </table>
+        </div>
       </div>
 
-    </div>
+      <div class="govuk-button-group">
+        <a href="/self-assessment" class="govuk-button" data-module="govuk-button">
+          Take Assessment Again
+        </a>
+      </div>
 
- </div>
+    </main>
+  </div>
 
+  <div th:replace="~{'fragments/HeaderAndFooter' :: mainFooter}"></div>
+
+
+
+  <script th:src="@{/scripts/govuk-frontend.js}"></script>
+  <script>
+    if (window.GOVUKFrontend?.initAll) {
+      GOVUKFrontend.initAll();
+    }
+  </script>
 
 </body>
 </html>
