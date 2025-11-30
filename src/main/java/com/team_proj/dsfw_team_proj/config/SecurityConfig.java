@@ -14,18 +14,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        HttpSecurity httpSecurity = http
+        http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // allows static resources
                         .requestMatchers(
                                 "/styles/**",
                                 "/scripts/**",
                                 "/images/**",
                                 "/govuk-assets.assets/**"
                         ).permitAll()
-
-                        // allows public pages
                         .requestMatchers(
                                 "/",
                                 "/home",
@@ -33,20 +30,23 @@ public class SecurityConfig {
                                 "/register",
                                 "/error"
                         ).permitAll()
-
-                        // everything else locked e.g. admin pages
                         .anyRequest().authenticated()
                 )
+
+
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .usernameParameter("email")
+                        .permitAll()
+                )
+
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/home")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
-                        .permitAll() // allows all to access /logout
+                        .permitAll()
                 );
-
-        // Allow frames for H2 Console (if you are using it)
-                //.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
 
         return http.build();
     }
