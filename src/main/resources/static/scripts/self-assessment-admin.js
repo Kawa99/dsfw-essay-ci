@@ -1,29 +1,40 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Creates popup messages to show success/error messages to users
-    function showAlert(message, type) {
-        const alertBox = document.getElementById('alertBox');
-        if (!alertBox) return;
 
-        alertBox.textContent = message;
-        alertBox.className = `alert alert-${type}`;
-        alertBox.style.display = 'block';
+    // Auto-hide success banners after 5 seconds
+    const successBanner = document.querySelector('.govuk-notification-banner[style*="00703c"]');
+    if (successBanner) {
         setTimeout(() => {
-            alertBox.style.display = 'none';
-        }, 3000);
+            successBanner.style.display = 'none';
+        }, 5000);
     }
 
-    // Handles clicking between different category sections
-    const navItems = document.querySelectorAll('.nav-item');
+    // Scroll to error summary if present (GOV.UK bundle handles focus)
+    const errorSummary = document.querySelector('.govuk-error-summary');
+    if (errorSummary) {
+        errorSummary.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ---------------------------------------------------------
+    // Sidebar Navigation Logic
+    // ---------------------------------------------------------
+    const navItems = document.querySelectorAll('.sub-navigation__item');
     const sections = document.querySelectorAll('.category-section');
 
     navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            // Removes active class from all navigation items
-            navItems.forEach(nav => nav.classList.remove('active'));
-            // Adds active class to the clicked item
-            item.classList.add('active');
+        if(item.classList.contains('nav-divider-item')) return;
 
-            // Shows the content section that matches the clicked nav item
+        const link = item.querySelector('a');
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // Update aria-current for accessibility
+            navItems.forEach(nav => {
+                const navLink = nav.querySelector('a');
+                if(navLink) navLink.setAttribute('aria-current', 'false');
+            });
+            link.setAttribute('aria-current', 'page');
+
+            // Show matching section
             const categoryId = item.dataset.categoryId;
             sections.forEach(section => {
                 section.classList.remove('active');
@@ -34,68 +45,81 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Show first category by default if exists
+    // Activate first category by default
     if (navItems.length > 0) {
-        navItems[0].click();
+        const firstLink = navItems[0].querySelector('a');
+        if(firstLink) firstLink.click();
     }
 
-    // Handle edit category inline
+    // ---------------------------------------------------------
+    // Inline Editing Logic
+    // ---------------------------------------------------------
+    function toggleEditMode(id, isEditing, type) {
+        const nameSpan = document.getElementById(`${type}-name-${id}`);
+        const editForm = document.getElementById(`${type}-edit-${id}`);
+
+        if (!nameSpan || !editForm) return;
+
+        if (isEditing) {
+            nameSpan.style.display = 'none';
+            editForm.style.display = 'block';
+            editForm.querySelector('input')?.focus();
+        } else {
+            editForm.style.display = 'none';
+            nameSpan.style.display = 'inline';
+        }
+    }
+
+    // Category editing (in category view)
     document.querySelectorAll('.edit-category-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const categoryId = this.dataset.categoryId;
-            const nameSpan = document.getElementById(`cat-name-${categoryId}`);
-            const editForm = document.getElementById(`cat-edit-${categoryId}`);
-
-            nameSpan.style.display = 'none';
-            editForm.style.display = 'inline';
-            editForm.querySelector('input').focus();
+        btn.addEventListener('click', function(e) {
+            if (this.onclick) return; // Let inline onclick handle tab switching
+            e.preventDefault();
+            toggleEditMode(this.dataset.categoryId, true, 'cat');
         });
     });
 
-    // Cancel edit category
     document.querySelectorAll('.cancel-edit-category').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const categoryId = this.dataset.categoryId;
-            const nameSpan = document.getElementById(`cat-name-${categoryId}`);
-            const editForm = document.getElementById(`cat-edit-${categoryId}`);
-
-            editForm.style.display = 'none';
-            nameSpan.style.display = 'inline';
+        btn.addEventListener('click', () => {
+            toggleEditMode(btn.dataset.categoryId, false, 'cat');
         });
     });
 
-    // Handle edit skill inline
+    // Skill editing
     document.querySelectorAll('.edit-skill-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const skillId = this.dataset.skillId;
-            const nameSpan = document.getElementById(`skill-name-${skillId}`);
-            const editForm = document.getElementById(`skill-edit-${skillId}`);
-
-            nameSpan.style.display = 'none';
-            editForm.style.display = 'inline';
-            editForm.querySelector('input').focus();
-        });
-    });
-
-    // Cancel edit skill
-    document.querySelectorAll('.cancel-edit-skill').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
-            const skillId = this.dataset.skillId;
-            const nameSpan = document.getElementById(`skill-name-${skillId}`);
-            const editForm = document.getElementById(`skill-edit-${skillId}`);
-
-            editForm.style.display = 'none';
-            nameSpan.style.display = 'inline';
+            toggleEditMode(this.dataset.skillId, true, 'skill');
         });
     });
 
-    // Confirmation for deactivate actions
+    document.querySelectorAll('.cancel-edit-skill').forEach(btn => {
+        btn.addEventListener('click', () => {
+            toggleEditMode(btn.dataset.skillId, false, 'skill');
+        });
+    });
+
+    // Category editing (in manage view)
+    document.querySelectorAll('.edit-category-manage-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleEditMode(this.dataset.categoryId, true, 'cat-manage');
+        });
+    });
+
+    document.querySelectorAll('.cancel-edit-category-manage').forEach(btn => {
+        btn.addEventListener('click', () => {
+            toggleEditMode(btn.dataset.categoryId, false, 'cat-manage');
+        });
+    });
+
+    // ---------------------------------------------------------
+    // Deactivation Confirmation
+    // ---------------------------------------------------------
     document.querySelectorAll('.deactivate-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             const itemType = this.dataset.itemType || 'item';
-            if (!confirm(`Are you sure you want to deactivate this ${itemType}?`)) {
+            if (!confirm(`Are you sure you want to deactivate this ${itemType}?\n\nThis will hide it from the user interface immediately.`)) {
                 e.preventDefault();
             }
         });
