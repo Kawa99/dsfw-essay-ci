@@ -17,83 +17,83 @@
 
 <body class="govuk-template__body dsfw-page">
 
-<div th:replace="~{'fragments/HeaderAndFooter' :: mainHeader}"></div>
+  <div th:replace="~{'fragments/HeaderAndFooter' :: mainHeader}"></div>
 
-<div class="govuk-width-container dsfw-page">
+  <div class="govuk-width-container dsfw-page">
     <main class="govuk-main-wrapper" id="main-content" role="main">
 
-        <h1 class="govuk-heading-xl">Assessment Results</h1>
+      <h1 class="govuk-heading-xl">Assessment Results</h1>
 
-        <div th:if="${assessmentData.empty}" class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-                <span class="govuk-warning-text__assistive">Warning</span>
-                No submissions found yet. Please take the assessment first.
-            </strong>
+      <div th:if="${assessmentData.empty}" class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+          <span class="govuk-warning-text__assistive">Warning</span>
+          No submissions found yet. Please take the assessment first.
+        </strong>
+      </div>
+
+      <div th:each="submission, rowStat : ${assessmentData}" class="govuk-summary-card">
+
+        <div class="govuk-summary-card__title-wrapper">
+          <h2 class="govuk-summary-card__title">
+            Submission #<span th:text="${rowStat.count}">1</span>
+          </h2>
         </div>
 
-        <div th:each="submission, rowStat : ${assessmentData}" class="govuk-summary-card">
+        <div class="govuk-summary-card__content">
 
-            <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">
-                    Submission #<span th:text="${rowStat.count}">1</span>
-                </h2>
-            </div>
+          <table class="govuk-table">
 
-            <div class="govuk-summary-card__content">
-
-                <table class="govuk-table">
-
-                    <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Question</th>
-                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Score Given</th>
-                    </tr>
-                    </thead>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header">Question</th>
+              <th scope="col" class="govuk-table__header govuk-table__header--numeric">Score Given</th>
+            </tr>
+            </thead>
 
 
-                    <tbody class="govuk-table__body">
-                    <tr th:each="entry, iterStat : ${submission}" class="govuk-table__row">
+            <tbody class="govuk-table__body">
+            <tr th:each="entry, iterStat : ${submission}" class="govuk-table__row">
 
-                        <td class="govuk-table__cell" th:text="'Question ' + ${iterStat.count}">
-                            Question 1
-                        </td>
+              <td class="govuk-table__cell" th:text="'Question ' + ${iterStat.count}">
+                Question 1
+              </td>
 
-                        <td class="govuk-table__cell govuk-table__cell--numeric">
-                            <strong class="govuk-tag" th:classappend="${entry.value >= 4 ? 'govuk-tag--green' : (entry.value >= 3 ? 'govuk-tag--yellow' : 'govuk-tag--red')}">
+              <td class="govuk-table__cell govuk-table__cell--numeric">
+                <strong class="govuk-tag" th:classappend="${entry.value >= 4 ? 'govuk-tag--green' : (entry.value >= 3 ? 'govuk-tag--yellow' : 'govuk-tag--red')}">
 
-                                <span th:text="${entry.value}">5</span> / 5
+                  <span th:text="${entry.value}">5</span> / 5
 
-                            </strong>
-                        </td>
+                </strong>
+              </td>
 
-                    </tr>
-                    </tbody>
+            </tr>
+            </tbody>
 
 
-                </table>
-            </div>
+          </table>
         </div>
+      </div>
 
-        <div class="govuk-button-group">
-            <a href="/self-assessment" class="govuk-button" data-module="govuk-button">
-                Take Assessment Again
-            </a>
-        </div>
+      <div class="govuk-button-group">
+        <a href="/self-assessment" class="govuk-button" data-module="govuk-button">
+          Take Assessment Again
+        </a>
+      </div>
 
     </main>
-</div>
+  </div>
 
-<div th:replace="~{'fragments/HeaderAndFooter' :: mainFooter}"></div>
+  <div th:replace="~{'fragments/HeaderAndFooter' :: mainFooter}"></div>
 
 
 
-<script th:src="@{/scripts/govuk-frontend.js}"></script>
-<script>
+  <script th:src="@{/scripts/govuk-frontend.js}"></script>
+  <script>
     if (window.GOVUKFrontend?.initAll) {
-        GOVUKFrontend.initAll();
+      GOVUKFrontend.initAll();
     }
-</script>
+  </script>
 
 </body>
 </html>

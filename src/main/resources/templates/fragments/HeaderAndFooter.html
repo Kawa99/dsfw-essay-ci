@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"> <head>
     <title>Fragments</title>
 </head>
 <body>
@@ -31,18 +31,19 @@
                     <li class="navigation-item">
                         <a class="navigation-link" th:href="@{/self-assessment/results}">Assessment Results</a>
                     </li>
-
                     <li class="navigation-item">
                         <a class="navigation-link" th:href="@{/manager/homepage}">Manager Home Page</a>
                     </li>
                     <li class="navigation-item">
                         <a class="navigation-link" th:href="@{/admin/self-assessment}">Admin</a>
                     </li>
+
                     <li class="navigation-item navigation-item--right" sec:authorize="isAuthenticated()">
                         <form th:action="@{/logout}" method="post" class="logout-form">
                             <button type="submit" class="logout-button-styled">Logout</button>
                         </form>
                     </li>
+
                     <li class="navigation-item navigation-item--right" sec:authorize="!isAuthenticated()">
                         <a class="login-button-styled" th:href="@{/login}">Login</a>
                     </li>
