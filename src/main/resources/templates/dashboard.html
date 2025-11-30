@@ -10,7 +10,7 @@
 <div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-md">
 
     <h1 class="text-3xl font-bold text-gray-800 mb-2">
-        Welcome, <span class="text-indigo-600" th:text="${user.firstName}">User</span>!
+        Welcome, <span class="text-indigo-600" th:text="${userEntity.firstName}">User</span>!
     </h1>
 
     <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-6 mt-6">
@@ -19,19 +19,19 @@
         <ul class="space-y-2">
             <li class="flex items-center">
                 <span class="w-24 font-medium text-gray-500">First Name:</span>
-                <span class="text-gray-800" th:text="${user.firstName}"></span>
+                <span class="text-gray-800" th:text="${userEntity.firstName}"></span>
             </li>
             <li class="flex items-center">
                 <span class="w-24 font-medium text-gray-500">Last Name:</span>
-                <span class="text-gray-800" th:text="${user.lastName}"></span>
+                <span class="text-gray-800" th:text="${userEntity.lastName}"></span>
             </li>
             <li class="flex items-center">
                 <span class="w-24 font-medium text-gray-500">Email:</span>
-                <span class="text-gray-800 font-mono bg-white px-2 py-1 rounded border" th:text="${user.email}"></span>
+                <span class="text-gray-800 font-mono bg-white px-2 py-1 rounded border" th:text="${userEntity.email}"></span>
             </li>
             <li class="flex items-center">
                 <span class="w-24 font-medium text-gray-500">User ID:</span>
-                <span class="text-gray-800" th:text="${user.id}"></span>
+                <span class="text-gray-800" th:text="${userEntity.id}"></span>
             </li>
         </ul>
     </div>
