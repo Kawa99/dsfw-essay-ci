@@ -1,31 +1,23 @@
 package com.team_proj.dsfw_team_proj.manager;
 
+import com.team_proj.dsfw_team_proj.teams.TeamMembershipEntity;
+import com.team_proj.dsfw_team_proj.teams.TeamMembershipRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class ManagerServiceImpl implements ManagerService {
 
+    @Autowired
+    private TeamMembershipRepository membershipRepository;
+
     @Override
-    public List<FakeOverviewDTO> getFakeManagerDataForOverview() {
-        List<FakeOverviewDTO> fakeData = new ArrayList<>();
-        String[] fakeNames = {"Fares", "Harry", "Kawa", "Jacob", "Ghasan"};
-        Random random = new Random();
+    public List<TeamMemberDTO> getTeamMembers(Long teamId) {
+        List<TeamMembershipEntity> memberships = membershipRepository.findAllByTeamId(teamId);
 
-        for (int i = 0; i < fakeNames.length; i++) {
-            String name = fakeNames[i];
-
-            LocalDateTime submittedAt = null;
-            if (random.nextDouble() > 0.3) {
-                submittedAt = LocalDateTime.now().minusHours(random.nextInt(120));
-            }
-            
-            fakeData.add(new FakeOverviewDTO((long) (1001 + i), name, submittedAt));
-        }
-        return fakeData;
+        return memberships.stream().map(m -> new TeamMemberDTO(m.getUser().getId(), m.getUser().getFirstName() + " " + m.getUser().getLastName(), m.getRole(), null)).collect(Collectors.toList());
     }
 }

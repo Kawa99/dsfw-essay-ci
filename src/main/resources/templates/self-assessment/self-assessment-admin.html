@@ -301,11 +301,7 @@
 </script>
 
 <script th:src="@{/scripts/govuk-frontend.js}"></script>
-<script>
-    if (window.GOVUKFrontend?.initAll) {
-        GOVUKFrontend.initAll();
-    }
-</script>
+<script th:src = "@{/scripts/gov-init.js}"></script>
 
 </body>
 </html>
