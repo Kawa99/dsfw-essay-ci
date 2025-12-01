@@ -66,4 +66,14 @@ public class TeamController {
         model.addAttribute("myMemberships", myMemberships);
         return "teams/my-teams";
     }
+    @PostMapping("/manager/delete/{teamId}")
+    public String deleteTeam(@PathVariable Long teamId, Principal principal) {
+        UserEntity user = userService.findByEmail(principal.getName());
+        if (!teamService.isManager(user, teamId)) {
+            return "redirect:/home?error=unauthorized";
+        }
+            teamService.deleteTeam(teamId);
+            return "redirect:/my-teams?success=team_deleted";
+    }
+
 }
