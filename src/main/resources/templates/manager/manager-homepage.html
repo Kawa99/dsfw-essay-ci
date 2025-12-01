@@ -42,7 +42,7 @@
 
                 <h3 class="govuk-heading-m">Understanding your team's skills</h3>
                 <p class="govuk-body">
-                    The Team Overview page provides a heatmap of your team's current digital capabilities.
+                    The Team Overview page provides a list of your team's current members. You can view the details of each members self-assessment results, or the overall results of the team there.
                     Use this data to identify:
                 </p>
                 <ul class="govuk-list govuk-list--bullet">
@@ -60,6 +60,23 @@
                 <p class="govuk-body">
                     Remember that self-assessment data is sensitive. Only use these results to support development conversations, not for performance management.
                 </p>
+                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+                <h2 class="govuk-heading-l">Danger Zone</h2>
+
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-warning-text__assistive">Warning</span>
+                        This action cannot be undone. This will permanently delete the team and remove all members.
+                    </strong>
+                </div>
+
+                <form th:action="@{'/manager/delete/' + ${team.id}}" method="post">
+                    <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button">
+                        Delete Team
+                    </button>
+                </form>
 
             </div>
         </div>
@@ -70,11 +87,7 @@
 <div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
 
 <script th:src="@{/scripts/govuk-frontend.js}"></script>
-<script>
-    if (window.GOVUKFrontend?.initAll) {
-        GOVUKFrontend.initAll();
-    }
-</script>
+<script th:src="@{/scripts/gov-init.js}"></script>
 
 </body>
 </html>

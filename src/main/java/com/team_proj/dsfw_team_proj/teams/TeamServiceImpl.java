@@ -3,7 +3,9 @@ package com.team_proj.dsfw_team_proj.teams;
 import com.team_proj.dsfw_team_proj.auth.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -57,5 +59,12 @@ public class TeamServiceImpl implements TeamService {
 
         Optional<TeamMembershipEntity> membership = membershipRepository.findByUserAndTeam(user, team);
         return membership.isPresent() && "MANAGER".equals(membership.get().getRole());
+    }
+    @Override
+    @Transactional
+    public void deleteTeam(Long teamId) {
+        List<TeamMembershipEntity> memberships = membershipRepository.findAllByTeamId(teamId);
+        membershipRepository.deleteAll(memberships);
+        teamRepository.deleteById(teamId);
     }
 }
