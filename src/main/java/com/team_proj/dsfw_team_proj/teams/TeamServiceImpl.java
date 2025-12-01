@@ -4,12 +4,15 @@ import com.team_proj.dsfw_team_proj.auth.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class TeamServiceImpl implements TeamService {
 
     @Autowired
     private TeamRepository teamRepository;
-    @Autowired TeamMembershipRepository membershipRepository;
+    @Autowired
+    private TeamMembershipRepository membershipRepository;
 
     @Override
     public TeamEntity createTeam(String teamName, UserEntity creator){
@@ -29,14 +32,30 @@ public class TeamServiceImpl implements TeamService {
 
         return savedTeam;
     }
+
     @Override
     public void joinTeam(String joinCode, UserEntity user) {
-        // Coming soon
+        TeamEntity team = teamRepository.findByJoinCode(joinCode)
+                .orElseThrow(() -> new RuntimeException("Invalid join code"));
+
+        if (membershipRepository.existsByUserAndTeam(user, team)) {
+            throw new RuntimeException("User is already a member of this team");
+        }
+
+        TeamMembershipEntity membership = new TeamMembershipEntity();
+        membership.setUser(user);
+        membership.setTeam(team);
+        membership.setRole("MEMBER");
+
+        membershipRepository.save(membership);
     }
 
     @Override
     public boolean isManager(UserEntity user, Long teamId) {
-        // Coming soon
-        return false;
+        TeamEntity team = teamRepository.findById(teamId).orElse(null);
+        if (team == null) return false;
+
+        Optional<TeamMembershipEntity> membership = membershipRepository.findByUserAndTeam(user, team);
+        return membership.isPresent() && "MANAGER".equals(membership.get().getRole());
     }
 }
