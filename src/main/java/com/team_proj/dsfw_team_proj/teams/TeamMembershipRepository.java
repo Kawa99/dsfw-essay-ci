@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface TeamMembershipRepository extends JpaRepository<TeamMembershipEntity, Integer> {
-    Optional<TeamMembershipEntity> findbyUserAndTeam(UserEntity user, TeamEntity team);
+public interface TeamMembershipRepository extends JpaRepository<TeamMembershipEntity, Long> {
 
+    Optional<TeamMembershipEntity> findByUserAndTeam(UserEntity user, TeamEntity team);
     boolean existsByUserAndTeam(UserEntity user, TeamEntity team);
 }

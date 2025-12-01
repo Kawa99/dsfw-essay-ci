@@ -38,11 +38,11 @@
                     </p>
 
                     <div class="govuk-button-group">
-                        <a class="govuk-button"
-                           data-module="govuk-button"
-                           th:href="@{/teams/create}">
-                            Create Team
-                        </a>
+                        <form th:action="@{/teams/create}" method="post">
+                            <button class="govuk-button" data-module="govuk-button" type="submit">
+                                Create Team
+                            </button>
+                        </form>
                     </div>
 
                     <div class="govuk-form-group govuk-!-margin-top-6">
