@@ -92,8 +92,18 @@
                 </div>
 
                 <div th:if="${#lists.isEmpty(myMemberships)}" class="govuk-inset-text">
-                    You are not a member of any teams yet. Go to <a th:href="@{/home}" class="govuk-link">Home</a> to create or join a team.
+                    You are not a member of any teams yet. Create or join a team below.
                 </div>
+
+                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+                <h2 class="govuk-heading-l">Create a new team</h2>
+
+                <form th:action="@{/teams/create}" method="post">
+                    <button type="submit" class="govuk-button" data-module="govuk-button">
+                        Create Team
+                    </button>
+                </form>
 
             </div>
         </div>
