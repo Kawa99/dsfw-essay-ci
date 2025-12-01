@@ -25,14 +25,14 @@
                     <li class="navigation-item">
                         <a class="navigation-link" th:href="@{/}">Home</a>
                     </li>
+                    <li class="navigation-item" sec:authorize="isAuthenticated()">
+                        <a class="navigation-link" th:href="@{/my-teams}">My Teams</a>
+                    </li>
                     <li class="navigation-item">
                         <a class="navigation-link" th:href="@{/self-assessment}">Self Assessment</a>
                     </li>
                     <li class="navigation-item">
                         <a class="navigation-link" th:href="@{/self-assessment/results}">Assessment Results</a>
-                    </li>
-                    <li class="navigation-item">
-                        <a class="navigation-link" th:href="@{/manager/homepage}">Manager Home Page</a>
                     </li>
                     <li class="navigation-item">
                         <a class="navigation-link" th:href="@{/admin/self-assessment}">Admin</a>
