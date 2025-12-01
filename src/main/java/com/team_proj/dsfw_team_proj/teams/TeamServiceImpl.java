@@ -67,4 +67,15 @@ public class TeamServiceImpl implements TeamService {
         membershipRepository.deleteAll(memberships);
         teamRepository.deleteById(teamId);
     }
+    @Override
+    @Transactional
+    public void leaveTeam(UserEntity user, Long teamId) {
+        TeamEntity team = teamRepository.findById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
+
+        TeamMembershipEntity membership = membershipRepository.findByUserAndTeam(user, team).orElseThrow(() -> new RuntimeException("You are not a member of this team"));
+        if ("MANAGER".equals(membership.getRole())) {
+            throw new RuntimeException("Managers cannot leave their own team. You must delete the team instead.");
+        }
+        membershipRepository.delete(membership);
+    }
 }

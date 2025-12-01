@@ -75,5 +75,16 @@ public class TeamController {
             teamService.deleteTeam(teamId);
             return "redirect:/my-teams?success=team_deleted";
     }
+    @PostMapping("/teams/leave/{teamId}")
+    public String leaveTeam(@PathVariable Long teamId, Principal principal) {
+        UserEntity user = userService.findByEmail(principal.getName());
+
+        try {
+            teamService.leaveTeam(user, teamId);
+        } catch (RuntimeException e) {
+            return "redirect:/my-teams?error=" + e.getMessage();
+        }
+        return "redirect:/my-teams?success=left_team";
+        }
 
 }

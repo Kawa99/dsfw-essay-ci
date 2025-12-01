@@ -21,6 +21,33 @@
     <main class="govuk-main-wrapper" id="main-content" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
+
+                <div th:if="${param.success != null and param.success[0] == 'left_team'}" class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                    <div class="govuk-notification-banner__header">
+                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                            Success
+                        </h2>
+                    </div>
+                    <div class="govuk-notification-banner__content">
+                        <h3 class="govuk-notification-banner__heading">
+                            You have successfully left the team.
+                        </h3>
+                    </div>
+                </div>
+
+                <div th:if="${param.success != null and param.success[0] == 'team_deleted'}" class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title-deleted" data-module="govuk-notification-banner">
+                    <div class="govuk-notification-banner__header">
+                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-deleted">
+                            Success
+                        </h2>
+                    </div>
+                    <div class="govuk-notification-banner__content">
+                        <h3 class="govuk-notification-banner__heading">
+                            Team deleted successfully.
+                        </h3>
+                    </div>
+                </div>
+
                 <h1 class="govuk-heading-xl">My Teams</h1>
 
                 <p class="govuk-body">
@@ -50,7 +77,14 @@
                                 <a th:if="${membership.role == 'MANAGER'}"
                                    th:href="@{'/manager/homepage/' + ${membership.team.id}}"
                                    class="govuk-link">Manage Team</a>
-                                <span th:if="${membership.role != 'MANAGER'}" class="govuk-body-s">View Details</span>
+
+                                <div th:if="${membership.role != 'MANAGER'}">
+                                    <form th:action="@{'/teams/leave/' + ${membership.team.id}}" method="post" onsubmit="return confirm('Are you sure you want to leave this team?');">
+                                        <button type="submit" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0" data-module="govuk-button">
+                                            Leave Team
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
