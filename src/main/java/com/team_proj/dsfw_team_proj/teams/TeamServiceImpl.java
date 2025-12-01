@@ -20,7 +20,12 @@ public class TeamServiceImpl implements TeamService {
     public TeamEntity createTeam(String teamName, UserEntity creator){
         TeamEntity team = new TeamEntity();
         team.setTeamName(teamName);
-        String code = java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+
+        String code;
+        do {
+            code = java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        } while (teamRepository.findByJoinCode(code).isPresent());
+
         team.setJoinCode(code);
 
         TeamEntity savedTeam = teamRepository.save(team);
