@@ -1,4 +1,4 @@
 package com.team_proj.dsfw_team_proj.teams;
 
-public class TeamMembership {
+public class TeamServiceImpl {
 }

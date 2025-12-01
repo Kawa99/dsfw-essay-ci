@@ -1,22 +1,28 @@
 package com.team_proj.dsfw_team_proj.teams;
 
+import com.team_proj.dsfw_team_proj.auth.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "TEAMS")
+@Table(name = "TEAM_MEMBERSHIPS")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamEntity {
+public class TeamMembershipEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String teamName;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
-    @Column(unique = true)
-    private String joinCode;
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private TeamEntity team;
+
+    private String role;
 }
