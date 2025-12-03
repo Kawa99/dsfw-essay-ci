@@ -1,4 +1,5 @@
 package com.team_proj.dsfw_team_proj.selfassessment;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,14 +9,15 @@ import java.util.Map;
 @Service
 public class SelfAssessmentServiceImpl implements SelfAssessmentService {
 
-    private final List<Map<Long, Integer>> mockDatabase = new ArrayList<>();
-
 
     private final CategoryRepository categoryRepository;
     private final SkillRepository skillRepository;
-    public SelfAssessmentServiceImpl(CategoryRepository categoryRepository, SkillRepository skillRepository) {
+    private final AssessmentSubmissionRepository submissionRepository;
+
+    public SelfAssessmentServiceImpl(CategoryRepository categoryRepository, SkillRepository skillRepository, AssessmentSubmissionRepository submissionRepository) {
         this.categoryRepository = categoryRepository;
         this.skillRepository = skillRepository;
+        this.submissionRepository = submissionRepository;
     }
 
     @Override
@@ -26,8 +28,8 @@ public class SelfAssessmentServiceImpl implements SelfAssessmentService {
 
 
         for (Category category : currentCategories) {
-            List<SkillsEntity>skills = skillRepository.findByIsActiveTrueAndCategory_Id(category.getId());
-            if(!skills.isEmpty()) {
+            List<SkillsEntity> skills = skillRepository.findByIsActiveTrueAndCategory_Id(category.getId());
+            if (!skills.isEmpty()) {
                 data.put(category, skills);
             }
         }
@@ -35,13 +37,37 @@ public class SelfAssessmentServiceImpl implements SelfAssessmentService {
     }
 
     @Override
+    @Transactional
     public void saveSubmission(Map<Long, Integer> userAnswers) {
-        mockDatabase.add(userAnswers);
+        AssessmentSubmission submission = new AssessmentSubmission();
+
+        List<AssessmentResponse> responseList = new ArrayList<>();
+
+        for (Map.Entry<Long, Integer> entry : userAnswers.entrySet()) {
+            Long skillId = entry.getKey();
+            Integer score = entry.getValue();
+
+
+            SkillsEntity skill = skillRepository.findById(skillId).orElse(null);
+
+            if (skill != null) {
+                AssessmentResponse response = new AssessmentResponse();
+                response.setSkill(skill);
+                response.setScore(score);
+                response.setSubmission(submission);
+
+                responseList.add(response);
+            }
+        }
+
+        submission.setResponses(responseList);
+
+        submissionRepository.save(submission);
     }
 
     @Override
-    public List<Map<Long, Integer>> getAllSubmissions() {
-        return mockDatabase;
+    public List<AssessmentSubmission> getAllSubmissions() {
+        return submissionRepository.findAllByOrderBySubmittedAtDesc();
     }
 
 }

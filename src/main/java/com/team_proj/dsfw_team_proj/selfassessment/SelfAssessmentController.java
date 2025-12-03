@@ -41,7 +41,7 @@ public class SelfAssessmentController {
     @GetMapping("/results")
     public ModelAndView showAssessmentResults() {
         ModelAndView mav = new ModelAndView("self-assessment/self-assessment-results");
-        List<Map<Long, Integer>> answers = saService.getAllSubmissions();
+        List<AssessmentSubmission> answers = saService.getAllSubmissions();
         mav.addObject("assessmentData", answers);
         return mav;
     }
