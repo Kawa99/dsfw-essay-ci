@@ -26,6 +26,16 @@
 
     <div class="govuk-width-container">
         <main class="govuk-main-wrapper" id="main-content" role="main">
+
+            <div th:if="${param.error}" class="govuk-error-summary" data-module="govuk-error-summary">
+                <div role="alert">
+                    <h2 class="govuk-error-summary__title">There is a problem</h2>
+                    <div class="govuk-error-summary__body">
+                        <p th:text="${param.error[0]}">Error message</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
                     <span class="govuk-caption-l">Public sector digital capability</span>
@@ -38,33 +48,54 @@
                     </p>
 
                     <div class="govuk-button-group">
-                        <form th:action="@{/teams/create}" method="post">
-                            <button class="govuk-button" data-module="govuk-button" type="submit">
-                                Create Team
-                            </button>
-                        </form>
+                        <a th:href="@{/teams/create}" class="govuk-button" data-module="govuk-button">
+                            Create Team
+                        </a>
                     </div>
 
                     <div class="govuk-form-group govuk-!-margin-top-6">
                         <form th:action="@{/teams/join}" method="post">
-                            <label class="govuk-label govuk-label--m" for="join-code">
-                                Enter join code here:
-                            </label>
-                            <div id="join-code-hint" class="govuk-hint">
-                                If you have been given a team code, enter it below.
-                            </div>
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                    Join a team
+                                </legend>
 
-                            <div style="display: flex; align-items: flex-start; gap: 10px;">
-                                <input class="govuk-input govuk-input--width-10"
-                                       id="join-code"
-                                       name="joinCode"
-                                       type="text"
-                                       aria-describedby="join-code-hint">
+                                <!-- Join Code Field -->
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" for="join-code">
+                                        Team join code
+                                    </label>
+                                    <div id="join-code-hint" class="govuk-hint">
+                                        Ask your manager for the 6-character code
+                                    </div>
+                                    <input class="govuk-input govuk-input--width-10"
+                                           id="join-code"
+                                           name="joinCode"
+                                           type="text"
+                                           aria-describedby="join-code-hint"
+                                           required>
+                                </div>
 
-                                <button class="govuk-button" data-module="govuk-button" type="submit">
-                                    Join
+                                <!-- Password Field -->
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" for="team-password">
+                                        Team password
+                                    </label>
+                                    <div id="team-password-hint" class="govuk-hint">
+                                        Your manager will provide this password
+                                    </div>
+                                    <input class="govuk-input govuk-input--width-20"
+                                           id="team-password"
+                                           name="password"
+                                           type="password"
+                                           aria-describedby="team-password-hint"
+                                           required>
+                                </div>
+
+                                <button class="govuk-button" data-module="govuk-button" type="submit" style="margin-top: 10px;">
+                                    Join Team
                                 </button>
-                            </div>
+                            </fieldset>
                         </form>
                     </div>
 

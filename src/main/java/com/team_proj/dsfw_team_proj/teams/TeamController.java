@@ -29,19 +29,43 @@ public class TeamController {
     private TeamMembershipRepository membershipRepository;
 
     @PostMapping("/teams/create")
-    public String createTeam (@RequestParam(defaultValue = "My Team") String teamName, Principal principal){
+    public String createTeam(
+            @RequestParam String teamName,
+            @RequestParam String description,
+            @RequestParam String password,
+            @RequestParam String passwordConfirm,
+            Principal principal,
+            Model model
+    ) {
+        // Validate passwords match
+        if (!password.equals(passwordConfirm)) {
+            model.addAttribute("error", "Passwords do not match");
+            return "teams/create-team";
+        }
+
+        // Validate password strength
+        String passwordError = validatePassword(password);
+        if (passwordError != null) {
+            model.addAttribute("error", passwordError);
+            return "teams/create-team";
+        }
+
         UserEntity user = userService.findByEmail(principal.getName());
-        TeamEntity newTeam = teamService.createTeam(teamName, user);
+        TeamEntity newTeam = teamService.createTeam(teamName, description, password, user);
         return "redirect:/manager/homepage/" + newTeam.getId();
     }
 
     @PostMapping("/teams/join")
-    public String joinTeam(@RequestParam String joinCode, Principal principal) {
+    public String joinTeam(
+            @RequestParam String joinCode,
+            @RequestParam String password,
+            Principal principal
+    ) {
         UserEntity user = userService.findByEmail(principal.getName());
         try {
-            teamService.joinTeam(joinCode, user);
+            teamService.joinTeam(joinCode, password, user);
         } catch (RuntimeException e) {
-            return "redirect:/home?error=invalid_code";
+            return "redirect:/home?error=" + e.getMessage();
         }
         return "redirect:/my-teams";
     }
@@ -85,6 +109,34 @@ public class TeamController {
             return "redirect:/my-teams?error=" + e.getMessage();
         }
         return "redirect:/my-teams?success=left_team";
+    }
+
+    @GetMapping("/teams/create")
+    public String showCreateTeamForm(Model model) {
+        return "teams/create-team";
+    }
+
+    private String validatePassword(String password) {
+        if (password.length() < 8) {
+            return "Password must be at least 8 characters";
         }
 
+        if (!password.matches(".*[A-Z].*")) {
+            return "Password must contain at least one uppercase letter";
+        }
+
+        if (!password.matches(".*[a-z].*")) {
+            return "Password must contain at least one lowercase letter";
+        }
+
+        if (!password.matches(".*\\d.*")) {
+            return "Password must contain at least one number";
+        }
+
+        if (!password.matches(".*[!@#$%^&*()_+<>/?;:'\"\\\\|><].*")) {
+            return "Password must contain at least one special character (!@#$%^&*()_+<>/?;:'\"|><)";
+        }
+
+        return null; // null means valid
+    }
 }
