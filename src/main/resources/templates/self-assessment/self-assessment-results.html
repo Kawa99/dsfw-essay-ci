@@ -26,13 +26,13 @@
 
         <h1 class="govuk-heading-xl">Assessment Results</h1>
 
-        <div th:if="${assessmentData.empty}" class="govuk-warning-text">
-          <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-          <strong class="govuk-warning-text__text">
-            <span class="govuk-warning-text__assistive">Warning</span>
-            No submissions found yet. Please take the assessment first.
-          </strong>
-        </div>
+      <div th:if="${assessmentData.empty}" class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+          <span class="govuk-warning-text__assistive">Warning</span>
+          No submissions found yet. Please take the assessment first.
+        </strong>
+      </div>
 
 
         <div th:each="submission, rowStat : ${assessmentData}" class="govuk-summary-card">
