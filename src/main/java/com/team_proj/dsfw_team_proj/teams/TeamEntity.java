@@ -19,4 +19,10 @@ public class TeamEntity {
 
     @Column(unique = true)
     private String joinCode;
+
+    @Column(length = 500)
+    private String description;
+
+    @Column(nullable = false)
+    private String password;
 }
