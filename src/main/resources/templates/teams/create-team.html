@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Create Team - Digital Skills for Wales</title>
+
+    <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
+</head>
+
+<body class="govuk-template__body">
+
+<a class="govuk-skip-link" href="#main-content">Skip to main content</a>
+
+<div class="dsfw-page">
+    <div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
+
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    <h1 class="govuk-heading-xl">Create a New Team</h1>
+
+                    <!-- Error Summary -->
+                    <div th:if="${error}" class="govuk-error-summary" data-module="govuk-error-summary">
+                        <div role="alert">
+                            <h2 class="govuk-error-summary__title">There is a problem</h2>
+                            <div class="govuk-error-summary__body">
+                                <p th:text="${error}">Error message</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Join Code Display -->
+                    <div class="govuk-notification-banner" role="region" aria-labelledby="join-code-heading">
+                        <div class="govuk-notification-banner__header">
+                            <h2 class="govuk-notification-banner__title" id="join-code-heading">
+                                Your Team Join Code
+                            </h2>
+                        </div>
+                        <div class="govuk-notification-banner__content">
+                            <p class="govuk-body">
+                                A unique 6-character join code will be automatically generated when you create your team.
+                            </p>
+                            <p class="govuk-body-s">
+                                Share this code with your team members so they can join.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Team Creation Form -->
+                    <form th:action="@{/teams/create}" method="post">
+
+                        <!-- Team Name Field -->
+                        <div class="govuk-form-group">
+                            <label class="govuk-label govuk-label--m" for="teamName">
+                                Team Name
+                            </label>
+                            <div id="teamName-hint" class="govuk-hint">
+                                For example, "Digital Services Team" or "Project Phoenix"
+                            </div>
+                            <input class="govuk-input" id="teamName" name="teamName"
+                                   type="text" aria-describedby="teamName-hint" required>
+                        </div>
+
+                        <!-- Description Field -->
+                        <div class="govuk-form-group">
+                            <label class="govuk-label govuk-label--m" for="description">
+                                Team Description
+                            </label>
+                            <div id="description-hint" class="govuk-hint">
+                                Brief description of your team's purpose or project
+                            </div>
+                            <textarea class="govuk-textarea" id="description" name="description"
+                                      rows="4" aria-describedby="description-hint" required></textarea>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="govuk-form-group">
+                            <label class="govuk-label govuk-label--m" for="password">
+                                Team Password
+                            </label>
+                            <div id="password-hint" class="govuk-hint">
+                                Your password must contain:
+                                <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2" id="password-requirements">
+                                    <li id="req-length" class="govuk-body-s">At least 8 characters</li>
+                                    <li id="req-uppercase" class="govuk-body-s">At least one uppercase letter (A-Z)</li>
+                                    <li id="req-lowercase" class="govuk-body-s">At least one lowercase letter (a-z)</li>
+                                    <li id="req-number" class="govuk-body-s">At least one number (0-9)</li>
+                                    <li id="req-special" class="govuk-body-s">At least one special character (!@#$%^&amp;*()_+&lt;&gt;/?;:'&quot;\|&gt;&lt;)</li>
+                                </ul>
+                                Members will need this password along with the join code to access your team.
+                            </div>
+                            <input class="govuk-input govuk-input--width-20" id="password" name="password"
+                                   type="password" aria-describedby="password-hint" required minlength="8">
+                        </div>
+
+                        <!-- Confirm Password Field -->
+                        <div class="govuk-form-group">
+                            <label class="govuk-label govuk-label--m" for="passwordConfirm">
+                                Confirm Password
+                            </label>
+                            <div id="password-match-hint" class="govuk-hint" style="display: none;">
+                                <span id="match-status" class="govuk-body-s"></span>
+                            </div>
+                            <input class="govuk-input govuk-input--width-20" id="passwordConfirm"
+                                   name="passwordConfirm" type="password" required minlength="8">
+                        </div>
+
+                        <button class="govuk-button" data-module="govuk-button" type="submit" id="submit-btn" disabled>
+                            Create Team
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
+</div>
+
+<script th:src="@{/scripts/govuk-frontend.js}"></script>
+<script th:src="@{/scripts/gov-init.js}"></script>
+<script th:src="@{/scripts/password-validation.js}"></script>
+
+</body>
+</html>

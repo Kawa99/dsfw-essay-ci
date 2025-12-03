@@ -2,6 +2,7 @@ package com.team_proj.dsfw_team_proj.teams;
 
 import com.team_proj.dsfw_team_proj.auth.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +17,15 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private TeamMembershipRepository membershipRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
-    public TeamEntity createTeam(String teamName, UserEntity creator){
+    public TeamEntity createTeam(String teamName, String description, String password, UserEntity creator){
         TeamEntity team = new TeamEntity();
         team.setTeamName(teamName);
+        team.setDescription(description);
+        team.setPassword(passwordEncoder.encode(password));
 
         String code;
         do {
@@ -41,9 +47,14 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void joinTeam(String joinCode, UserEntity user) {
+    public void joinTeam(String joinCode, String password, UserEntity user) {
         TeamEntity team = teamRepository.findByJoinCode(joinCode)
                 .orElseThrow(() -> new RuntimeException("Invalid join code"));
+
+        // Verify password
+        if (!passwordEncoder.matches(password, team.getPassword())) {
+            throw new RuntimeException("Incorrect password");
+        }
 
         if (membershipRepository.existsByUserAndTeam(user, team)) {
             throw new RuntimeException("User is already a member of this team");

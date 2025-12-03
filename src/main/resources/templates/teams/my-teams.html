@@ -99,11 +99,9 @@
 
                 <h2 class="govuk-heading-l">Create a new team</h2>
 
-                <form th:action="@{/teams/create}" method="post">
-                    <button type="submit" class="govuk-button" data-module="govuk-button">
-                        Create Team
-                    </button>
-                </form>
+                <a th:href="@{/teams/create}" class="govuk-button" data-module="govuk-button">
+                    Create Team
+                </a>
 
             </div>
         </div>
