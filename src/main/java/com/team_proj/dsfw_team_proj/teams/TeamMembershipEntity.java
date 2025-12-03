@@ -24,5 +24,6 @@ public class TeamMembershipEntity {
     @JoinColumn(name = "team_id")
     private TeamEntity team;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private TeamRole role;
 }

@@ -18,6 +18,6 @@ public class ManagerServiceImpl implements ManagerService {
     public List<TeamMemberDTO> getTeamMembers(Long teamId) {
         List<TeamMembershipEntity> memberships = membershipRepository.findAllByTeamId(teamId);
 
-        return memberships.stream().map(m -> new TeamMemberDTO(m.getUser().getId(), m.getUser().getFirstName() + " " + m.getUser().getLastName(), m.getRole(), null)).collect(Collectors.toList());
+        return memberships.stream().map(m -> new TeamMemberDTO(m.getUser().getId(), m.getUser().getFirstName() + " " + m.getUser().getLastName(), m.getRole().name(), null)).collect(Collectors.toList());
     }
 }

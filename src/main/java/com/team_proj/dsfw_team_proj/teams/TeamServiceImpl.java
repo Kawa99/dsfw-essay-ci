@@ -2,12 +2,14 @@ package com.team_proj.dsfw_team_proj.teams;
 
 import com.team_proj.dsfw_team_proj.auth.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TeamServiceImpl implements TeamService {
@@ -27,23 +29,27 @@ public class TeamServiceImpl implements TeamService {
         team.setDescription(description);
         team.setPassword(passwordEncoder.encode(password));
 
-        String code;
-        do {
-            code = java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
-        } while (teamRepository.findByJoinCode(code).isPresent());
+        int maxRetries = 5;
+        for (int i = 0; i < maxRetries; i++) {
+            try {
+                String code = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+                team.setJoinCode(code);
 
-        team.setJoinCode(code);
+                TeamEntity savedTeam = teamRepository.save(team);
 
-        TeamEntity savedTeam = teamRepository.save(team);
+                TeamMembershipEntity membership = new TeamMembershipEntity();
+                membership.setUser(creator);
+                membership.setTeam(savedTeam);
+                membership.setRole(TeamRole.MANAGER);
 
-        TeamMembershipEntity membership = new TeamMembershipEntity();
-        membership.setUser(creator);
-        membership.setTeam(savedTeam);
-        membership.setRole("MANAGER");
+                membershipRepository.save(membership);
+                return savedTeam;
 
-        membershipRepository.save(membership);
-
-        return savedTeam;
+            } catch (DataIntegrityViolationException e) {
+                if (i == maxRetries - 1) throw new RuntimeException("Unable to generate unique team code");
+            }
+        }
+        return null;
     }
 
     @Override
@@ -51,7 +57,6 @@ public class TeamServiceImpl implements TeamService {
         TeamEntity team = teamRepository.findByJoinCode(joinCode)
                 .orElseThrow(() -> new RuntimeException("Invalid join code"));
 
-        // Verify password
         if (!passwordEncoder.matches(password, team.getPassword())) {
             throw new RuntimeException("Incorrect password");
         }
@@ -63,7 +68,7 @@ public class TeamServiceImpl implements TeamService {
         TeamMembershipEntity membership = new TeamMembershipEntity();
         membership.setUser(user);
         membership.setTeam(team);
-        membership.setRole("MEMBER");
+        membership.setRole(TeamRole.MEMBER);
 
         membershipRepository.save(membership);
     }
@@ -74,8 +79,9 @@ public class TeamServiceImpl implements TeamService {
         if (team == null) return false;
 
         Optional<TeamMembershipEntity> membership = membershipRepository.findByUserAndTeam(user, team);
-        return membership.isPresent() && "MANAGER".equals(membership.get().getRole());
+        return membership.isPresent() && membership.get().getRole() == TeamRole.MANAGER;
     }
+
     @Override
     @Transactional
     public void deleteTeam(Long teamId) {
@@ -83,13 +89,17 @@ public class TeamServiceImpl implements TeamService {
         membershipRepository.deleteAll(memberships);
         teamRepository.deleteById(teamId);
     }
+
     @Override
     @Transactional
     public void leaveTeam(UserEntity user, Long teamId) {
-        TeamEntity team = teamRepository.findById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
+        TeamEntity team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Team not found"));
 
-        TeamMembershipEntity membership = membershipRepository.findByUserAndTeam(user, team).orElseThrow(() -> new RuntimeException("You are not a member of this team"));
-        if ("MANAGER".equals(membership.getRole())) {
+        TeamMembershipEntity membership = membershipRepository.findByUserAndTeam(user, team)
+                .orElseThrow(() -> new RuntimeException("You are not a member of this team"));
+
+        if (membership.getRole() == TeamRole.MANAGER) {
             throw new RuntimeException("Managers cannot leave their own team. You must delete the team instead.");
         }
         membershipRepository.delete(membership);
