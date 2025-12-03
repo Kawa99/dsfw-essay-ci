@@ -47,27 +47,34 @@
 
 
           <div class="govuk-summary-card__content">
-            <table class="govuk-table">
 
-              <tbody class="govuk-table__body">
-              <tr th:each="response, iterStat : ${submission.responses}" class="govuk-table__row">
+              <div th:each="category : ${submission.getResponsesGroupedByCategory}">
 
-                <td class="govuk-table__cell" th:text="${response.skill.name}">Question Text</td>
-                <td class="govuk-table__cell">
-                  <strong class="govuk-tag"
-                          th:classappend="${response.score >= 4 ? 'govuk-tag--green' : 'govuk-tag--yellow'}">
-                    <span th:text="${response.score}"></span>
-                  </strong>
-                </td>
+                <h2 class="govuk-heading-m" th:text="${category.key}"></h2>
 
-              </tr>
-              </tbody>
+                <table class="govuk-table">
 
-            </table>
+                  <tbody class="govuk-table__body">
+                  <tr th:each="response, iterStat : ${category.value}" class="govuk-table__row">
+                    <td class="govuk-table__cell" th:text="${response.skill.name}">Question Text</td>
+                    <td class="govuk-table__cell">
+                      <strong class="govuk-tag"
+                              th:classappend="${response.score >= 4 ? 'govuk-tag--green' : 'govuk-tag--yellow'}">
+                        <span th:text="${response.score}"></span>
+                      </strong>
+                    </td>
+
+                  </tr>
+                  </tbody>
+                </table>
+
+              </div>
+
           </div>
 
-
         </div>
+
+
 
         <div class="govuk-button-group">
           <a href="/self-assessment" class="govuk-button" data-module="govuk-button">

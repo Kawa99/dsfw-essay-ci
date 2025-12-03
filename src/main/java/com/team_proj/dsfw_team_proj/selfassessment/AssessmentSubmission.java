@@ -6,6 +6,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -24,4 +26,8 @@ public class AssessmentSubmission {
 
     @OneToMany(mappedBy = "submission", cascade = CascadeType.ALL)
     private List<AssessmentResponse> responses = new ArrayList<>();
+
+    public Map<String, List<AssessmentResponse>> getResponsesGroupedByCategory() {
+        return responses.stream().collect(Collectors.groupingBy(r -> r.getSkill().getCategory().getName()));
+    }
 }
