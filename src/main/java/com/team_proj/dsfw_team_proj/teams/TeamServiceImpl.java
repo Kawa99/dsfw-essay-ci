@@ -104,4 +104,82 @@ public class TeamServiceImpl implements TeamService {
         }
         membershipRepository.delete(membership);
     }
+
+    @Override
+    @Transactional
+    public void updateTeamName(Long teamId, String newName, UserEntity user) {
+        // Check if user is manager
+        if (!isManager(user, teamId)) {
+            throw new RuntimeException("Only the team manager can update the team name");
+        }
+
+        // Validate team name is not empty
+        if (newName == null || newName.trim().isEmpty()) {
+            throw new RuntimeException("Team name cannot be empty");
+        }
+
+        // Find team and update name
+        TeamEntity team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Team not found"));
+
+        team.setTeamName(newName.trim());
+        teamRepository.save(team);
+    }
+
+    @Override
+    @Transactional
+    public void updateTeamDescription(Long teamId, String newDescription, UserEntity user) {
+        // Check if user is manager
+        if (!isManager(user, teamId)) {
+            throw new RuntimeException("Only the team manager can update the team description");
+        }
+
+        // Validate description is not null (empty is okay)
+        if (newDescription == null) {
+            throw new RuntimeException("Team description cannot be null");
+        }
+
+        // Find team and update description
+        TeamEntity team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Team not found"));
+
+        team.setDescription(newDescription.trim());
+        teamRepository.save(team);
+    }
+
+    @Override
+    @Transactional
+    public void changeTeamPassword(Long teamId, String currentPassword, String newPassword, UserEntity user) {
+        // Check if user is manager
+        if (!isManager(user, teamId)) {
+            throw new RuntimeException("Only the team manager can change the team password");
+        }
+
+        // Find team
+        TeamEntity team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Team not found"));
+
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, team.getPassword())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+
+        // Validate new password strength
+        if (newPassword.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters");
+        }
+        if (!newPassword.matches(".*[A-Z].*")) {
+            throw new RuntimeException("Password must contain at least one uppercase letter");
+        }
+        if (!newPassword.matches(".*[a-z].*")) {
+            throw new RuntimeException("Password must contain at least one lowercase letter");
+        }
+        if (!newPassword.matches(".*[!@#$%^&*()_+{}\\[\\]'\"\\|/?.,><].*")) {
+            throw new RuntimeException("Password must contain at least one special character");
+        }
+
+        // Hash and save new password
+        team.setPassword(passwordEncoder.encode(newPassword));
+        teamRepository.save(team);
+    }
 }

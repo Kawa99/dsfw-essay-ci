@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import java.util.Map;
+import java.util.HashMap;
 
 import java.security.Principal;
 import java.util.List;
@@ -138,5 +144,82 @@ public class TeamController {
         }
 
         return null; // null means valid
+    }
+
+    @PutMapping("/teams/{teamId}/name")
+    @ResponseBody
+    public ResponseEntity<?> updateTeamName(
+            @PathVariable Long teamId,
+            @RequestParam String newName,
+            Principal principal
+    ) {
+        try {
+            UserEntity user = userService.findByEmail(principal.getName());
+            teamService.updateTeamName(teamId, newName, user);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Team name updated successfully");
+            response.put("newName", newName.trim());
+
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+        }
+    }
+
+    @PutMapping("/teams/{teamId}/description")
+    @ResponseBody
+    public ResponseEntity<?> updateTeamDescription(
+            @PathVariable Long teamId,
+            @RequestParam String newDescription,
+            Principal principal
+    ) {
+        try {
+            UserEntity user = userService.findByEmail(principal.getName());
+            teamService.updateTeamDescription(teamId, newDescription, user);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Team description updated successfully");
+            response.put("newDescription", newDescription.trim());
+
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+        }
+    }
+
+    @PutMapping("/teams/{teamId}/password")
+    @ResponseBody
+    public ResponseEntity<?> changeTeamPassword(
+            @PathVariable Long teamId,
+            @RequestParam String currentPassword,
+            @RequestParam String newPassword,
+            @RequestParam String confirmPassword,
+            Principal principal
+    ) {
+        try {
+            // Validate passwords match
+            if (!newPassword.equals(confirmPassword)) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "New password and confirmation do not match");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+
+            UserEntity user = userService.findByEmail(principal.getName());
+            teamService.changeTeamPassword(teamId, currentPassword, newPassword, user);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Team password changed successfully");
+
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
     }
 }
