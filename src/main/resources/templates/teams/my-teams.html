@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>My Teams</title>
+
+    <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
+    <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
+    <meta name="theme-color" content="#0b0c0c">
+
+    <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
+</head>
+<body class="govuk-template__body dsfw-page">
+
+<div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
+
+<div class="govuk-width-container dsfw-page">
+    <main class="govuk-main-wrapper" id="main-content" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+
+                <div th:if="${param.success != null and param.success[0] == 'left_team'}" class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                    <div class="govuk-notification-banner__header">
+                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                            Success
+                        </h2>
+                    </div>
+                    <div class="govuk-notification-banner__content">
+                        <h3 class="govuk-notification-banner__heading">
+                            You have successfully left the team.
+                        </h3>
+                    </div>
+                </div>
+
+                <div th:if="${param.success != null and param.success[0] == 'team_deleted'}" class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title-deleted" data-module="govuk-notification-banner">
+                    <div class="govuk-notification-banner__header">
+                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title-deleted">
+                            Success
+                        </h2>
+                    </div>
+                    <div class="govuk-notification-banner__content">
+                        <h3 class="govuk-notification-banner__heading">
+                            Team deleted successfully.
+                        </h3>
+                    </div>
+                </div>
+
+                <h1 class="govuk-heading-xl">My Teams</h1>
+
+                <p class="govuk-body">
+                    Here is a list of all the teams you are a member or manager of.
+                </p>
+
+                <div th:if="${not #lists.isEmpty(myMemberships)}">
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Team Name</th>
+                            <th scope="col" class="govuk-table__header">Your Role</th>
+                            <th scope="col" class="govuk-table__header">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row" th:each="membership : ${myMemberships}">
+                            <td class="govuk-table__cell" th:text="${membership.team.teamName}">Team Name</td>
+
+                            <td class="govuk-table__cell">
+                                <strong class="govuk-tag"
+                                        th:classappend="${membership.role == 'MANAGER'} ? 'govuk-tag--blue' : 'govuk-tag--grey'"
+                                        th:text="${membership.role}">ROLE</strong>
+                            </td>
+
+                            <td class="govuk-table__cell">
+                                <a th:if="${membership.role == 'MANAGER'}"
+                                   th:href="@{'/manager/homepage/' + ${membership.team.id}}"
+                                   class="govuk-link">Manage Team</a>
+
+                                <div th:if="${membership.role != 'MANAGER'}">
+                                    <form th:action="@{'/teams/leave/' + ${membership.team.id}}" method="post" onsubmit="return confirm('Are you sure you want to leave this team?');">
+                                        <button type="submit" class="govuk-button govuk-button--warning govuk-!-margin-bottom-0" data-module="govuk-button">
+                                            Leave Team
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div th:if="${#lists.isEmpty(myMemberships)}" class="govuk-inset-text">
+                    You are not a member of any teams yet. Create or join a team below.
+                </div>
+
+                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+                <h2 class="govuk-heading-l">Create a new team</h2>
+
+                <form th:action="@{/teams/create}" method="post">
+                    <button type="submit" class="govuk-button" data-module="govuk-button">
+                        Create Team
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
+
+<script th:src="@{/scripts/govuk-frontend.js}"></script>
+<script th:src="@{/scripts/gov-init.js}"></script>
+
+</body>
+</html>

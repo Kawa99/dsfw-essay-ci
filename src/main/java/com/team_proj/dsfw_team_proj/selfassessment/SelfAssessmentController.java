@@ -17,8 +17,12 @@ public class SelfAssessmentController {
 
     private final SelfAssessmentService saService;
 
-    public SelfAssessmentController(SelfAssessmentService saService) {
+    private final SelfAssessmentValidator validator;
+
+    public SelfAssessmentController(SelfAssessmentService saService,
+                                    SelfAssessmentValidator validator) {
         this.saService = saService;
+        this.validator = validator;
     }
 
     @GetMapping
@@ -30,13 +34,30 @@ public class SelfAssessmentController {
 
 
     @PostMapping("/submit")
-    public ModelAndView saveAssessment(@ModelAttribute("assessmentData") ResultsFormDTO form) {
-        ModelAndView mav;
-        Map<Long, Integer> answers = form.getAnswers();
-        saService.saveSubmission(answers);
-        mav = new ModelAndView("redirect:/self-assessment/results");
-        return mav;
+    public ModelAndView saveAssessment(
+            @ModelAttribute("assessmentForm") ResultsFormDTO form,
+            Model model) {
+
+        // Load category + skills structure
+        Map<Category, List<SkillsEntity>> assessmentData = saService.getAssessmentData();
+
+        // Validate
+        Map<String, List<String>> errors = validator.validate(assessmentData, form.getAnswers());
+
+        if (!errors.isEmpty()) {
+            // Return same page with errors and user-input preserved
+            model.addAttribute("assessmentData", assessmentData);
+            model.addAttribute("assessmentForm", form);
+            model.addAttribute("validationErrors", errors);
+
+            return new ModelAndView("self-assessment/self-assessment");
+        }
+
+        // If valid then save and redirect
+        saService.saveSubmission(form.getAnswers());
+        return new ModelAndView("redirect:/self-assessment/results");
     }
+
 
     @GetMapping("/results")
     public ModelAndView showAssessmentResults() {
