@@ -316,6 +316,26 @@ function showSuccessBanner(message) {
     }
 }
 
+function showErrorBanner(message) {
+    const banner = document.createElement('div');
+    banner.className = 'govuk-notification-banner govuk-notification-banner--error';
+    banner.setAttribute('role', 'alert');
+
+    banner.innerHTML =
+        '<div class="govuk-notification-banner__header">' +
+        '<h2 class="govuk-notification-banner__title">Error</h2>' +
+        '</div>' +
+        '<div class="govuk-notification-banner__content">' +
+        '<h3 class="govuk-notification-banner__heading">' + message + '</h3>' +
+        '</div>';
+
+    const mainContent = document.querySelector('.govuk-main-wrapper');
+    if (mainContent) {
+        mainContent.insertBefore(banner, mainContent.firstChild);
+        setTimeout(() => banner.remove(), 5000);
+    }
+}
+
 // Initialize password validation and wire up Change Password buttons
 document.addEventListener('DOMContentLoaded', function () {
     // Find all Change Password buttons on the page
@@ -332,6 +352,51 @@ document.addEventListener('DOMContentLoaded', function () {
         // Wire up the click handler to call changePassword with the correct teamId
         button.addEventListener('click', function () {
             changePassword(teamId);
+        });
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const removeButtons = document.querySelectorAll(".remove-member-btn");
+
+    removeButtons.forEach(btn => {
+        btn.addEventListener("click", async () => {
+
+            const userId = btn.getAttribute("data-user-id");
+            const teamId = btn.getAttribute("data-team-id");
+
+            if (!confirm("Are you sure you want to remove this team member?")) {
+                return;
+            }
+
+            try {
+                const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+                const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+                const response = await fetch(`/manager/team/${teamId}/remove/${userId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        [csrfHeader]: csrfToken
+                    }
+                });
+
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    const row = btn.closest("tr");
+                    if (row) row.remove();
+
+                    showSuccessBanner("Team member removed successfully.");
+                } else {
+                    showErrorBanner(result.error || "Failed to remove member.");
+                }
+
+            } catch (error) {
+                console.error("Error removing member:", error);
+                alert("An unexpected error occurred.");
+            }
         });
     });
 });

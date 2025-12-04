@@ -8,6 +8,7 @@ public interface TeamService {
     boolean isManager(UserEntity user, Long teamId);
     void deleteTeam(Long teamId);
     void leaveTeam(UserEntity user, Long teamId);
+    void removeMember(UserEntity requester, Long teamId, Long userId);
     void updateTeamName(Long teamId, String newName, UserEntity user);
     void updateTeamDescription(Long teamId, String newDescription, UserEntity user);
     void changeTeamPassword(Long teamId, String currentPassword, String newPassword, UserEntity user);

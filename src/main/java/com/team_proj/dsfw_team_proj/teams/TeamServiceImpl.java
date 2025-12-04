@@ -137,6 +137,39 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     @Transactional
+    public void removeMember(UserEntity requester, Long teamId, Long userId) {
+        // 1. Only the team manager can remove members
+        if (!isManager(requester, teamId)) {
+            throw new RuntimeException("Only the team manager can remove team members");
+        }
+
+        // 2. Managers cannot remove themselves via this feature
+        if (requester.getId().equals(userId)) {
+            throw new RuntimeException("Managers cannot remove themselves. You must delete the team instead.");
+        }
+
+        // 3. Find the team
+        TeamEntity team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Team not found"));
+
+        // 4. Find the membership for the given user in this team
+        List<TeamMembershipEntity> memberships = membershipRepository.findAllByTeamId(teamId);
+        TeamMembershipEntity membershipToRemove = memberships.stream()
+                .filter(m -> m.getUser() != null && m.getUser().getId().equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("User is not a member of this team"));
+
+        // 5. Extra safety: do not allow removing another manager
+        if (membershipToRemove.getRole() == TeamRole.MANAGER) {
+            throw new RuntimeException("You cannot remove a team manager");
+        }
+
+        // 6. Delete the membership
+        membershipRepository.delete(membershipToRemove);
+    }
+
+    @Override
+    @Transactional
     public void updateTeamName(Long teamId, String newName, UserEntity user) {
         // Check if user is manager
         if (!isManager(user, teamId)) {

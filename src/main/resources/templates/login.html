@@ -1,64 +1,80 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" class="govuk-template" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/styles/auth-styling/auth-style.css}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Sign in - Digital Skills for Wales</title>
+
+    <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/govuk-assets/images/govuk-logotype-crown.svg}">
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/govuk-assets/images/govuk-apple-touch-icon-180x180.png}">
+    <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
+    <meta name="theme-color" content="#0b0c0c">
+
+    <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="govuk-template__body">
 
-<div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
+<a class="govuk-skip-link" href="#main-content">Skip to main content</a>
 
-    <div class="p-8 text-center">
-        <h2 class="text-2xl font-bold text-gray-800">Welcome Back</h2>
-        <p class="text-sm text-gray-500 mt-2">Please enter your details to sign in.</p>
-    </div>
+<div class="dsfw-page">
+    <div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
 
-    <div class="px-8 pb-8">
-        <div th:if="${message}" class="mb-6 p-4 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-2">
-            <i class="fa-solid fa-circle-info"></i>
-            <p th:text="${message}" class="text-sm font-medium"></p>
-        </div>
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-xl">Sign in</h1>
+                    <p class="govuk-body">Use your work email address to access Digital Skills for Wales.</p>
 
-        <div th:if="${param.error}" class="mb-6 p-4 rounded-lg bg-red-50 text-red-700 border border-red-200 flex items-center gap-2">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <p class="text-sm font-medium">Invalid email or password.</p>
-        </div>
+                    <div th:if="${message}" class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                        <div class="govuk-notification-banner__header">
+                            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">Success</h2>
+                        </div>
+                        <div class="govuk-notification-banner__content">
+                            <p class="govuk-notification-banner__heading" th:text="${message}">Message text</p>
+                        </div>
+                    </div>
 
-        <form id="login-form" th:action="@{/login}" method="POST" class="space-y-6">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                        <i class="fa-regular fa-envelope"></i>
-                    </span>
-                    <input type="email" name="email" required class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="you@example.com">
+                    <div th:if="${param.error}" class="govuk-error-summary" role="alert" aria-labelledby="login-error-title" data-module="govuk-error-summary">
+                        <div role="alert">
+                            <h2 class="govuk-error-summary__title" id="login-error-title">There is a problem</h2>
+                            <div class="govuk-error-summary__body">
+                                <p class="govuk-body">Invalid email or password.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="login-form" th:action="@{/login}" method="post" novalidate>
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="email">Email address</label>
+                            <div id="email-hint" class="govuk-hint">Use your public sector work email.</div>
+                            <input class="govuk-input govuk-!-width-two-thirds" id="email" name="email" type="email" autocomplete="email" spellcheck="false" aria-describedby="email-hint" required>
+                        </div>
+
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="password">Password</label>
+                            <input class="govuk-input govuk-!-width-two-thirds" id="password" name="password" type="password" autocomplete="current-password" required>
+                        </div>
+
+                        <button type="submit" class="govuk-button" data-module="govuk-button">Sign in</button>
+                    </form>
+
+                    <p class="govuk-body govuk-!-margin-top-6">
+                        Need an account?
+                        <a th:href="@{/register}" class="govuk-link">Create one now</a>.
+                    </p>
                 </div>
             </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                        <i class="fa-solid fa-lock"></i>
-                    </span>
-                    <input type="password" name="password" required class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="••••••••">
-                </div>
-            </div>
-
-            <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-indigo-700 transition-transform transform active:scale-95">
-                Sign In
-            </button>
-        </form>
-
-        <div class="text-center mt-6 text-sm text-gray-500">
-            <span>Don't have an account? <a href="/register" class="text-indigo-600 hover:underline font-medium">Register here</a></span>
-        </div>
+        </main>
     </div>
+
+    <div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
 </div>
 
+<script th:src="@{/scripts/govuk-frontend.js}"></script>
+<script th:src="@{/scripts/gov-init.js}"></script>
 </body>
 </html>
