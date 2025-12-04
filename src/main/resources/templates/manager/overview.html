@@ -231,6 +231,7 @@
                             <th scope="col" class="govuk-table__header col-name">Name</th>
                             <th scope="col" class="govuk-table__header col-status">Role</th>
                             <th scope="col" class="govuk-table__header col-action">Action</th>
+                            <th scope="col" class="govuk-table__header col-action">Remove</th>
                         </tr>
                         </thead>
                         <tbody class="govuk-table__body">
@@ -250,6 +251,18 @@
                                 <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                                     View Results
                                 </button>
+                            </td>
+                            <td class="govuk-table__cell">
+                                <!-- REMOVE MEMBER BUTTON (Only shown for non-managers) -->
+                                <div th:if="${emp.role != 'MANAGER'}" style="margin-top: 8px;">
+                                    <button type="button"
+                                            class="govuk-button govuk-button--warning remove-member-btn"
+                                            th:data-user-id="${emp.userId}"
+                                            th:data-team-id="${team.id}"
+                                            data-module="govuk-button">
+                                        Remove
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
