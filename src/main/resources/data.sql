@@ -25,3 +25,5 @@ INSERT IGNORE INTO skills (name, is_active, category_id) VALUES ('I ensure that 
 INSERT IGNORE INTO skills (name, is_active, category_id) VALUES ('I regularly monitor the team''s processes to identify areas where our "ways of working" need improvement.', true, 5);
 INSERT IGNORE INTO skills (name, is_active, category_id) VALUES ('I can effectively lead the team in reflecting on our collective performance (e.g., during retrospectives).', true, 5);
 INSERT IGNORE INTO skills (name, is_active, category_id) VALUES ('I am confident in suggesting and implementing specific actions to improve team efficiency based on feedback.', true, 5);
+
+UPDATE USER_DETAILS SET role = 'ADMIN' WHERE email = 'admin@test.com';
