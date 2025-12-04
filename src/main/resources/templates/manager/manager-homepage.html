@@ -16,6 +16,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
+                <span class="govuk-caption-xl" th:text="${team.teamName}">Team Name</span>
                 <h1 class="govuk-heading-xl">Manager Home Page</h1>
 
                 <p class="govuk-body-l">
@@ -23,7 +24,7 @@
                 </p>
 
                 <div class="govuk-inset-text">
-                    Your Team Invite Code: <strong class="govuk-!-font-weight-bold">####</strong>
+                    Your Team Invite Code: <strong class="govuk-!-font-weight-bold" th:text="${team.joinCode}">ABC123</strong>
                     <br>
                     <span class="govuk-hint">Share this code with your employees so they can join your team.</span>
                 </div>

@@ -1,25 +1,26 @@
-package com.team_proj.dsfw_team_proj.manager.entity;
-
+package com.team_proj.dsfw_team_proj.manager;
 import jakarta.persistence.*;
-import lombok.*;
-import java.util.List; // Required for List<>
 
 @Entity
-@Table(name = "managers")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Manager {
-
+public class ManagerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
+    private int results;
 
-    // One Manager -> Many Team Members
-    @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL)
-    private List<TeamMember> teamMembers;
+    // Constructors
+    public ManagerEntity() {}
+    public ManagerEntity(String name, int results) {
+        this.name = name;
+        this.results = results;
+    }
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public int getResults() { return results; }
+    public void setResults(int results) { this.results = results; }
 }

@@ -98,47 +98,14 @@
                     You are not a member of any teams yet. Create or join a team below.
                 </div>
 
+                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
                 <h2 class="govuk-heading-l">Create a new team</h2>
 
                 <a th:href="@{/teams/create}" class="govuk-button" data-module="govuk-button">
                     Create Team
                 </a>
 
-                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
-                <h2 class="govuk-heading-l">Join a team</h2>
-                <p class="govuk-body">
-                    Enter the join code and team password given to you by your manager.
-                </p>
-
-                <form class="govuk-form-group" method="post" th:action="@{/teams/join}">
-                    <!-- CSRF Token -->
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-
-                    <div class="govuk-form-group">
-                        <label class="govuk-label" for="joinCode">Join Code</label>
-                        <input class="govuk-input govuk-input--width-10"
-                               id="joinCode"
-                               name="joinCode"
-                               type="text"
-                               autocomplete="off"
-                               required>
-                    </div>
-
-                    <div class="govuk-form-group">
-                        <label class="govuk-label" for="joinPassword">Team Password</label>
-                        <input class="govuk-input govuk-input--width-20"
-                               id="joinPassword"
-                               name="password"
-                               type="password"
-                               autocomplete="current-password"
-                               required>
-                    </div>
-
-                    <button class="govuk-button" data-module="govuk-button" type="submit" style="margin-top: 10px;">
-                        Join Team
-                    </button>
-                </form>
             </div>
         </div>
     </main>
@@ -150,4 +117,4 @@
 <script th:src="@{/scripts/gov-init.js}"></script>
 
 </body>
-</html>>
+</html>
