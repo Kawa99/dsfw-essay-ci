@@ -43,22 +43,22 @@ public class TeamController {
             Principal principal,
             Model model
     ) {
-        // Validate passwords match
         if (!password.equals(passwordConfirm)) {
             model.addAttribute("error", "Passwords do not match");
             return "teams/create-team";
         }
 
-        // Validate password strength
-        String passwordError = validatePassword(password);
-        if (passwordError != null) {
-            model.addAttribute("error", passwordError);
+        UserEntity user = userService.findByEmail(principal.getName());
+
+        try {
+            TeamEntity newTeam = teamService.createTeam(teamName, description, password, user);
+            model.addAttribute("team", newTeam);
+            return "manager/manager-homepage";
+        } catch (RuntimeException e) {
+            // Show any validation errors from the service on the same page
+            model.addAttribute("error", e.getMessage());
             return "teams/create-team";
         }
-
-        UserEntity user = userService.findByEmail(principal.getName());
-        TeamEntity newTeam = teamService.createTeam(teamName, description, password, user);
-        return "redirect:/manager/homepage/" + newTeam.getId();
     }
 
     @PostMapping("/teams/join")
@@ -70,10 +70,10 @@ public class TeamController {
         UserEntity user = userService.findByEmail(principal.getName());
         try {
             teamService.joinTeam(joinCode, password, user);
+            return "redirect:/my-teams?success=joined";
         } catch (RuntimeException e) {
-            return "redirect:/home?error=" + e.getMessage();
+            return "redirect:/my-teams?error=" + e.getMessage();
         }
-        return "redirect:/my-teams";
     }
 
     @GetMapping("/manager/homepage/{teamId}")
@@ -90,12 +90,27 @@ public class TeamController {
     }
 
     @GetMapping("/my-teams")
-    public String showMyTeams(Model model, Principal principal) {
+    public String showMyTeams(
+            Model model,
+            Principal principal,
+            @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "success", required = false) String success
+    ) {
         UserEntity user = userService.findByEmail(principal.getName());
         List<TeamMembershipEntity> myMemberships = membershipRepository.findByUser(user);
         model.addAttribute("myMemberships", myMemberships);
+
+        if (error != null) {
+            model.addAttribute("error", error);
+        }
+
+        if (success != null) {
+            model.addAttribute("success", success);
+        }
+
         return "teams/my-teams";
     }
+
     @PostMapping("/manager/delete/{teamId}")
     public String deleteTeam(@PathVariable Long teamId, Principal principal) {
         UserEntity user = userService.findByEmail(principal.getName());
@@ -120,30 +135,6 @@ public class TeamController {
     @GetMapping("/teams/create")
     public String showCreateTeamForm(Model model) {
         return "teams/create-team";
-    }
-
-    private String validatePassword(String password) {
-        if (password.length() < 8) {
-            return "Password must be at least 8 characters";
-        }
-
-        if (!password.matches(".*[A-Z].*")) {
-            return "Password must contain at least one uppercase letter";
-        }
-
-        if (!password.matches(".*[a-z].*")) {
-            return "Password must contain at least one lowercase letter";
-        }
-
-        if (!password.matches(".*\\d.*")) {
-            return "Password must contain at least one number";
-        }
-
-        if (!password.matches(".*[!@#$%^&*()_+<>/?;:'\"\\\\|><].*")) {
-            return "Password must contain at least one special character (!@#$%^&*()_+<>/?;:'\"|><)";
-        }
-
-        return null; // null means valid
     }
 
     @PutMapping("/teams/{teamId}/name")

@@ -22,8 +22,38 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private void validateTeamPasswordOrThrow(String password) {
+        if (password == null || password.isBlank()) {
+            throw new RuntimeException("Password cannot be empty");
+        }
+
+        if (password.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters");
+        }
+
+        if (!password.matches(".*[A-Z].*")) {
+            throw new RuntimeException("Password must contain at least one uppercase letter");
+        }
+
+        if (!password.matches(".*[a-z].*")) {
+            throw new RuntimeException("Password must contain at least one lowercase letter");
+        }
+
+        if (!password.matches(".*\\d.*")) {
+            throw new RuntimeException("Password must contain at least one number");
+        }
+
+        if (!password.matches(".*[!@#$%^&*()_+{}\\[\\]'\"\\|/?.,><-].*")) {
+            throw new RuntimeException("Password must contain at least one special character");
+        }
+    }
+
+
     @Override
     public TeamEntity createTeam(String teamName, String description, String password, UserEntity creator){
+        // Validate password according to shared rules
+        validateTeamPasswordOrThrow(password);
+
         TeamEntity team = new TeamEntity();
         team.setTeamName(teamName);
         team.setDescription(description);
@@ -164,22 +194,12 @@ public class TeamServiceImpl implements TeamService {
             throw new RuntimeException("Current password is incorrect");
         }
 
-        // Validate new password strength
-        if (newPassword.length() < 8) {
-            throw new RuntimeException("Password must be at least 8 characters");
-        }
-        if (!newPassword.matches(".*[A-Z].*")) {
-            throw new RuntimeException("Password must contain at least one uppercase letter");
-        }
-        if (!newPassword.matches(".*[a-z].*")) {
-            throw new RuntimeException("Password must contain at least one lowercase letter");
-        }
-        if (!newPassword.matches(".*[!@#$%^&*()_+{}\\[\\]'\"\\|/?.,><].*")) {
-            throw new RuntimeException("Password must contain at least one special character");
-        }
+        // ✅ Use shared validation for the new password
+        validateTeamPasswordOrThrow(newPassword);
 
         // Hash and save new password
         team.setPassword(passwordEncoder.encode(newPassword));
         teamRepository.save(team);
     }
+
 }

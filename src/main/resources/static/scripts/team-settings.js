@@ -1,19 +1,19 @@
 // Team Name Edit Functions
-function enableEditTeamName(teamId) {
-    const displayEl = document.getElementById('team-name-display-' + teamId);
-    const btnEl = document.getElementById('edit-name-btn-' + teamId);
-    const editEl = document.getElementById('team-name-edit-' + teamId);
+function enableEdit(teamId, field) {
+    const displayEl = document.getElementById(`team-${field}-display-${teamId}`);
+    const btnEl = document.getElementById(`edit-${field}-btn-${teamId}`);
+    const editEl = document.getElementById(`team-${field}-edit-${teamId}`);
 
     if (displayEl) displayEl.style.display = 'none';
     if (btnEl) btnEl.style.display = 'none';
     if (editEl) editEl.style.display = 'block';
 }
 
-function cancelEditTeamName(teamId) {
-    const displayEl = document.getElementById('team-name-display-' + teamId);
-    const btnEl = document.getElementById('edit-name-btn-' + teamId);
-    const editEl = document.getElementById('team-name-edit-' + teamId);
-    const errorEl = document.getElementById('team-name-error-' + teamId);
+function cancelEdit(teamId, field) {
+    const displayEl = document.getElementById(`team-${field}-display-${teamId}`);
+    const btnEl = document.getElementById(`edit-${field}-btn-${teamId}`);
+    const editEl = document.getElementById(`team-${field}-edit-${teamId}`);
+    const errorEl = document.getElementById(`team-${field}-error-${teamId}`);
 
     if (editEl) editEl.style.display = 'none';
     if (displayEl) displayEl.style.display = 'inline-block';
@@ -21,100 +21,65 @@ function cancelEditTeamName(teamId) {
     if (errorEl) errorEl.style.display = 'none';
 }
 
-function saveTeamName(teamId) {
-    const inputEl = document.getElementById('team-name-input-' + teamId);
-    const newName = inputEl ? inputEl.value.trim() : '';
+function enableEditTeamName(teamId) { enableEdit(teamId, 'name'); }
+function cancelEditTeamName(teamId) { cancelEdit(teamId, 'name'); }
 
-    if (!newName) {
-        showError(teamId, 'name', 'Team name cannot be empty');
-        return;
-    }
+function saveTeamField(teamId, field, value, emptyMessage) {
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
-    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
-    fetch('/teams/' + teamId + '/name', {
+    fetch(`/teams/${teamId}/${field}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             [csrfHeader]: csrfToken
         },
-        body: 'newName=' + encodeURIComponent(newName)
+        body: `new${field.charAt(0).toUpperCase() + field.slice(1)}=` + encodeURIComponent(value)
     })
         .then(response => response.json())
         .then(data => {
             if (data.error) {
-                showError(teamId, 'name', data.error);
+                showError(teamId, field, data.error);
             } else {
-                const displayEl = document.getElementById('team-name-display-' + teamId);
-                if (displayEl) displayEl.textContent = data.newName;
-                cancelEditTeamName(teamId);
-                showSuccessBanner('Team name updated successfully');
+                const displayEl = document.getElementById(`team-${field}-display-${teamId}`);
+                const finalText = data[`new${field.charAt(0).toUpperCase() + field.slice(1)}`] || emptyMessage;
+
+                if (displayEl) displayEl.textContent = finalText;
+
+                cancelEdit(teamId, field);
+                showSuccessBanner(`Team ${field} updated successfully`);
             }
         })
-        .catch(error => {
-            showError(teamId, 'name', 'An error occurred while updating the team name');
+        .catch(() => {
+            showError(teamId, field, `An error occurred while updating the team ${field}`);
         });
 }
 
 // Team Description Edit Functions
-function enableEditTeamDescription(teamId) {
-    const displayEl = document.getElementById('team-description-display-' + teamId);
-    const btnEl = document.getElementById('edit-description-btn-' + teamId);
-    const editEl = document.getElementById('team-description-edit-' + teamId);
+function enableEditTeamDescription(teamId) { enableEdit(teamId, 'description'); }
+function cancelEditTeamDescription(teamId) { cancelEdit(teamId, 'description'); }
 
-    if (displayEl) displayEl.style.display = 'none';
-    if (btnEl) btnEl.style.display = 'none';
-    if (editEl) editEl.style.display = 'block';
-}
+function saveTeamName(teamId) {
+    const input = document.getElementById(`team-name-input-${teamId}`);
+    const value = input ? input.value.trim() : '';
 
-function cancelEditTeamDescription(teamId) {
-    const displayEl = document.getElementById('team-description-display-' + teamId);
-    const btnEl = document.getElementById('edit-description-btn-' + teamId);
-    const editEl = document.getElementById('team-description-edit-' + teamId);
-    const errorEl = document.getElementById('team-description-error-' + teamId);
+    if (!value) {
+        showError(teamId, 'name', 'Team name cannot be empty');
+        return;
+    }
 
-    if (editEl) editEl.style.display = 'none';
-    if (displayEl) displayEl.style.display = 'inline-block';
-    if (btnEl) btnEl.style.display = 'inline';
-    if (errorEl) errorEl.style.display = 'none';
+    saveTeamField(teamId, 'name', value, '');
 }
 
 function saveTeamDescription(teamId) {
-    const inputEl = document.getElementById('team-description-input-' + teamId);
-    const newDescription = inputEl ? inputEl.value.trim() : '';
+    const input = document.getElementById(`team-description-input-${teamId}`);
+    const value = input ? input.value.trim() : '';
 
-    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
-    fetch('/teams/' + teamId + '/description', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            [csrfHeader]: csrfToken
-        },
-        body: 'newDescription=' + encodeURIComponent(newDescription)
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                showError(teamId, 'description', data.error);
-            } else {
-                const displayText = data.newDescription || 'No description provided';
-                const displayEl = document.getElementById('team-description-display-' + teamId);
-                if (displayEl) displayEl.textContent = displayText;
-                cancelEditTeamDescription(teamId);
-                showSuccessBanner('Team description updated successfully');
-            }
-        })
-        .catch(error => {
-            showError(teamId, 'description', 'An error occurred while updating the team description');
-        });
+    saveTeamField(teamId, 'description', value, 'No description provided');
 }
 
-// Password validation helpers
 function validatePasswordField(value, fieldName) {
-    if (!value) {
+    if (!value || value.trim().length === 0) {
         return 'Please enter ' + fieldName;
     }
     return null;
@@ -124,21 +89,21 @@ function validatePasswordStrength(password) {
     if (password.length < 8) {
         return 'Password must be at least 8 characters';
     }
-
     if (!/[A-Z]/.test(password)) {
         return 'Password must contain at least one uppercase letter';
     }
-
     if (!/[a-z]/.test(password)) {
         return 'Password must contain at least one lowercase letter';
     }
-
+    if (!/\d/.test(password)) {
+        return 'Password must contain at least one number';
+    }
     if (!/[!@#$%^&*()_+{}\[\]'"|/?.,><]/.test(password)) {
         return 'Password must contain at least one special character';
     }
-
     return null;
 }
+
 
 function validatePasswordMatch(newPass, confirmPass) {
     if (newPass !== confirmPass) {
@@ -241,6 +206,10 @@ function initPasswordValidation(teamId) {
         lowercase: {
             regex: /[a-z]/,
             element: document.getElementById('req-lowercase-' + teamId)
+        },
+        number: {
+            regex: /\d/,
+            element: document.getElementById('req-number-' + teamId)
         },
         special: {
             regex: /[!@#$%^&*()_+{}\[\]'"|/?.,><]/,
@@ -347,27 +316,22 @@ function showSuccessBanner(message) {
     }
 }
 
-// Initialize password validation when page loads and details is opened
-document.addEventListener('DOMContentLoaded', function() {
-    const detailsElement = document.querySelector('.govuk-details');
+// Initialize password validation and wire up Change Password buttons
+document.addEventListener('DOMContentLoaded', function () {
+    // Find all Change Password buttons on the page
+    const buttons = document.querySelectorAll('button[id^="change-password-btn-"]');
 
-    if (detailsElement) {
-        // Get team ID from any element with data-team-id
-        const teamIdEl = document.querySelector('[data-team-id]');
-        const teamId = teamIdEl ? teamIdEl.getAttribute('data-team-id') : null;
-
-        if (teamId) {
-            // Initialize when details is opened
-            detailsElement.addEventListener('toggle', function() {
-                if (this.open) {
-                    initPasswordValidation(teamId);
-                }
-            });
-
-            // Also initialize if details is already open on page load
-            if (detailsElement.open) {
-                initPasswordValidation(teamId);
-            }
+    buttons.forEach(button => {
+        const teamId = button.getAttribute('data-team-id');
+        if (!teamId) {
+            return;
         }
-    }
+        // Initialise real-time validation for this team's password fields
+        initPasswordValidation(teamId);
+
+        // Wire up the click handler to call changePassword with the correct teamId
+        button.addEventListener('click', function () {
+            changePassword(teamId);
+        });
+    });
 });

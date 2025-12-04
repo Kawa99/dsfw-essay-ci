@@ -178,6 +178,7 @@
                                                 <li th:id="'req-length-' + ${team.id}" class="govuk-body-s">At least 8 characters</li>
                                                 <li th:id="'req-uppercase-' + ${team.id}" class="govuk-body-s">At least one uppercase letter (A-Z)</li>
                                                 <li th:id="'req-lowercase-' + ${team.id}" class="govuk-body-s">At least one lowercase letter (a-z)</li>
+                                                <li th:id="'req-number-' + ${team.id}" class="govuk-body-s">At least one number (0-9)</li>
                                                 <li th:id="'req-special-' + ${team.id}" class="govuk-body-s">At least one special character (!@#$%^&amp;*()_+&lt;&gt;/?;:'&quot;\|&gt;&lt;)</li>
                                             </ul>
                                         </div>
@@ -213,8 +214,7 @@
                                             data-module="govuk-button"
                                             th:id="'change-password-btn-' + ${team.id}"
                                             th:data-team-id="${team.id}"
-                                            disabled
-                                            onclick="changePassword(this.getAttribute('data-team-id'))">
+                                            disabled>
                                         Change password
                                     </button>
                                 </form>
