@@ -25,3 +25,13 @@ INSERT IGNORE INTO skills (name, is_active, category_id) VALUES ('I ensure that 
 INSERT IGNORE INTO skills (name, is_active, category_id) VALUES ('I regularly monitor the team''s processes to identify areas where our "ways of working" need improvement.', true, 5);
 INSERT IGNORE INTO skills (name, is_active, category_id) VALUES ('I can effectively lead the team in reflecting on our collective performance (e.g., during retrospectives).', true, 5);
 INSERT IGNORE INTO skills (name, is_active, category_id) VALUES ('I am confident in suggesting and implementing specific actions to improve team efficiency based on feedback.', true, 5);
+
+DELETE FROM user_details WHERE email='admin@test.com';
+INSERT INTO user_details (first_name, last_name, email, password, role)
+VALUES (
+           'Admin',
+           'User',
+           'admin@test.com',
+           '$2b$12$OEVQ6zyfoZRYP7XvTB6Qyu7Z7ojRtitSEYq45QQzv4Mfcz98Vibj6',
+           'ADMIN'
+       );
