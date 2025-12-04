@@ -9,4 +9,6 @@ public interface TeamService {
     boolean isManager(UserEntity user, Long teamId);
     void deleteTeam(Long teamId);
     void leaveTeam(UserEntity user, Long teamId);
+
+    Long getTeamIdByManager(UserEntity user);
 }

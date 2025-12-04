@@ -104,4 +104,11 @@ public class TeamServiceImpl implements TeamService {
         }
         membershipRepository.delete(membership);
     }
+
+    @Override
+    public Long getTeamIdByManager(UserEntity user) {
+        Optional<TeamMembershipEntity> membership = membershipRepository.findByUserAndRole(user, TeamRole.MANAGER);
+
+        return membership.map(m -> m.getTeam().getId()).orElse(null);
+    }
 }
