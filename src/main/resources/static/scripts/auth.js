@@ -1,47 +1,39 @@
-function togglePasswordVisibility(inputId) {
+function togglePasswordVisibility(inputId, labelId) {
     const input = document.getElementById(inputId);
-    const icon = input.parentElement.querySelector('button i');
+    if (!input) return;
 
-    if (input.type === "password") {
-        input.type = "text";
-        icon.classList.replace('fa-eye', 'fa-eye-slash');
-    } else {
-        input.type = "password";
-        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    const isHidden = input.type === "password";
+    input.type = isHidden ? "text" : "password";
+
+    const label = labelId ? document.getElementById(labelId) : null;
+    if (label) {
+        label.textContent = isHidden ? "Hide password" : "Show password";
     }
 }
 
 function checkPassword() {
-    const passwordInput = document.getElementById('reg-password');
-    if (!passwordInput) return;
+    const passwordInput = document.getElementById("reg-password");
+    const feedbackText = document.getElementById("length-feedback");
+    const submitBtn = document.getElementById("reg-submit-btn");
 
-    const feedbackText = document.getElementById('length-feedback');
-    const submitBtn = document.getElementById('reg-submit-btn');
+    if (!passwordInput || !feedbackText || !submitBtn) return;
 
-    const minLength = passwordInput.getAttribute('minlength') || 9;
-    const isValid = passwordInput.value.length >= minLength;
+    const minLength = Number(passwordInput.getAttribute("minlength")) || 9;
+    const isValid = passwordInput.value.trim().length >= minLength;
 
     if (isValid) {
-        feedbackText.className = 'text-xs flex items-center gap-1 transition-colors duration-300 text-green-600';
-        feedbackText.innerHTML = '<i class="fa-solid fa-check"></i> Length requirement met';
-
-        passwordInput.classList.remove('border-red-500', 'focus:ring-red-500');
-        passwordInput.classList.add('border-green-500', 'focus:ring-green-500');
-
-        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        feedbackText.className = "govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0";
+        feedbackText.textContent = "Password length looks good.";
+        passwordInput.classList.remove("govuk-input--error");
         submitBtn.disabled = false;
+        submitBtn.removeAttribute("aria-disabled");
     } else {
-        feedbackText.className = 'text-xs flex items-center gap-1 transition-colors duration-300 text-red-500';
-        feedbackText.innerHTML = `<i class="fa-solid fa-circle text-[6px]"></i> Must be ${minLength} characters or more`;
-
-        passwordInput.classList.remove('border-green-500', 'focus:ring-green-500');
-        passwordInput.classList.add('border-red-500', 'focus:ring-red-500');
-
-        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        feedbackText.className = "govuk-error-message govuk-!-margin-top-1";
+        feedbackText.innerHTML = '<span class="govuk-visually-hidden">Error:</span> Must be at least ' + minLength + " characters.";
+        passwordInput.classList.add("govuk-input--error");
         submitBtn.disabled = true;
+        submitBtn.setAttribute("aria-disabled", "true");
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    checkPassword();
-});
+document.addEventListener("DOMContentLoaded", checkPassword);
