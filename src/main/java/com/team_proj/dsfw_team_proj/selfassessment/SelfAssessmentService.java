@@ -8,5 +8,5 @@ public interface SelfAssessmentService {
 
     void saveSubmission(Map<Long, Integer> userAnswers);
 
-    List<Map<Long, Integer>> getAllSubmissions();
+    List<AssessmentSubmission> getAllSubmissions();
 }

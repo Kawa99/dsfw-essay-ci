@@ -227,7 +227,7 @@
                                     </div>
                                 </form>
                             </td>
-                            <td class="govuk-table__cell" th:text="${#lists.size(skillsByCategory[category.id])}"></td>
+                            <td class="govuk-table__cell" th:text="${skillsByCategory.containsKey(category.id) ? skillsByCategory[category.id].size() : 0}"></td>
                             <td class="govuk-table__cell">
                                 <button type="button"
                                         class="govuk-link govuk-link--no-visited-state btn-link edit-category-manage-btn"

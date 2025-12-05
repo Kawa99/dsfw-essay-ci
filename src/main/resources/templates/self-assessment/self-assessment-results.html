@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
     <title>Self-Assessment Result</title>
 
     <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
     <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
-    <meta name="theme-color" content="#0b0c0c">
 
     <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
     <link rel="stylesheet" th:href="@{/styles/global.css}">
@@ -19,10 +19,12 @@
 
   <div th:replace="~{'fragments/HeaderAndFooter' :: mainHeader}"></div>
 
+
   <div class="govuk-width-container dsfw-page">
+
     <main class="govuk-main-wrapper" id="main-content" role="main">
 
-      <h1 class="govuk-heading-xl">Assessment Results</h1>
+        <h1 class="govuk-heading-xl">Assessment Results</h1>
 
       <div th:if="${assessmentData.empty}" class="govuk-warning-text">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -32,57 +34,58 @@
         </strong>
       </div>
 
-      <div th:each="submission, rowStat : ${assessmentData}" class="govuk-summary-card">
 
-        <div class="govuk-summary-card__title-wrapper">
-          <h2 class="govuk-summary-card__title">
-            Submission #<span th:text="${rowStat.count}">1</span>
-          </h2>
+        <div th:each="submission, rowStat : ${assessmentData}" class="govuk-summary-card">
+
+
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+              Submission #<span th:text="${submission.id}">1</span>
+              <span class="govuk-caption-m" th:text="${#temporals.format(submission.submittedAt, 'dd-MM-yyyy HH:mm')}">Date</span>
+            </h2>
+          </div>
+
+
+          <div class="govuk-summary-card__content">
+
+              <div th:each="category : ${submission.getResponsesGroupedByCategory}">
+
+                <h2 class="govuk-heading-m" th:text="${category.key}"></h2>
+
+                <table class="govuk-table">
+
+                  <tbody class="govuk-table__body">
+                  <tr th:each="response, iterStat : ${category.value}" class="govuk-table__row">
+                    <td class="govuk-table__cell" th:text="${response.skill.name}">Question Text</td>
+                    <td class="govuk-table__cell">
+                      <strong class="govuk-tag"
+                              th:classappend="${response.score >= 4 ? 'govuk-tag--green' : 'govuk-tag--yellow'}">
+                        <span th:text="${response.score}"></span>
+                      </strong>
+                    </td>
+
+                  </tr>
+                  </tbody>
+                </table>
+
+              </div>
+
+          </div>
+
         </div>
 
-        <div class="govuk-summary-card__content">
-
-          <table class="govuk-table">
-
-            <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-              <th scope="col" class="govuk-table__header">Question</th>
-              <th scope="col" class="govuk-table__header govuk-table__header--numeric">Score Given</th>
-            </tr>
-            </thead>
 
 
-            <tbody class="govuk-table__body">
-            <tr th:each="entry, iterStat : ${submission}" class="govuk-table__row">
-
-              <td class="govuk-table__cell" th:text="'Question ' + ${iterStat.count}">
-                Question 1
-              </td>
-
-              <td class="govuk-table__cell govuk-table__cell--numeric">
-                <strong class="govuk-tag" th:classappend="${entry.value >= 4 ? 'govuk-tag--green' : (entry.value >= 3 ? 'govuk-tag--yellow' : 'govuk-tag--red')}">
-
-                  <span th:text="${entry.value}">5</span> / 5
-
-                </strong>
-              </td>
-
-            </tr>
-            </tbody>
-
-
-          </table>
+        <div class="govuk-button-group">
+          <a href="/self-assessment" class="govuk-button" data-module="govuk-button">
+            Take Assessment Again
+          </a>
         </div>
-      </div>
-
-      <div class="govuk-button-group">
-        <a href="/self-assessment" class="govuk-button" data-module="govuk-button">
-          Take Assessment Again
-        </a>
-      </div>
 
     </main>
   </div>
+
+
 
   <div th:replace="~{'fragments/HeaderAndFooter' :: mainFooter}"></div>
 
