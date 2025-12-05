@@ -34,7 +34,7 @@
                     <li class="navigation-item">
                         <a class="navigation-link" th:href="@{/self-assessment/results}">Assessment Results</a>
                     </li>
-                    <li class="navigation-item">
+                    <li class="navigation-item" sec:authorize="hasRole('ADMIN')">
                         <a class="navigation-link" th:href="@{/admin/self-assessment}">Admin</a>
                     </li>
 
@@ -63,9 +63,9 @@
                         <li class="govuk-footer__inline-list-item">
                             <a class="govuk-footer__link" th:href="@{/}">Home</a>
                         </li>
-                        <li class="govuk-footer__inline-list-item">
+                  <!--      <li class="govuk-footer__inline-list-item">
                             <a class="govuk-footer__link" th:href="@{/admin/self-assessment}">Admin</a>
-                        </li>
+                        </li> -->
                     </ul>
                     <span class="govuk-footer__licence-description">
                         2025 Digital Skills for Wales Team Project
