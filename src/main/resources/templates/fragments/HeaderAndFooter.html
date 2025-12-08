@@ -37,6 +37,9 @@
                     <li class="navigation-item" sec:authorize="hasRole('ADMIN')">
                         <a class="navigation-link" th:href="@{/admin/self-assessment}">Admin</a>
                     </li>
+                    <li class="navigation-item">
+                        <a class="navigation-link" th:href="@{/notification}">Notifications</a>
+                    </li>
 
                     <li class="navigation-item navigation-item--right" sec:authorize="isAuthenticated()">
                         <form th:action="@{/logout}" method="post" class="logout-form">
