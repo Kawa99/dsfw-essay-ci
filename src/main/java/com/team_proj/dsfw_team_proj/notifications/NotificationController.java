@@ -42,6 +42,7 @@ public class NotificationController {
             List<Notification> notifications = notificationService.getUserNotifications(user);
             modelAndView.addObject("notifications", notifications);
 
+            notificationService.markAllAsRead(user);
         }
 
         return modelAndView;

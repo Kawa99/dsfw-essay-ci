@@ -38,7 +38,11 @@
                         <a class="navigation-link" th:href="@{/admin/self-assessment}">Admin</a>
                     </li>
                     <li class="navigation-item">
-                        <a class="navigation-link" th:href="@{/notification}">Notifications</a>
+                        <a class="navigation-link" th:href="@{/notification}">Notifications
+                            <span class="notification-badge"
+                                  th:if="${unreadNotificationCount > 0}"
+                                  th:text="${unreadNotificationCount}"></span>
+                        </a>
                     </li>
 
                     <li class="navigation-item navigation-item--right" sec:authorize="isAuthenticated()">

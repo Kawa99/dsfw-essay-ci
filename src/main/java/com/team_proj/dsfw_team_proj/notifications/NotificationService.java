@@ -10,7 +10,7 @@ public interface NotificationService {
 
     List<Notification> getUserNotifications(UserEntity user);
 
-//    long getUnreadCount(UserEntity user);
-//
-//    void markAllAsRead(UserEntity user);
+    long getUnreadCount(UserEntity user);
+
+    void markAllAsRead(UserEntity user);
 }

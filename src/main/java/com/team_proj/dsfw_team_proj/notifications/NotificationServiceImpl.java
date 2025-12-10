@@ -27,10 +27,20 @@ public class NotificationServiceImpl implements NotificationService {
         return notificationRepository.findByUserOrderByTimestampDesc(user);
     }
 
-    // still working on this feature.
-    public long countUnreadNotifications(UserEntity user) {
+
+    public long getUnreadCount(UserEntity user) {
         return notificationRepository.countByUserAndIsReadFalse(user);
     }
 
+    @Override
+    public void markAllAsRead(UserEntity user) {
+        List<Notification> unread = notificationRepository.findByUserAndIsReadFalse(user);
 
+        if(unread.isEmpty()){
+            return;
+        }
+
+        unread.forEach(notification -> notification.setRead(true));
+        notificationRepository.saveAll(unread);
+    }
 }
