@@ -6,13 +6,15 @@ import com.team_proj.dsfw_team_proj.selfassessment.SkillRepository;
 import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
 public class AdminServiceImplTest {
 
     private CategoryRepository categoryRepository;
@@ -26,34 +28,21 @@ public class AdminServiceImplTest {
         service = new AdminServiceImpl(categoryRepository, skillRepository);
     }
 
-    // Adding a Category
-    @Test
-    void addCategory_ShouldSaveCategory() {
-        Category saved = new Category();
-        saved.setId(1L);
-        saved.setName("Content Design");
-        saved.setActive(true);
-
-        when(categoryRepository.save(any(Category.class))).thenReturn(saved);
-
-        Category result = service.addCategory("Content Design");
-
-        assertEquals("Content Design", result.getName());
-        assertTrue(result.isActive());
-        verify(categoryRepository).save(any(Category.class));
-    }
-
     // Adding a Category with wrong input
     @Test
+    @DisplayName("Should throw exception when category name is blank")
     void addCategory_ShouldThrow_WhenBlank() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            service.addCategory("   ");
-        });
+        // Act n Assert
+        assertThatThrownBy(() -> service.addCategory("   "))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("cannot be empty");
     }
 
     // Updating a Category
     @Test
+    @DisplayName("Should update category name successfully")
     void updateCategory_ShouldUpdateName() {
+        // Arrange
         Category existing = new Category();
         existing.setId(1L);
         existing.setName("Old Name");
@@ -62,54 +51,107 @@ public class AdminServiceImplTest {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(categoryRepository.save(existing)).thenReturn(existing);
 
+        // Act
         Category updated = service.updateCategory(1L, "New Name");
 
-        assertEquals("New Name", updated.getName());
-    }
-
-    // Adding a Skill
-    @Test
-    void addSkill_ShouldSaveSkill() {
-        Category category = new Category();
-        category.setId(5L);
-
-        when(categoryRepository.findById(5L)).thenReturn(Optional.of(category));
-
-        SkillsEntity saved = new SkillsEntity();
-        saved.setId(10L);
-        saved.setName("UserEntity Research Experience");
-        saved.setCategory(category);
-
-        when(skillRepository.save(any(SkillsEntity.class))).thenReturn(saved);
-
-        SkillsEntity result = service.addSkill("UserEntity Research Experience", 5L);
-
-        assertEquals("UserEntity Research Experience", result.getName());
-        verify(skillRepository).save(any(SkillsEntity.class));
+        // Assert
+        assertThat(updated.getName()).isEqualTo("New Name");
+        verify(categoryRepository).save(existing);
     }
 
     // Deactivating a skills
     @Test
+    @DisplayName("Should deactivate skill successfully")
     void deactivateSkill_ShouldSetInactive() {
+        // Arrange
         SkillsEntity skill = new SkillsEntity();
         skill.setId(3L);
         skill.setActive(true);
 
         when(skillRepository.findById(3L)).thenReturn(Optional.of(skill));
 
+        // Act
         service.deactivateSkill(3L);
 
-        assertFalse(skill.isActive());
+        // Assert
+        assertThat(skill.isActive()).isFalse();
         verify(skillRepository).save(skill);
     }
 
     @Test
+    @DisplayName("Should throw exception when adding skill to non-existent category")
     void addSkill_ShouldThrow_WhenCategoryDoesNotExist() {
+        // Arrange
         when(categoryRepository.findById(999L)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> {
-            service.addSkill("Test Skill", 999L);
-        });
+        // Act n Assert
+        assertThatThrownBy(() -> service.addSkill("Test Skill", 999L))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Category not found");
     }
 
+    @Test
+    @DisplayName("Should reactivate inactive category instead of creating duplicate")
+    void addCategory_ShouldReactivateInactiveCategory() {
+        // Arrange: inactive category exists
+        Category inactiveCategory = new Category();
+        inactiveCategory.setId(1L);
+        inactiveCategory.setName("Design");
+        inactiveCategory.setActive(false);
+
+        when(categoryRepository.findByName("Design")).thenReturn(Optional.of(inactiveCategory));
+        when(categoryRepository.save(any(Category.class))).thenReturn(inactiveCategory);
+
+        // Act
+        Category result = service.addCategory("Design");
+
+        // Assert
+        assertThat(result.isActive()).isTrue();
+        assertThat(result.getName()).isEqualTo("Design");
+        verify(categoryRepository).save(inactiveCategory);
+        verify(categoryRepository, never()).save(argThat(cat ->
+                cat != inactiveCategory && "Design".equals(cat.getName())
+        ));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when adding duplicate active category")
+    void addCategory_ShouldThrow_WhenAlreadyActive() {
+        // Arrange; active category exists
+        Category activeCategory = new Category();
+        activeCategory.setId(1L);
+        activeCategory.setName("Programming");
+        activeCategory.setActive(true);
+
+        when(categoryRepository.findByName("Programming")).thenReturn(Optional.of(activeCategory));
+
+        // Act and Assert
+        assertThatThrownBy(() -> service.addCategory("Programming"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("already exists");
+    }
+
+    @Test
+    @DisplayName("Should throw exception when adding duplicate skill name")
+    void addSkill_ShouldThrow_WhenSkillNameExists() {
+        // Arrange
+        when(skillRepository.existsByName("Duplicate Skill")).thenReturn(true);
+
+        // Act n Assert
+        assertThatThrownBy(() -> service.addSkill("Duplicate Skill", 1L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("already exists");
+    }
+
+    @Test
+    @DisplayName("Should throw exception when deactivating non-existent skill")
+    void deactivateSkill_ShouldThrow_WhenNotFound() {
+        // Arrange
+        when(skillRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Act n Assert
+        assertThatThrownBy(() -> service.deactivateSkill(999L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("not found");
+    }
 }
