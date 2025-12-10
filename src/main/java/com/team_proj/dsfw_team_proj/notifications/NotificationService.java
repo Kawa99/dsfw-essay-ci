@@ -9,4 +9,8 @@ public interface NotificationService {
     void sendNotification(UserEntity user, String message);
 
     List<Notification> getUserNotifications(UserEntity user);
+
+//    long getUnreadCount(UserEntity user);
+//
+//    void markAllAsRead(UserEntity user);
 }

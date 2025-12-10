@@ -16,21 +16,24 @@ import java.util.UUID;
 @Service
 public class TeamServiceImpl implements TeamService {
 
-    @Autowired
     private TeamRepository teamRepository;
-    @Autowired
     private TeamMembershipRepository membershipRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
     private NotificationService notificationService;
     private UserService userService;
 
-    public TeamServiceImpl(NotificationService notificationService, UserService userService) {
+    public TeamServiceImpl(TeamRepository teamRepository,
+                           TeamMembershipRepository membershipRepository,
+                           PasswordEncoder passwordEncoder,
+                           NotificationService notificationService,
+                           UserService userService) {
+        this.teamRepository = teamRepository;
+        this.membershipRepository = membershipRepository;
+        this.passwordEncoder = passwordEncoder;
         this.notificationService = notificationService;
         this.userService = userService;
     }
+
 
     private void validateTeamPasswordOrThrow(String password) {
         if (password == null || password.isBlank()) {
@@ -157,13 +160,13 @@ public class TeamServiceImpl implements TeamService {
             throw new RuntimeException("Managers cannot leave their own team. You must delete the team instead.");
         }
 
-        notificationService.sendNotification(user, "You have left team" + team.getTeamName());
+        notificationService.sendNotification(user, "You have left team " + team.getTeamName());
 
         List<TeamMembershipEntity> memberships = membershipRepository.findAllByTeamId(teamId);
         memberships.stream().filter(teamMembershipEntity -> teamMembershipEntity.getRole() == TeamRole.MANAGER)
                         .forEach(teamMembershipEntity -> {
                             UserEntity manager = teamMembershipEntity.getUser();
-                            notificationService.sendNotification(manager, user.getEmail() + " left your" + team.getTeamName() + "team");
+                            notificationService.sendNotification(manager, user.getEmail() + " left your " + team.getTeamName() + " team");
                         });
 
         membershipRepository.delete(membership);
