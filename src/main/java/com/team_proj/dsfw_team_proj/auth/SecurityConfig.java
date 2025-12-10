@@ -19,7 +19,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/styles/**", "/scripts/**", "/govuk-assets/**","/images/**", "/assets/**").permitAll()
                         .requestMatchers("/register", "/login", "/error", "/","/home").permitAll()
-                        //.requestMatchers("/manager/**").hasRole("MANAGER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -82,16 +83,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Map<Long, List<SkillsEntity>> getActiveSkillsGroupedByCategory() {
-        Map<Long, List<SkillsEntity>> result = new HashMap<>();
-        List<Category> categories = getActiveCategories();
-
-        for (Category category : categories) {
-            List<SkillsEntity> skills =
-                    skillRepository.findByIsActiveTrueAndCategory_Id(category.getId());
-            result.put(category.getId(), skills);
-        }
-
-        return result;
+        List<SkillsEntity> allSkills = skillRepository.findByIsActiveTrueAndCategory_IsActiveTrueOrderByCategoryIdAsc();
+        return allSkills.stream()
+                .collect(Collectors.groupingBy(skill -> skill.getCategory().getId(),Collectors.toList()));
     }
 
     @Override

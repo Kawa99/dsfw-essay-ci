@@ -21,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
         String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
         userEntity.setPassword(encodedPassword);
+        userEntity.setRole("USER");
         return userRepository.save(userEntity);
     }
 

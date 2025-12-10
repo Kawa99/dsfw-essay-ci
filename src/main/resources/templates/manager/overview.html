@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Manager Overview - Digital Skills for Wales</title>
 
     <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
@@ -30,7 +32,197 @@
 
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
-                    <h1 class="govuk-heading-xl">Team Self-Assessment Overview</h1>
+                    <div class="govuk-!-margin-bottom-6">
+                        <!-- Team Name Display/Edit -->
+                        <div class="govuk-!-margin-bottom-2">
+        <span th:id="'team-name-display-' + ${team.id}"
+              class="govuk-heading-xl govuk-!-display-inline-block govuk-!-margin-bottom-0"
+              th:text="${team.teamName}">Team Name</span>
+
+                            <button type="button"
+                                    class="govuk-button govuk-button--secondary govuk-!-margin-left-2 govuk-!-margin-bottom-0"
+                                    style="vertical-align: middle; padding: 8px 10px; font-size: 16px;"
+                                    th:id="'edit-name-btn-' + ${team.id}"
+                                    th:data-team-id="${team.id}"
+                                    onclick="enableEditTeamName(this.getAttribute('data-team-id'))">
+                                Edit
+                            </button>
+
+                            <!-- Edit mode for name (hidden by default) -->
+                            <div th:id="'team-name-edit-' + ${team.id}" style="display: none;" class="govuk-!-margin-top-2">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" th:for="'team-name-input-' + ${team.id}">
+                                        Team name
+                                    </label>
+                                    <input class="govuk-input govuk-input--width-20"
+                                           type="text"
+                                           th:id="'team-name-input-' + ${team.id}"
+                                           th:value="${team.teamName}">
+
+                                    <div th:id="'team-name-error-' + ${team.id}"
+                                         class="govuk-error-message"
+                                         style="display: none;">
+                                    </div>
+
+                                    <div class="govuk-button-group govuk-!-margin-top-2">
+                                        <button type="button"
+                                                class="govuk-button govuk-button--secondary"
+                                                th:data-team-id="${team.id}"
+                                                onclick="saveTeamName(this.getAttribute('data-team-id'))">
+                                            Save
+                                        </button>
+                                        <button type="button"
+                                                class="govuk-link"
+                                                style="border: none; background: none; cursor: pointer; text-decoration: underline;"
+                                                th:data-team-id="${team.id}"
+                                                onclick="cancelEditTeamName(this.getAttribute('data-team-id'))">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Team Description Display/Edit -->
+                        <div class="govuk-!-margin-bottom-4">
+                            <p th:id="'team-description-display-' + ${team.id}"
+                               class="govuk-body-l govuk-!-display-inline-block"
+                               th:text="${team.description} ?: 'No description provided'">Description</p>
+
+                            <button type="button"
+                                    class="govuk-button govuk-button--secondary govuk-!-margin-left-2 govuk-!-margin-bottom-0"
+                                    style="vertical-align: middle; padding: 8px 10px; font-size: 16px;"
+                                    th:id="'edit-description-btn-' + ${team.id}"
+                                    th:data-team-id="${team.id}"
+                                    onclick="enableEditTeamDescription(this.getAttribute('data-team-id'))">
+                                Edit
+                            </button>
+
+                            <!-- Edit mode for description (hidden by default) -->
+                            <div th:id="'team-description-edit-' + ${team.id}" style="display: none;" class="govuk-!-margin-top-2">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" th:for="'team-description-input-' + ${team.id}">
+                                        Team description
+                                    </label>
+                                    <textarea class="govuk-textarea"
+                                              th:id="'team-description-input-' + ${team.id}"
+                                              rows="5"
+                                              th:text="${team.description}"></textarea>
+
+                                    <div th:id="'team-description-error-' + ${team.id}"
+                                         class="govuk-error-message"
+                                         style="display: none;">
+                                    </div>
+
+                                    <div class="govuk-button-group govuk-!-margin-top-2">
+                                        <button type="button"
+                                                class="govuk-button govuk-button--secondary"
+                                                th:data-team-id="${team.id}"
+                                                onclick="saveTeamDescription(this.getAttribute('data-team-id'))">
+                                            Save
+                                        </button>
+                                        <button type="button"
+                                                class="govuk-link"
+                                                style="border: none; background: none; cursor: pointer; text-decoration: underline;"
+                                                th:data-team-id="${team.id}"
+                                                onclick="cancelEditTeamDescription(this.getAttribute('data-team-id'))">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Change Team Password Section (Collapsible) -->
+                        <details class="govuk-details govuk-!-margin-bottom-6" data-module="govuk-details">
+                            <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+            Change team password
+        </span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                <div class="govuk-notification-banner" role="region">
+                                    <div class="govuk-notification-banner__header">
+                                        <h2 class="govuk-notification-banner__title">
+                                            Important
+                                        </h2>
+                                    </div>
+                                    <div class="govuk-notification-banner__content">
+                                        <p class="govuk-body-s">
+                                            Changing the team password will only affect new members trying to join.
+                                            Existing team members will remain in the team and won't need to re-enter the password.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <form th:id="'password-form-' + ${team.id}" onsubmit="return false;">
+                                    <!-- Current Password Field -->
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label govuk-label--s" th:for="'current-password-' + ${team.id}">
+                                            Current password
+                                        </label>
+                                        <input class="govuk-input govuk-input--width-20"
+                                               type="password"
+                                               th:id="'current-password-' + ${team.id}"
+                                               autocomplete="current-password">
+                                    </div>
+
+                                    <!-- New Password Field -->
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label govuk-label--s" th:for="'new-password-' + ${team.id}">
+                                            New password
+                                        </label>
+                                        <div th:id="'new-password-hint-' + ${team.id}" class="govuk-hint">
+                                            Your password must contain:
+                                            <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2" th:id="'password-requirements-' + ${team.id}">
+                                                <li th:id="'req-length-' + ${team.id}" class="govuk-body-s">At least 8 characters</li>
+                                                <li th:id="'req-uppercase-' + ${team.id}" class="govuk-body-s">At least one uppercase letter (A-Z)</li>
+                                                <li th:id="'req-lowercase-' + ${team.id}" class="govuk-body-s">At least one lowercase letter (a-z)</li>
+                                                <li th:id="'req-number-' + ${team.id}" class="govuk-body-s">At least one number (0-9)</li>
+                                                <li th:id="'req-special-' + ${team.id}" class="govuk-body-s">At least one special character (!@#$%^&amp;*()_+&lt;&gt;/?;:'&quot;\|&gt;&lt;)</li>
+                                            </ul>
+                                        </div>
+                                        <input class="govuk-input govuk-input--width-20"
+                                               type="password"
+                                               th:id="'new-password-' + ${team.id}"
+                                               aria-describedby="new-password-hint"
+                                               autocomplete="new-password">
+                                    </div>
+
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label govuk-label--s" th:for="'confirm-password-' + ${team.id}">
+                                            Confirm new password
+                                        </label>
+                                        <div th:id="'password-match-hint-' + ${team.id}" class="govuk-hint" style="display: none;">
+                                            <span th:id="'match-status-' + ${team.id}" class="govuk-body-s"></span>
+                                        </div>
+                                        <input class="govuk-input govuk-input--width-20"
+                                               type="password"
+                                               th:id="'confirm-password-' + ${team.id}"
+                                               autocomplete="new-password">
+                                    </div>
+
+                                    <!-- Error Message -->
+                                    <div th:id="'password-error-' + ${team.id}"
+                                         class="govuk-error-message"
+                                         style="display: none;">
+                                    </div>
+
+                                    <!-- Submit Button -->
+                                    <button type="button"
+                                            class="govuk-button"
+                                            data-module="govuk-button"
+                                            th:id="'change-password-btn-' + ${team.id}"
+                                            th:data-team-id="${team.id}"
+                                            disabled>
+                                        Change password
+                                    </button>
+                                </form>
+                            </div>
+                        </details>
+
+                        <h2 class="govuk-heading-l govuk-!-margin-bottom-0">Team Self-Assessment Overview</h2>
+                    </div>
 
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
@@ -39,6 +231,7 @@
                             <th scope="col" class="govuk-table__header col-name">Name</th>
                             <th scope="col" class="govuk-table__header col-status">Role</th>
                             <th scope="col" class="govuk-table__header col-action">Action</th>
+                            <th scope="col" class="govuk-table__header col-action">Remove</th>
                         </tr>
                         </thead>
                         <tbody class="govuk-table__body">
@@ -59,12 +252,24 @@
                                     View Results
                                 </button>
                             </td>
+                            <td class="govuk-table__cell">
+                                <!-- REMOVE MEMBER BUTTON (Only shown for non-managers) -->
+                                <div th:if="${emp.role != 'MANAGER'}" style="margin-top: 8px;">
+                                    <button type="button"
+                                            class="govuk-button govuk-button--warning remove-member-btn"
+                                            th:data-user-id="${emp.userId}"
+                                            th:data-team-id="${team.id}"
+                                            data-module="govuk-button">
+                                        Remove
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
 
                     <div class="govuk-button-group govuk-!-margin-top-6">
-                        <a th:href="@{/manager/dashboard}" class="govuk-button" data-module="govuk-button">See all results</a>
+                        <a href="#" class="govuk-button" data-module="govuk-button">See all results</a>
                     </div>
                 </div>
             </div>
@@ -77,6 +282,6 @@
 
 <script th:src="@{/scripts/govuk-frontend.js}"></script>
 <script th:src="@{/scripts/gov-init.js}"></script>
-
+<script th:src="@{/scripts/team-settings.js}"></script>
 </body>
 </html>
