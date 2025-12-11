@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,8 @@ public class AdminController {
                            @RequestParam("questionType") String questionTypeStr,
                            @RequestParam(value = "options", required = false) String options,
                            @RequestParam(value = "tagIds", required = false) List<Long> tagIds,
-                           RedirectAttributes redirectAttributes) {
+                           RedirectAttributes redirectAttributes,
+                           HttpServletRequest request) {
         try {
 
             QuestionType questionType = QuestionType.valueOf(questionTypeStr);
@@ -103,6 +105,17 @@ public class AdminController {
 
             // Attach tags
             saService.updateSkillTags(skill.getId(), tagIds);
+
+            Map<String, String[]> paramMap = request.getParameterMap();
+            Map<String, String> recMap = new java.util.HashMap<>();
+
+            for (String key : paramMap.keySet()) {
+                if (key.startsWith("rec_")) {
+                    recMap.put(key.substring(4), request.getParameter(key));
+                }
+            }
+
+            saService.saveRecommendations(skill.getId(), recMap);
 
             redirectAttributes.addFlashAttribute("success", "Question added successfully");
 
@@ -120,7 +133,8 @@ public class AdminController {
                             @RequestParam("questionType") String questionTypeStr,
                             @RequestParam(value = "options", required = false) String options,
                             @RequestParam(value = "tagIds", required = false) List<Long> tagIds,
-                            RedirectAttributes redirectAttributes) {
+                            RedirectAttributes redirectAttributes,
+                            HttpServletRequest request) {
         try {
             QuestionType questionType = QuestionType.valueOf(questionTypeStr);
 
@@ -128,6 +142,17 @@ public class AdminController {
 
             // Save tags
             saService.updateSkillTags(id, tagIds);
+
+            Map<String, String[]> paramMap = request.getParameterMap();
+            Map<String, String> recMap = new java.util.HashMap<>();
+
+            for (String key : paramMap.keySet()) {
+                if (key.startsWith("rec_")) {
+                    recMap.put(key.substring(4), request.getParameter(key));
+                }
+            }
+
+            saService.updateSkillRecommendations(id, recMap);
 
             redirectAttributes.addFlashAttribute("success", "Question updated successfully");
 

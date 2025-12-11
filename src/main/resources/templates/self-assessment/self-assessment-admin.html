@@ -19,6 +19,20 @@
     <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
 </head>
 
+<style>
+    .recommendation-wrapper {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transition: max-height 0.35s ease, opacity 0.25s ease;
+    }
+
+    .recommendation-wrapper.active {
+        max-height: 800px;
+        opacity: 1;
+    }
+</style>
+
 <body class="govuk-template__body dsfw-page">
 
 <div th:replace="~{'fragments/HeaderAndFooter' :: mainHeader}"></div>
@@ -188,6 +202,8 @@
                                         <input type="hidden" name="options" class="options-hidden-field" th:value="${skill.options}">
                                     </div>
 
+                                    <div class="recommendation-block govuk-!-margin-top-4"></div>
+
                                     <!-- tag selection -->
                                     <div class="govuk-form-group tag-selector"
                                          th:attr="data-skill-id=${skill.id}">
@@ -205,22 +221,6 @@
                                                            th:checked="${skill.tags.contains(tag)}" />
                                                     <span class="govuk-checkboxes__label" th:text="${tag.name}"></span>
                                                 </label>
-                                            </div>
-                                        </div>
-
-                                        <!-- Add new tag -->
-                                        <div class="add-tag-block govuk-!-margin-top-3">
-                                            <button type="button" class="govuk-link govuk-link--no-visited-state"
-                                                    onclick="toggleNewTagInput(this)">
-                                                + Add new tag
-                                            </button>
-
-                                            <div class="new-tag-input govuk-!-margin-top-2" style="display:none;">
-                                                <input class="govuk-input new-tag-name" type="text" placeholder="New tag name">
-                                                <button type="button"
-                                                        class="govuk-button govuk-button--secondary govuk-!-margin-left-2 create-tag-btn">
-                                                    Add
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -342,6 +342,8 @@
                                     <input type="hidden" name="options" class="options-hidden-field">
                                 </div>
 
+                                <div class="recommendation-block govuk-!-margin-top-4"></div>
+
                                 <details class="govuk-details" data-module="govuk-details">
 
                                     <summary class="govuk-details__summary">
@@ -405,6 +407,37 @@
                                             </table>
                                         </div>
                                     </div>
+                                    <div class="add-tag-block govuk-!-margin-top-4">
+                                        <button type="button"
+                                                class="govuk-button govuk-button--secondary"
+                                                onclick="toggleNewTagInput(this)">
+                                            Add new tag
+                                        </button>
+
+                                        <div class="new-tag-input govuk-!-margin-top-2 govuk-!-padding-4"
+                                             style="display:none; background-color: #f3f2f1; border-left: 5px solid #b1b4b6;">
+
+                                            <div class="govuk-form-group govuk-!-margin-bottom-0">
+                                                <label class="govuk-label govuk-!-font-weight-bold" for="new-tag-name">
+                                                    Tag name
+                                                </label>
+
+                                                <div style="display: flex; align-items: flex-start; gap: 15px;">
+                                                    <input class="govuk-input govuk-!-width-two-thirds new-tag-name"
+                                                           id="new-tag-name"
+                                                           type="text"
+                                                           placeholder="e.g. Leadership"
+                                                           autocomplete="off">
+
+                                                    <button type="button"
+                                                            class="govuk-button create-tag-btn"
+                                                            style="margin-bottom: 0;">
+                                                        Save Tag
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </details>
 
                                 <details class="govuk-details" data-module="govuk-details">
@@ -430,22 +463,83 @@
                                                 </label>
                                             </div>
                                         </div>
+                                    </div>
+                                </details>
+                                <!-- RECOMMENDATIONS (OPTION 1 — GOV.UK SUMMARY CARD) -->
+                                <div class="govuk-summary-card recommendation-card govuk-!-margin-top-6">
+                                    <div class="govuk-summary-card__title-wrapper">
+                                        <h3 class="govuk-summary-card__title">Recommendations (optional)</h3>
+                                    </div>
 
-                                        <!-- Add new tag -->
-                                        <div class="add-tag-block govuk-!-margin-top-3">
-                                            <button type="button" class="govuk-button govuk-button--secondary" onclick="toggleNewTagInput(this)">
-                                                + Add new tag
-                                            </button>
+                                    <div class="govuk-summary-card__content">
 
-                                            <div class="new-tag-input govuk-!-margin-top-2" style="display:none;">
-                                                <input class="govuk-input new-tag-name" type="text" placeholder="New tag name">
-                                                <button type="button" class="govuk-button govuk-button--secondary govuk-!-margin-left-2 create-tag-btn">
-                                                    Add
-                                                </button>
+                                        <!-- RATING SCALE fields (hidden until selected) -->
+                                        <div class="recommendation-group rec-rating" style="display:none;">
+                                            <h4 class="govuk-heading-s">Rating Scale (1–5)</h4>
+
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label">Low score (1–2) recommendation URL</label>
+                                                <input class="govuk-input rec-input"
+                                                       name="rec_LOW"
+                                                       type="url"
+                                                       placeholder="https://example.com/resource">
+                                            </div>
+
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label">Medium score (3) recommendation URL</label>
+                                                <input class="govuk-input rec-input"
+                                                       name="rec_MEDIUM"
+                                                       type="url"
+                                                       placeholder="https://example.com/resource">
+                                            </div>
+
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label">High score (4–5) recommendation URL</label>
+                                                <input class="govuk-input rec-input"
+                                                       name="rec_HIGH"
+                                                       type="url"
+                                                       placeholder="https://example.com/resource">
+                                            </div>
+                                        </div>
+
+                                        <!-- YES/NO fields -->
+                                        <div class="recommendation-group rec-yesno" style="display:none;">
+                                            <h4 class="govuk-heading-s">Yes / No Question</h4>
+
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label">YES recommendation URL</label>
+                                                <input class="govuk-input rec-input"
+                                                       name="rec_YES"
+                                                       type="url"
+                                                       placeholder="https://example.com/resource">
+                                            </div>
+
+                                            <div class="govuk-form-group">
+                                                <label class="govuk-label">NO recommendation URL</label>
+                                                <input class="govuk-input rec-input"
+                                                       name="rec_NO"
+                                                       type="url"
+                                                       placeholder="https://example.com/resource">
+                                            </div>
+                                        </div>
+
+                                        <!-- MULTIPLE CHOICE / DROPDOWN fields (generated via JS) -->
+                                        <div class="recommendation-group rec-options" style="display:none;">
+                                            <h4 class="govuk-heading-s">Option-Based Recommendations</h4>
+
+                                            <p class="govuk-hint">A recommendation field will appear for each option you add.</p>
+
+                                            <div class="rec-options-container">
+                                                <!-- JS will inject fields here -->
                                             </div>
                                         </div>
                                     </div>
-                                </details>
+                                </div>
+
+                                <div class="recommendation-wrapper">
+                                    <div class="recommendation-block"></div>
+                                </div>
+
                                 <button type="submit" class="govuk-button">Add question</button>
                             </form>
                         </div>

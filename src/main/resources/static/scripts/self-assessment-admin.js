@@ -156,13 +156,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show/hide options builder based on question type
         select.addEventListener('change', function() {
             const selectedType = this.value;
+
+            // ------------------------------------
+            // OPTIONS BUILDER TOGGLE
+            // ------------------------------------
             if (selectedType === 'MULTIPLE_CHOICE' || selectedType === 'DROPDOWN') {
                 optionsBuilder.style.display = 'block';
-                if (hiddenField) hiddenField.required = true;
+                hiddenField.required = true;
             } else {
                 optionsBuilder.style.display = 'none';
-                if (hiddenField) hiddenField.required = false;
-                // Clear options when switching away
+                hiddenField.required = false;
                 options = [];
                 updateOptionsDisplay();
             }
@@ -187,6 +190,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 optionInput.value = '';
                 optionInput.focus();
                 updateOptionsDisplay();
+                const recContainer = form.querySelector(".recommendation-block");
+                buildOptionRecommendations(recContainer, options);
             });
         }
 
@@ -236,6 +241,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     const index = parseInt(btn.dataset.index);
                     options.splice(index, 1);
                     updateOptionsDisplay();
+
+                    const recContainer = form.querySelector(".recommendation-block");
+                    buildOptionRecommendations(recContainer, options);
                 });
             });
         }
@@ -282,6 +290,36 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        // ----------------------------------------------------
+// INITIALIZE RECOMMENDATION BLOCK (EDIT FORM)
+// ----------------------------------------------------
+        const recContainer = form.querySelector(".recommendation-block");
+
+        function updateRecommendationBlock() {
+            const selectedType = select.value;
+
+            if (selectedType === "RATING_SCALE") {
+                buildRatingScaleRecommendations(recContainer);
+            }
+            else if (selectedType === "YES_NO") {
+                buildYesNoRecommendations(recContainer);
+            }
+            else if (selectedType === "MULTIPLE_CHOICE" || selectedType === "DROPDOWN") {
+                const optionsList = hiddenField.value.trim() ? hiddenField.value.split("\n") : [];
+                buildOptionRecommendations(recContainer, optionsList);
+            }
+            else {
+                recContainer.innerHTML = "";
+                const wrapper = recContainer.closest(".recommendation-wrapper");
+                wrapper.classList.remove("active");
+                wrapper.classList.add("active");
+            }
+        }
+
+        updateOptionsVisibility();
+        updateOptionsDisplay();
+        updateRecommendationBlock();
+
         select.addEventListener('change', updateOptionsVisibility);
 
         // Initialize on load
@@ -311,6 +349,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 optionInput.value = '';
                 optionInput.focus();
                 updateOptionsDisplay();
+                const recContainer = form.querySelector(".recommendation-block");
+                updateRecommendationBlock();
             });
         }
 
@@ -357,9 +397,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add remove handlers
             tableBody.querySelectorAll('.remove-option-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const index = parseInt(btn.dataset.index);
-                    options.splice(index, 1);
-                    updateOptionsDisplay();
+                    const recContainer = form.querySelector(".recommendation-block");
+                    buildOptionRecommendations(recContainer, options);
                 });
             });
         }
@@ -526,3 +565,63 @@ document.addEventListener('DOMContentLoaded', function() {
         tbody.appendChild(row);
     }
 });
+
+// ---------------------------------------------------------
+// RECOMMENDATION FIELD GENERATORS (Option A)
+// ---------------------------------------------------------
+
+function buildRatingScaleRecommendations(container) {
+    container.innerHTML = `
+        <div class="govuk-form-group">
+            <label class="govuk-label">Low score recommendation</label>
+            <textarea class="govuk-textarea" name="rec_LOW" rows="2"></textarea>
+        </div>
+
+        <div class="govuk-form-group">
+            <label class="govuk-label">Medium score recommendation</label>
+            <textarea class="govuk-textarea" name="rec_MEDIUM" rows="2"></textarea>
+        </div>
+
+        <div class="govuk-form-group">
+            <label class="govuk-label">High score recommendation</label>
+            <textarea class="govuk-textarea" name="rec_HIGH" rows="2"></textarea>
+        </div>
+    `;
+}
+
+function buildYesNoRecommendations(container) {
+    container.innerHTML = `
+        <div class="govuk-form-group">
+            <label class="govuk-label">YES recommendation</label>
+            <textarea class="govuk-textarea" name="rec_YES" rows="2"></textarea>
+        </div>
+
+        <div class="govuk-form-group">
+            <label class="govuk-label">NO recommendation</label>
+            <textarea class="govuk-textarea" name="rec_NO" rows="2"></textarea>
+        </div>
+    `;
+}
+
+function buildOptionRecommendations(container, optionsArray) {
+    container.innerHTML = "";
+
+    if (!optionsArray || optionsArray.length === 0) {
+        container.innerHTML = `<p class="govuk-hint">Add options first to create recommendations.</p>`;
+        return;
+    }
+
+    optionsArray.forEach(option => {
+        const safeKey = option.replace(/\s+/g, "_"); // convert spaces to underscores
+
+        const block = document.createElement("div");
+        block.classList.add("govuk-form-group");
+        block.innerHTML = `
+            <label class="govuk-label">Recommendation for: <strong>${option}</strong></label>
+            <textarea class="govuk-textarea" name="rec_${safeKey}" rows="2"></textarea>
+        `;
+
+        container.appendChild(block);
+    });
+}
+

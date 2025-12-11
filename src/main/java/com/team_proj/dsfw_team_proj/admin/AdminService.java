@@ -26,4 +26,9 @@ public interface AdminService {
     List<Tag> getAllTags();
     Tag createTag(String name);
     void updateSkillTags(Long skillId, List<Long> tagIds);
+
+    // Recommendations
+    void updateSkillRecommendations(Long skillId, Map<String, String> conditionToUrlMap);
+    Map<String, String> getSkillRecommendations(Long skillId);
+    void saveRecommendations(Long skillId, Map<String, String> recMap);
 }
