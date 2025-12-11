@@ -5,5 +5,4 @@ public enum QuestionType {
     YES_NO,          // Yes/No question
     MULTIPLE_CHOICE, // Multiple checkboxes
     DROPDOWN,        // Dropdown/select menu
-    TEXT_INPUT       // Free text input
 }
