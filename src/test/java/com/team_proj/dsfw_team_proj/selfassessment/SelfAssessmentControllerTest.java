@@ -30,6 +30,15 @@ class SelfAssessmentControllerTest {
     @MockBean
     private SelfAssessmentValidator validator;
 
+    @MockBean
+    private com.team_proj.dsfw_team_proj.auth.UserRepository userRepository;
+
+    @MockBean
+    private com.team_proj.dsfw_team_proj.notifications.NotificationService notificationService;
+
+    @MockBean
+    private com.team_proj.dsfw_team_proj.auth.UserService userService;
+
     @Test
     @DisplayName("GET /self-assessment should render assessment page with data")
     @WithMockUser(username = "testuser", roles = "USER")

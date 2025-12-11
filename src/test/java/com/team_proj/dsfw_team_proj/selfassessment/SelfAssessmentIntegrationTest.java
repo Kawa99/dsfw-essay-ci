@@ -27,6 +27,15 @@ class SelfAssessmentIntegrationTest {
     @MockBean
     private SelfAssessmentService saService;
 
+    @MockBean
+    private com.team_proj.dsfw_team_proj.auth.UserRepository userRepository;
+
+    @MockBean
+    private com.team_proj.dsfw_team_proj.notifications.NotificationService notificationService;
+
+    @MockBean
+    private com.team_proj.dsfw_team_proj.auth.UserService userService;
+
     @Test
     @DisplayName("Integration: Valid submission flow with mocked service but real validator")
     @WithMockUser(username = "testuser", roles = "USER")
