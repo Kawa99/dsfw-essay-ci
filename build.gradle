@@ -32,8 +32,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    // OPTION A: Use this for Development/Testing
-    //runtimeOnly 'com.h2database:h2'
 
     // OPTION B: Uncomment this for the real database
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'

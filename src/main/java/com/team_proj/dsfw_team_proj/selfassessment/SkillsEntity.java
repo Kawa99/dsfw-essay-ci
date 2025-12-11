@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,4 +46,11 @@ public class SkillsEntity {
 
     @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SkillRecommendation> recommendations = new ArrayList<>();
+
+    public List<String> getOptionsList() {
+        if (options == null || options.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(options.trim().split("\\r?\\n"));
+    }
 }

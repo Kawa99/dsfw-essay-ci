@@ -102,3 +102,30 @@ a.login-button-styled:active {
     top: 2px;
     box-shadow: none;
 }
+
+.navigation-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: bold;
+}
+
+.notification-badge {
+    background-color: #d93025;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    position: absolute;
+    top: -11px;
+    right: -25px;
+
+}

@@ -32,6 +32,15 @@ class SelfAssessmentFullIntegrationTest {
     @Autowired
     private SelfAssessmentValidator validator;
 
+    @MockBean
+    private com.team_proj.dsfw_team_proj.auth.UserRepository userRepository;
+
+    @MockBean
+    private com.team_proj.dsfw_team_proj.notifications.NotificationService notificationService;
+
+    @MockBean
+    private com.team_proj.dsfw_team_proj.auth.UserService userService;
+
     @Test
     @DisplayName("Full integration: GET assessment page loads with application context")
     @WithMockUser(username = "testuser", roles = "USER")

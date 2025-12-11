@@ -1,6 +1,8 @@
 package com.team_proj.dsfw_team_proj.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,4 +31,24 @@ public class UserServiceImpl implements UserService {
     public UserEntity findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+
+    @Override
+    public UserEntity getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            throw new IllegalStateException("No authenticated user in SecurityContext");
+        }
+
+        String email = auth.getName();
+
+        UserEntity user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new IllegalStateException("User not found with email: " + email);
+        }
+
+        return user;
+    }
+
 }

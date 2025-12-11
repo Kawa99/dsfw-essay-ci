@@ -1,6 +1,8 @@
 package com.team_proj.dsfw_team_proj.teams;
 
 import com.team_proj.dsfw_team_proj.auth.UserEntity;
+import com.team_proj.dsfw_team_proj.auth.UserService;
+import com.team_proj.dsfw_team_proj.notifications.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,13 +16,24 @@ import java.util.UUID;
 @Service
 public class TeamServiceImpl implements TeamService {
 
-    @Autowired
     private TeamRepository teamRepository;
-    @Autowired
     private TeamMembershipRepository membershipRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
+    private NotificationService notificationService;
+    private UserService userService;
+
+    public TeamServiceImpl(TeamRepository teamRepository,
+                           TeamMembershipRepository membershipRepository,
+                           PasswordEncoder passwordEncoder,
+                           NotificationService notificationService,
+                           UserService userService) {
+        this.teamRepository = teamRepository;
+        this.membershipRepository = membershipRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.notificationService = notificationService;
+        this.userService = userService;
+    }
+
 
     private void validateTeamPasswordOrThrow(String password) {
         if (password == null || password.isBlank()) {
@@ -73,6 +86,7 @@ public class TeamServiceImpl implements TeamService {
                 membership.setRole(TeamRole.MANAGER);
 
                 membershipRepository.save(membership);
+                notificationService.sendNotification(creator, "You have created team" + savedTeam.getTeamName());
                 return savedTeam;
 
             } catch (DataIntegrityViolationException e) {
@@ -101,6 +115,14 @@ public class TeamServiceImpl implements TeamService {
         membership.setRole(TeamRole.MEMBER);
 
         membershipRepository.save(membership);
+
+        notificationService.sendNotification(user, "You were added to Team " + team.getTeamName());
+        List<TeamMembershipEntity> memberships = membershipRepository.findAllByTeamId(team.getId());
+        memberships.stream().filter(teamMembershipEntity -> teamMembershipEntity.getRole() == TeamRole.MANAGER)
+                .forEach(teamMembershipEntity -> {
+                    UserEntity manager = teamMembershipEntity.getUser();
+                    notificationService.sendNotification(manager, user.getEmail() + " successfully joined Team " + team.getTeamName());
+                });
     }
 
     @Override
@@ -116,8 +138,13 @@ public class TeamServiceImpl implements TeamService {
     @Transactional
     public void deleteTeam(Long teamId) {
         List<TeamMembershipEntity> memberships = membershipRepository.findAllByTeamId(teamId);
+        TeamEntity team = teamRepository.findById(teamId).orElse(null);
+
         membershipRepository.deleteAll(memberships);
         teamRepository.deleteById(teamId);
+
+        UserEntity user = userService.getCurrentUser();
+        notificationService.sendNotification(user, "You have deleted team " + team.getTeamName());
     }
 
     @Override
@@ -132,6 +159,16 @@ public class TeamServiceImpl implements TeamService {
         if (membership.getRole() == TeamRole.MANAGER) {
             throw new RuntimeException("Managers cannot leave their own team. You must delete the team instead.");
         }
+
+        notificationService.sendNotification(user, "You have left team " + team.getTeamName());
+
+        List<TeamMembershipEntity> memberships = membershipRepository.findAllByTeamId(teamId);
+        memberships.stream().filter(teamMembershipEntity -> teamMembershipEntity.getRole() == TeamRole.MANAGER)
+                        .forEach(teamMembershipEntity -> {
+                            UserEntity manager = teamMembershipEntity.getUser();
+                            notificationService.sendNotification(manager, user.getEmail() + " left your " + team.getTeamName() + " team");
+                        });
+
         membershipRepository.delete(membership);
     }
 
@@ -164,8 +201,22 @@ public class TeamServiceImpl implements TeamService {
             throw new RuntimeException("You cannot remove a team manager");
         }
 
+        UserEntity removedUser = membershipToRemove.getUser();
+
         // 6. Delete the membership
         membershipRepository.delete(membershipToRemove);
+
+        // For the manager
+        notificationService.sendNotification(
+                requester,
+                "You removed " + removedUser.getEmail() + " from team " + team.getTeamName()
+        );
+
+        // For the removed user:
+        notificationService.sendNotification(
+                removedUser,
+                "You were removed from team " + team.getTeamName()
+        );
     }
 
     @Override
