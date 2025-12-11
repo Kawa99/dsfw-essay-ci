@@ -24,7 +24,7 @@ public class ChartsController {
     @GetMapping("/skills-average")
     public ChartDataDTO getSkillAverages() {
         // fetch all skills and responses from the database
-        List<Category> categories = CategoryRepository.findAll();
+        List<Category> categories = categoryRepository.findAll();
         List<AssessmentResponse> responses = assessmentResponseRepository.findAll();
 
         // Groups responses by category ID and calculate the average score
