@@ -55,6 +55,9 @@ public class SelfAssessmentServiceImpl implements SelfAssessmentService {
             Long skillId = entry.getKey();
             Integer score = entry.getValue();
 
+            if (score == null) {
+                continue;
+            }
 
             SkillsEntity skill = skillRepository.findById(skillId).orElse(null);
 
