@@ -3,6 +3,7 @@ package com.team_proj.dsfw_team_proj.selfassessment;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,6 +43,9 @@ public class SkillsEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags = new HashSet<>();
+
+    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SkillRecommendation> recommendations = new ArrayList<>();
 
     public List<String> getOptionsList() {
         if (options == null || options.trim().isEmpty()) {

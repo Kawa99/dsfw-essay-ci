@@ -15,13 +15,16 @@ public class AdminServiceImpl implements AdminService {
     private final CategoryRepository categoryRepository;
     private final SkillRepository skillRepository;
     private final TagService tagService;
+    private final RecommendationService recommendationService;
 
     public AdminServiceImpl(CategoryRepository categoryRepository,
                             SkillRepository skillRepository,
-                            TagService tagService) {
+                            TagService tagService,
+                            RecommendationService recommendationService) {
         this.categoryRepository = categoryRepository;
         this.skillRepository = skillRepository;
         this.tagService = tagService;
+        this.recommendationService = recommendationService;
     }
 
     // Category related methods
@@ -174,5 +177,20 @@ public class AdminServiceImpl implements AdminService {
         } else {
             tagService.assignTagsToSkill(skillId, tagIds);
         }
+    }
+
+    @Override
+    public void updateSkillRecommendations(Long skillId, Map<String, List<String>> conditionToUrlMap) {
+        recommendationService.saveRecommendations(skillId, conditionToUrlMap);
+    }
+
+    @Override
+    public Map<String, String> getSkillRecommendations(Long skillId) {
+        return recommendationService.getRecommendations(skillId);
+    }
+
+    @Override
+    public void saveRecommendations(Long skillId, Map<String, List<String>> recMap) {
+        recommendationService.saveRecommendations(skillId, recMap);
     }
 }
