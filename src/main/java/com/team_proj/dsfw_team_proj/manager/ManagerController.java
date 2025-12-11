@@ -13,7 +13,7 @@ import com.team_proj.dsfw_team_proj.teams.TeamEntity;
 import com.team_proj.dsfw_team_proj.teams.TeamRepository;
 
 import java.security.Principal;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/manager")
@@ -46,9 +46,40 @@ public class ManagerController {
                 .orElseThrow(() -> new RuntimeException("Team not found"));
 
         model.addAttribute("teamId", teamId);
-        model.addAttribute("team", team);  // NEW: add team object
-        model.addAttribute("employees", members);
+        model.addAttribute("team", team);
+        model.addAttribute("members", members); //changed from "employees" to "members"
+
+        Map<String, Object> stats = managerService.getTeamStats(teamId);
+        List<Map<String, Object>> skillGaps = managerService.getSkillGaps(teamId);
+
+        model.addAttribute("stats", stats);      // Needed for dashboard cards
+        model.addAttribute("skillGaps", skillGaps); // Needed for Skill Gaps table
 
         return "manager/overview";
+    }
+    @GetMapping("individualReport/{teamId}/{userId}")
+    public String showIndividualReport(@PathVariable Long teamId, @PathVariable Long userId, Model model, Principal principal) {
+        UserEntity user = userService.findByEmail(principal.getName());
+
+        TeamEntity team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Team not found"));
+
+        model.addAttribute("team", team);
+        model.addAttribute("user", user);
+
+        //todo: fetch and add individual report data to model
+
+        return "manager/individual-result-page";
+    }
+
+    @GetMapping("teamReport/{teamId}")
+    public String showTeamReport(@PathVariable Long teamId, Model model, Principal principal) {
+
+        TeamEntity team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Team not found"));
+
+        model.addAttribute("team", team);
+
+        return "manager/team-result-page";
     }
 }

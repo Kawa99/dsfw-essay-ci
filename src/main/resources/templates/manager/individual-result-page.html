@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Member Results - Digital Skills for Wales</title>
+
+    <meta name="theme-color" content="#0b0c0c">
+
+    <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
+
+    <style>
+        .chart-container { position: relative; height: 400px; width: 100%; }
+    </style>
+</head>
+
+<body class="govuk-template__body">
+
+<a class="govuk-skip-link" href="#main-content">Skip to main content</a>
+
+<div class="dsfw-page">
+
+    <div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
+
+    <div class="govuk-width-container">
+        <a th:href="@{'/manager/overview/' + ${team.id}}" class="govuk-back-link">Back to Team Results</a>
+
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <span class="govuk-caption-xl">Individual Assessment</span>
+                    <h1 class="govuk-heading-xl" id="member-name-heading">
+                        <span th:text="${user.firstName} + ' ' + ${user.lastName}">Member Name</span>
+                    </h1>
+
+                    <div class="govuk-inset-text">
+                        This view compares the individual's self-assessment against the current team average (dotted line).
+                    </div>
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-half">
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">Gap Analysis</h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <div class="chart-container">
+                                <canvas id="memberRadarChart"></canvas>
+                            </div>
+                            <div class="govuk-body-s govuk-!-margin-top-4 govuk-!-text-align-center">
+                                <span style="color: #1d70b8; font-weight: bold;">&#9679; Individual</span>
+                                <span class="govuk-!-margin-left-2" style="color: #b1b4b6; font-weight: bold;">&#9679; Team Average</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="govuk-grid-column-one-half">
+                    <h2 class="govuk-heading-m">Competency Breakdown</h2>
+                    <dl class="govuk-summary-list" id="member-score-list">
+                    </dl>
+                </div>
+            </div>
+
+            <div class="govuk-button-group govuk-!-margin-top-6">
+                <button class="govuk-button" data-module="govuk-button">
+                    Assign Training
+                </button>
+                <button class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    Export PDF
+                </button>
+            </div>
+
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:src="@{/scripts/govuk-frontend.js}"></script>
+<script src="/scripts/team-results-mock.js"></script>
+
+</body>
+</html>
