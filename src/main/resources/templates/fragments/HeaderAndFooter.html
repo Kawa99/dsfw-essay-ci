@@ -37,6 +37,13 @@
                     <li class="navigation-item" sec:authorize="hasRole('ADMIN')">
                         <a class="navigation-link" th:href="@{/admin/self-assessment}">Admin</a>
                     </li>
+                    <li class="navigation-item">
+                        <a class="navigation-link" th:href="@{/notification}">Notifications
+                            <span class="notification-badge"
+                                  th:if="${unreadNotificationCount > 0}"
+                                  th:text="${unreadNotificationCount}"></span>
+                        </a>
+                    </li>
 
                     <li class="navigation-item navigation-item--right" sec:authorize="isAuthenticated()">
                         <form th:action="@{/logout}" method="post" class="logout-form">
