@@ -3,7 +3,10 @@ package com.team_proj.dsfw_team_proj.selfassessment;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -39,4 +42,11 @@ public class SkillsEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags = new HashSet<>();
+
+    public List<String> getOptionsList() {
+        if (options == null || options.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(options.trim().split("\\r?\\n"));
+    }
 }
