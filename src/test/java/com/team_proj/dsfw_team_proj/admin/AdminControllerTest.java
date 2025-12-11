@@ -32,6 +32,9 @@ public class AdminControllerTest {
     private AdminService adminService;
 
     @MockBean
+    private TagService tagService;
+
+    @MockBean
     private UserDetailsService userDetailsService;
 
     @MockBean

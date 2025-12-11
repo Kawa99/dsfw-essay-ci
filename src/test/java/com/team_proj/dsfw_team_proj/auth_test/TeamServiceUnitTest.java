@@ -1,6 +1,8 @@
 package com.team_proj.dsfw_team_proj.auth_test;
 
 import com.team_proj.dsfw_team_proj.auth.UserEntity;
+import com.team_proj.dsfw_team_proj.auth.UserService;
+import com.team_proj.dsfw_team_proj.notifications.NotificationService;
 import com.team_proj.dsfw_team_proj.teams.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,12 @@ public class TeamServiceUnitTest {
 
     @Mock
     private TeamRepository teamRepository;
+
+    @Mock
+    private NotificationService notificationService;
+
+    @Mock
+    private UserService userService;
 
     @Mock
     private TeamMembershipRepository membershipRepository;
