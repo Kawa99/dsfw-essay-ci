@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Home - Digital Skills for Wales</title>
+
+    <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/govuk-assets/images/govuk-logotype-crown.svg}">
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/govuk-assets/images/govuk-apple-touch-icon-180x180.png}">
+    <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
+    <meta name="theme-color" content="#0b0c0c">
+
+    <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
+</head>
+
+<body class="govuk-template__body">
+
+<a class="govuk-skip-link" href="#main-content">Skip to main content</a>
+
+<div class="dsfw-page">
+
+    <div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
+
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+
+            <div th:if="${param.error}" class="govuk-error-summary" data-module="govuk-error-summary">
+                <div role="alert">
+                    <h2 class="govuk-error-summary__title">There is a problem</h2>
+                    <div class="govuk-error-summary__body">
+                        <p th:text="${param.error[0]}">Error message</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <span class="govuk-caption-l">Public sector digital capability</span>
+                    <h1 class="govuk-heading-xl">Digital Skills for Wales</h1>
+
+                    <p class="govuk-body">
+                        Use this service to sign in with your public sector work email and join your manager’s team.
+                        Once signed in, you will be able to complete a digital skills self assessment and see where
+                        you and your team have strengths and gaps.
+                    </p>
+
+                    <div class="govuk-button-group">
+                        <a th:href="@{/teams/create}" class="govuk-button" data-module="govuk-button">
+                            Create Team
+                        </a>
+                    </div>
+
+                    <div class="govuk-form-group govuk-!-margin-top-6">
+                        <form th:action="@{/teams/join}" method="post">
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                    Join a team
+                                </legend>
+
+                                <!-- Join Code Field -->
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" for="join-code">
+                                        Team join code
+                                    </label>
+                                    <div id="join-code-hint" class="govuk-hint">
+                                        Ask your manager for the 6-character code
+                                    </div>
+                                    <input class="govuk-input govuk-input--width-10"
+                                           id="join-code"
+                                           name="joinCode"
+                                           type="text"
+                                           aria-describedby="join-code-hint"
+                                           required>
+                                </div>
+
+                                <!-- Password Field -->
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" for="team-password">
+                                        Team password
+                                    </label>
+                                    <div id="team-password-hint" class="govuk-hint">
+                                        Your manager will provide this password
+                                    </div>
+                                    <input class="govuk-input govuk-input--width-20"
+                                           id="team-password"
+                                           name="password"
+                                           type="password"
+                                           aria-describedby="team-password-hint"
+                                           required>
+                                </div>
+
+                                <button class="govuk-button" data-module="govuk-button" type="submit" style="margin-top: 10px;">
+                                    Join Team
+                                </button>
+                            </fieldset>
+                        </form>
+                    </div>
+
+                    <div class="govuk-inset-text">
+                        <p class="govuk-body">
+                            You will need a valid public sector work email address to use this service.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="govuk-grid-column-one-third">
+                    <div class="govuk-notification-banner" role="region"
+                         aria-labelledby="service-status-title"
+                         data-module="govuk-notification-banner">
+                        <div class="govuk-notification-banner__header">
+                            <h2 class="govuk-notification-banner__title" id="service-status-title">
+                                About this service
+                            </h2>
+                        </div>
+                        <div class="govuk-notification-banner__content">
+                            <p class="govuk-body">
+                                This tool helps teams across the Welsh public sector understand their existing digital
+                                skills and identify where support or training is needed.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="govuk-!-margin-top-6">
+                <h2 class="govuk-heading-m">What you will need</h2>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>A public sector work email address (for example, NHS, local authority or Welsh Government)</li>
+                    <li>The name or code of your team so you can join your manager’s team</li>
+                    <li>Around 10 minutes to answer simple yes/no questions about your work</li>
+                </ul>
+            </section>
+
+            <section class="govuk-!-margin-top-6">
+                <h2 class="govuk-heading-m">How it works</h2>
+                <ol class="govuk-list govuk-list--number">
+                    <li>Sign in using your work email.</li>
+                    <li>Join your manager’s team using the code or link they provide.</li>
+                    <li>Complete the digital skills self assessment.</li>
+                    <li>View your results and recommended resources to help fill any skill gaps.</li>
+                </ol>
+            </section>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
+</div>
+
+<script th:src="@{/scripts/govuk-frontend.js}"></script>
+<script th:src="@{/scripts/gov-init.js}"></script>
+
+</body>
+</html>

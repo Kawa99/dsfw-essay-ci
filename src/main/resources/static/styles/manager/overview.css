@@ -1,0 +1,27 @@
+.header-logo-image {
+    height: 72px;
+    width: auto;
+    max-width: 260px;
+}
+
+.col-id {
+    width: 10%;
+}
+
+.col-name {
+    width: 25%;
+}
+
+.col-status {
+    width: 45%;
+}
+
+.col-action {
+    width: 20%;
+}
+
+.submission-metadata {
+    display: block;
+    margin-top: 5px;
+    color: #505a5f;
+}

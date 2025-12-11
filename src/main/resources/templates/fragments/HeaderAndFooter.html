@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"> <head>
+    <title>Fragments</title>
+</head>
+<body>
+
+<div th:fragment="mainHeader">
+    <header class="govuk-header" role="banner" data-module="govuk-header">
+        <div class="govuk-header__container govuk-width-container">
+            <div class="govuk-header__logo">
+                <a class="govuk-header__link govuk-header__link--homepage" th:href="@{/}">
+                    <img th:src="@{/images/thumbnail_image252147.png}"
+                         alt="Digital Skills for Wales"
+                         class="govuk-header__logotype-crown header-logo-image">
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="navigation-bar">
+        <div class="govuk-width-container">
+            <nav aria-label="Primary navigation">
+                <ul class="navigation-list">
+                    <li class="navigation-item">
+                        <a class="navigation-link" th:href="@{/}">Home</a>
+                    </li>
+                    <li class="navigation-item" sec:authorize="isAuthenticated()">
+                        <a class="navigation-link" th:href="@{/my-teams}">My Teams</a>
+                    </li>
+                    <li class="navigation-item">
+                        <a class="navigation-link" th:href="@{/self-assessment}">Self Assessment</a>
+                    </li>
+                    <li class="navigation-item">
+                        <a class="navigation-link" th:href="@{/self-assessment/results}">Assessment Results</a>
+                    </li>
+                    <li class="navigation-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="navigation-link" th:href="@{/admin/self-assessment}">Admin</a>
+                    </li>
+                    <li class="navigation-item">
+                        <a class="navigation-link" th:href="@{/notification}">Notifications
+                            <span class="notification-badge"
+                                  th:if="${unreadNotificationCount > 0}"
+                                  th:text="${unreadNotificationCount}"></span>
+                        </a>
+                    </li>
+
+                    <li class="navigation-item navigation-item--right" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post" class="logout-form">
+                            <button type="submit" class="logout-button-styled">Logout</button>
+                        </form>
+                    </li>
+
+                    <li class="navigation-item navigation-item--right" sec:authorize="!isAuthenticated()">
+                        <a class="login-button-styled" th:href="@{/login}">Login</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="mainFooter">
+    <footer class="govuk-footer" role="contentinfo">
+        <div class="govuk-width-container">
+            <div class="govuk-footer__meta">
+                <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+                    <h2 class="govuk-visually-hidden">Support links</h2>
+                    <ul class="govuk-footer__inline-list">
+                        <li class="govuk-footer__inline-list-item">
+                            <a class="govuk-footer__link" th:href="@{/}">Home</a>
+                        </li>
+                  <!--      <li class="govuk-footer__inline-list-item">
+                            <a class="govuk-footer__link" th:href="@{/admin/self-assessment}">Admin</a>
+                        </li> -->
+                    </ul>
+                    <span class="govuk-footer__licence-description">
+                        2025 Digital Skills for Wales Team Project
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>

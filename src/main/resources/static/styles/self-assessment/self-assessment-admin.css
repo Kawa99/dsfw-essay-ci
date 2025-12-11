@@ -1,0 +1,98 @@
+/* Admin-specific styles only - GOV.UK base styles come from govuk-frontend.css */
+
+/* Sidebar Navigation - Custom component not in GOV.UK */
+.sub-navigation {
+    margin-bottom: 30px;
+}
+
+.sub-navigation__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 2px solid #1d70b8;
+}
+
+.sub-navigation__item a {
+    display: block;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #0b0c0c;
+    border-bottom: 1px solid #b1b4b6;
+    font-size: 19px;
+}
+
+.sub-navigation__item a:hover {
+    background-color: #f3f2f1;
+    color: #003078;
+}
+
+.sub-navigation__item a[aria-current="page"] {
+    background-color: white;
+    font-weight: 700;
+    border-left: 5px solid #1d70b8;
+    padding-left: 10px;
+}
+
+/* Utility classes for layout */
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.flex-row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.separator {
+    color: #b1b4b6;
+    margin: 0 5px;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 19px;
+}
+
+.text-red {
+    color: #d4351c !important;
+}
+
+.text-grey {
+    color: #505a5f;
+    font-style: italic;
+}
+
+/* Category sections toggle - Admin-specific */
+.category-section {
+    display: none;
+}
+
+.category-section.active {
+    display: block;
+}
+
+/* Inline edit forms - Admin-specific */
+.inline-edit-form {
+    display: none;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .govuk-grid-column-one-quarter,
+    .govuk-grid-column-three-quarters {
+        width: 100%;
+    }
+
+    .flex-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}

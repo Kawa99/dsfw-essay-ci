@@ -1,0 +1,131 @@
+.header-logo-image {
+    display: block;
+    height: 72px;
+    width: auto;
+    max-width: 260px;
+}
+
+.navigation-bar {
+    background-color: #e0e0e0;
+    border-bottom: 1px solid #b1b4b6;
+    padding: 10px 0;
+}
+
+.navigation-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.navigation-item {
+    display: inline-block;
+}
+
+.navigation-link {
+    color: #0b0c0c;
+    text-decoration: none;
+    font-size: 19px;
+    font-family: "GDS Transport", arial, sans-serif;
+    font-weight: 700;
+}
+
+.navigation-link:hover {
+    text-decoration: underline;
+    color: #1d70b8;
+}
+
+.govuk-header__link--homepage {
+    display: inline-block;
+}
+
+.navigation-item--right {
+    margin-left: auto;
+}
+
+.logout-form {
+    display: inline-block;
+}
+
+button.logout-button-styled {
+    background-color: #d4351c;
+    color: #ffffff;
+    font-family: "GDS Transport", arial, sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    box-shadow: 0 2px 0 #55150b;
+    padding: 8px 15px;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1;
+    margin: 0;
+    vertical-align: middle;
+}
+
+button.logout-button-styled:hover {
+    background-color: #aa2a16;
+    text-decoration: none;
+}
+
+button.logout-button-styled:active {
+    top: 2px;
+    box-shadow: none;
+}
+
+a.login-button-styled {
+    display: inline-block;
+    background-color: #00703c;
+    color: #ffffff;
+    font-family: "GDS Transport", arial, sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    box-shadow: 0 2px 0 #002d18;
+    padding: 8px 15px;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1;
+    margin: 0;
+    vertical-align: middle;
+}
+
+a.login-button-styled:hover {
+    background-color: #005a30;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+a.login-button-styled:active {
+    top: 2px;
+    box-shadow: none;
+}
+
+.navigation-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: bold;
+}
+
+.notification-badge {
+    background-color: #d93025;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    position: absolute;
+    top: -11px;
+    right: -25px;
+
+}

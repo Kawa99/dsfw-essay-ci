@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Digital Skills Self Assessment - GOV.UK</title>
+
+    <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/govuk-assets/images/govuk-logotype-crown.svg}">
+    <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
+    <meta name="theme-color" content="#0b0c0c">
+
+    <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
+    <link rel="stylesheet" th:href="@{/styles/self-assessment/self-assessment.css}" />
+</head>
+<body class="govuk-template__body">
+
+<a class="govuk-skip-link" href="#main-content">Skip to main content</a>
+
+<div class="dsfw-page">
+    <div th:replace="~{fragments/HeaderAndFooter :: mainHeader}"></div>
+
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <span class="govuk-caption-xl">Professional Development</span>
+                    <h1 class="govuk-heading-xl">Digital Skills Self-Assessment</h1>
+                    <p class="govuk-body-l">
+                        Answer the questions below to assess your digital capabilities.
+                    </p>
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+
+                <div class="govuk-grid-column-one-quarter">
+                    <nav class="sub-navigation" aria-label="Assessment sections">
+                        <h3 class="govuk-heading-s">Categories</h3>
+                        <ul class="sub-navigation__list">
+                            <li class="sub-navigation__item" th:each="navEntry, iterStat : ${assessmentData}">
+                                <a class="sub-navigation__link js-tab-link"
+                                   href="#"
+                                   th:aria-current="${iterStat.first} ? 'page' : 'false'"
+                                   th:data-target="'cat-' + ${navEntry.key.id}"
+                                   th:text="${navEntry.key.name}"
+                                   th:classappend="(${validationErrors != null
+                   and validationErrors.containsKey('partialCategories')
+                   and validationErrors.get('partialCategories').contains(navEntry.key.name)})
+                   ? ' sidebar-warning' : ''">
+                                </a>
+                            </li>
+                        </ul>
+                        <button type="submit"
+                                form="self-assessment-form"
+                                class="govuk-button govuk-button--primary govuk-button--start govuk-!-margin-top-4"
+                                data-module="govuk-button">
+                            Submit Assessment
+                        </button>
+                    </nav>
+                </div>
+
+                <div class="govuk-grid-column-three-quarters">
+                    <form id="self-assessment-form"
+                          th:action="@{/self-assessment/submit}"
+                          th:object="${assessmentForm}"
+                          method="post">
+
+                        <div id="error-summary"
+                             class="govuk-error-summary govuk-!-display-none"
+                             aria-labelledby="error-summary-title"
+                             role="alert"
+                             tabindex="-1"
+                             data-module="govuk-error-summary"
+                             th:attr="data-server-error=${validationErrors != null}">
+
+                            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                                There is a problem
+                            </h2>
+
+                            <div class="govuk-error-summary__body">
+                                <ul class="govuk-list govuk-error-summary__list" id="error-summary-list">
+                                    <li th:each="msg : ${validationErrors?.partialCategories}"
+                                        th:text="'Category is incomplete: ' + ${msg}"></li>
+                                    <li th:each="msg : ${validationErrors?.noCompleteCategories}"
+                                        th:text="${msg}"></li>
+                                    <li th:each="msg : ${validationErrors?.incompleteQuestions}"
+                                        th:text="'Unanswered question: ' + ${msg}"></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="govuk-!-margin-bottom-8 govuk-!-margin-top-4" id="progress-wrapper">
+                            <p class="govuk-body govuk-!-margin-bottom-2" id="progress-text" aria-live="polite">
+                                Progress: 0% complete
+                            </p>
+                            <div class="govuk-progress">
+                                <div id="progress-bar" class="govuk-progress__bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div th:each="entry, iterStat : ${assessmentData}"
+                             th:id="'cat-' + ${entry.key.id}"
+                             class="category-section"
+                             th:classappend="${!iterStat.first} ? 'js-hidden'">
+
+                            <h2 class="govuk-heading-l" th:text="${entry.key.name}">Category Name</h2>
+                            <button type="button"
+                                    class="govuk-button govuk-button--secondary clear-category-btn"
+                                    th:data-category-id="${entry.key.id}">
+                                Clear this category
+                            </button>
+
+                            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+                            <div th:each="skill : ${entry.value}"
+                                 class="govuk-form-group govuk-!-margin-bottom-6"
+                                 th:classappend="${validationErrors?.incompleteQuestions?.contains(entry.key.name + ': ' + skill.name)} ? ' question-warning'">
+                                <fieldset class="govuk-fieldset" th:aria-describedby="'hint-' + ${skill.id}">
+
+                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                        <h3 class="govuk-fieldset__heading" th:text="${skill.name}">Question Text</h3>
+                                    </legend>
+
+                                    <th:block th:if="${skill.questionType.name() == 'RATING_SCALE'}">
+                                        <div th:id="'hint-' + ${skill.id}" class="govuk-hint govuk-!-font-size-16">
+                                            1 = I do not know this skill &nbsp;&mdash;&nbsp; 5 = I am proficient
+                                        </div>
+                                        <div class="govuk-radios govuk-radios--inline govuk-radios--small">
+                                            <div class="govuk-radios__item" th:each="i : ${#numbers.sequence(1, 5)}">
+                                                <input class="govuk-radios__input" type="radio"
+                                                       th:field="*{answers[__${skill.id}__]}"
+                                                       th:value="${i}"
+                                                       th:id="'skill-'+${skill.id}+'-val-'+${i}">
+                                                <label class="govuk-label govuk-radios__label"
+                                                       th:for="'skill-'+${skill.id}+'-val-'+${i}"
+                                                       th:text="${i}"></label>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${skill.questionType.name() == 'YES_NO'}">
+                                        <div class="govuk-radios govuk-radios--inline">
+                                            <div class="govuk-radios__item">
+                                                <input class="govuk-radios__input" type="radio"
+                                                       th:field="*{answers[__${skill.id}__]}"
+                                                       value="1"
+                                                       th:id="'skill-'+${skill.id}+'-yes'">
+                                                <label class="govuk-label govuk-radios__label"
+                                                       th:for="'skill-'+${skill.id}+'-yes'">Yes</label>
+                                            </div>
+                                            <div class="govuk-radios__item">
+                                                <input class="govuk-radios__input" type="radio"
+                                                       th:field="*{answers[__${skill.id}__]}"
+                                                       value="0"
+                                                       th:id="'skill-'+${skill.id}+'-no'">
+                                                <label class="govuk-label govuk-radios__label"
+                                                       th:for="'skill-'+${skill.id}+'-no'">No</label>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${skill.questionType.name() == 'MULTIPLE_CHOICE'}">
+                                        <div class="govuk-radios">
+                                            <div class="govuk-radios__item" th:each="option, iterStat : ${skill.optionsList}">
+                                                <input class="govuk-radios__input" type="radio"
+                                                       th:field="*{answers[__${skill.id}__]}"
+                                                       th:value="${iterStat.count}"
+                                                       th:id="'skill-'+${skill.id}+'-opt-'+${iterStat.index}">
+                                                <label class="govuk-label govuk-radios__label"
+                                                       th:for="'skill-'+${skill.id}+'-opt-'+${iterStat.index}"
+                                                       th:text="${option}"></label>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${skill.questionType.name() == 'DROPDOWN'}">
+                                        <div class="govuk-form-group">
+                                            <select class="govuk-select"
+                                                    th:field="*{answers[__${skill.id}__]}"
+                                                    th:id="'skill-'+${skill.id}">
+                                                <option value="">Select an option</option>
+                                                <option th:each="option, iterStat : ${skill.optionsList}"
+                                                        th:value="${iterStat.count}"
+                                                        th:text="${option}"></option>
+                                            </select>
+                                        </div>
+                                    </th:block>
+
+                                </fieldset>
+                            </div>
+
+                            <div class="govuk-button-group govuk-!-margin-top-8">
+                                <button type="button"
+                                        th:if="${!iterStat.first}"
+                                        class="govuk-button govuk-button--secondary js-btn-prev"
+                                        th:data-prev-target="'cat-' + ${assessmentData.keySet().toArray()[iterStat.index - 1].id}">
+                                    Back to previous section
+                                </button>
+                                <button type="button"
+                                        th:if="${!iterStat.last}"
+                                        class="govuk-button govuk-button--secondary js-btn-next"
+                                        th:data-next-target="'cat-' + ${assessmentData.keySet().toArray()[iterStat.index + 1].id}">
+                                    Continue to next section
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div th:replace="~{fragments/HeaderAndFooter :: mainFooter}"></div>
+</div>
+
+<script th:src="@{/scripts/govuk-frontend.js}"></script>
+<script th:src="@{/scripts/gov-init.js}"></script>
+<script th:src="@{/scripts/self-assessment-validation.js}"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+
+.dashboard-card {
+    background-color: #ffffff;
+    border: 1px solid #b1b4b6;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.dashboard-card {
+    border-bottom: 4px solid #1d70b8;
+}
+
+.govuk-table__cell {
+    vertical-align: middle;
+}
+
+.govuk-table__row:hover .govuk-table__cell {
+    background-color: #f3f2f1;
+}
