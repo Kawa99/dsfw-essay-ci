@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import com.team_proj.dsfw_team_proj.selfassessment.QuestionType;
 
 @SpringBootTest
 @Transactional
@@ -44,7 +45,7 @@ class AdminServiceIntegrationTest {
         assertThat(category.isActive()).isTrue();
 
         // Act: add skill to category
-        SkillsEntity skill = adminService.addSkill("Email Management", category.getId());
+        SkillsEntity skill = adminService.addSkill("Email Management", category.getId(), QuestionType.RATING_SCALE, null);
 
         // Assert skill was saved with correct relationship
         assertThat(skill.getId()).isNotNull();
@@ -91,9 +92,9 @@ class AdminServiceIntegrationTest {
         Category cat1 = adminService.addCategory("Programming");
         Category cat2 = adminService.addCategory("Design");
 
-        adminService.addSkill("Java", cat1.getId());
-        adminService.addSkill("Python", cat1.getId());
-        adminService.addSkill("Figma", cat2.getId());
+        adminService.addSkill("Java", cat1.getId(), QuestionType.RATING_SCALE, null);
+        adminService.addSkill("Python", cat1.getId(), QuestionType.RATING_SCALE, null);
+        adminService.addSkill("Figma", cat2.getId(), QuestionType.RATING_SCALE, null);
 
         // Act
         Map<Long, List<SkillsEntity>> grouped = adminService.getActiveSkillsGroupedByCategory();
@@ -117,8 +118,8 @@ class AdminServiceIntegrationTest {
     void getActiveSkillsGroupedByCategory_ExcludesInactiveCategories_Integration() {
         // Arrange: create category with skills
         Category category = adminService.addCategory("Archived");
-        adminService.addSkill("Old Skill 1", category.getId());
-        adminService.addSkill("Old Skill 2", category.getId());
+        adminService.addSkill("Old Skill 1", category.getId(), QuestionType.RATING_SCALE, null);
+        adminService.addSkill("Old Skill 2", category.getId(), QuestionType.RATING_SCALE, null);
 
         // Verify skills are in result before deactivation
         Map<Long, List<SkillsEntity>> beforeDeactivation = adminService.getActiveSkillsGroupedByCategory();

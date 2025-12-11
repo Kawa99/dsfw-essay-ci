@@ -2,6 +2,7 @@ package com.team_proj.dsfw_team_proj.selfassessment;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.team_proj.dsfw_team_proj.selfassessment.QuestionType;
 
 public class CategoryAndSkillTestDataFactory {
 
@@ -26,6 +27,7 @@ public class CategoryAndSkillTestDataFactory {
         skill.setName(name);
         skill.setCategory(category);
         skill.setActive(true);
+        skill.setQuestionType(QuestionType.RATING_SCALE);
         return skill;
     }
 
@@ -34,6 +36,7 @@ public class CategoryAndSkillTestDataFactory {
         skill.setName(name);
         skill.setCategory(category);
         skill.setActive(false);
+        skill.setQuestionType(QuestionType.RATING_SCALE);
         return skill;
     }
 

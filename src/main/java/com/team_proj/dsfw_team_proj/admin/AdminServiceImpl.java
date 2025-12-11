@@ -1,9 +1,6 @@
 package com.team_proj.dsfw_team_proj.admin;
 
-import com.team_proj.dsfw_team_proj.selfassessment.Category;
-import com.team_proj.dsfw_team_proj.selfassessment.CategoryRepository;
-import com.team_proj.dsfw_team_proj.selfassessment.SkillRepository;
-import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
+import com.team_proj.dsfw_team_proj.selfassessment.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +14,14 @@ public class AdminServiceImpl implements AdminService {
 
     private final CategoryRepository categoryRepository;
     private final SkillRepository skillRepository;
+    private final TagService tagService;
 
     public AdminServiceImpl(CategoryRepository categoryRepository,
-                            SkillRepository skillRepository) {
+                            SkillRepository skillRepository,
+                            TagService tagService) {
         this.categoryRepository = categoryRepository;
         this.skillRepository = skillRepository;
+        this.tagService = tagService;
     }
 
     // Category related methods
@@ -89,7 +89,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public SkillsEntity addSkill(String name, Long categoryId) {
+    public SkillsEntity addSkill(String name, Long categoryId, QuestionType questionType, String options) {
         validateText(name, "Skill/question text");
 
         if (skillRepository.existsByName(name.trim())) {
@@ -99,22 +99,41 @@ public class AdminServiceImpl implements AdminService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found: " + categoryId));
 
+        // Validate options for question types that need them
+        if (questionType == QuestionType.MULTIPLE_CHOICE || questionType == QuestionType.DROPDOWN) {
+            if (options == null || options.trim().isEmpty()) {
+                throw new IllegalArgumentException("Options are required for multiple choice and dropdown questions");
+            }
+        }
+
         SkillsEntity skill = new SkillsEntity();
         skill.setName(name.trim());
         skill.setActive(true);
         skill.setCategory(category);
+        skill.setQuestionType(questionType);
+        skill.setOptions(options != null ? options.trim() : null);
 
         return skillRepository.save(skill);
     }
 
     @Override
-    public SkillsEntity updateSkill(Long id, String newName) {
+    public SkillsEntity updateSkill(Long id, String newName, QuestionType questionType, String options) {
         validateText(newName, "Skill/question text");
 
         SkillsEntity skill = skillRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Skill not found"));
 
+        // Validate options for question types that need them
+        if (questionType == QuestionType.MULTIPLE_CHOICE || questionType == QuestionType.DROPDOWN) {
+            if (options == null || options.trim().isEmpty()) {
+                throw new IllegalArgumentException("Options are required for multiple choice and dropdown questions");
+            }
+        }
+
         skill.setName(newName.trim());
+        skill.setQuestionType(questionType);
+        skill.setOptions(options != null ? options.trim() : null);
+
         return skillRepository.save(skill);
     }
 
@@ -135,6 +154,25 @@ public class AdminServiceImpl implements AdminService {
         }
         if (value.trim().length() > 255) {
             throw new IllegalArgumentException(fieldName + " is too long (max 255 chars)");
+        }
+    }
+
+    @Override
+    public List<Tag> getAllTags() {
+        return tagService.getAllTags();
+    }
+
+    @Override
+    public Tag createTag(String name) {
+        return tagService.createTag(name);
+    }
+
+    @Override
+    public void updateSkillTags(Long skillId, List<Long> tagIds) {
+        if (tagIds == null || tagIds.isEmpty()) {
+            tagService.clearTagsFromSkill(skillId);
+        } else {
+            tagService.assignTagsToSkill(skillId, tagIds);
         }
     }
 }

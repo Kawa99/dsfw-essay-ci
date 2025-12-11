@@ -1,7 +1,9 @@
 package com.team_proj.dsfw_team_proj.admin;
 
 import com.team_proj.dsfw_team_proj.selfassessment.Category;
+import com.team_proj.dsfw_team_proj.selfassessment.QuestionType;
 import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
+import com.team_proj.dsfw_team_proj.selfassessment.Tag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,12 @@ import java.util.Map;
 public class AdminController {
 
     private final AdminService saService;
+    private final TagService tagService;
 
-    public AdminController(AdminService saService) {
+    public AdminController(AdminService saService, TagService tagService) {
+
         this.saService = saService;
+        this.tagService = tagService;
     }
 
     @GetMapping
@@ -27,6 +32,10 @@ public class AdminController {
 
         model.addAttribute("categories", categories);
         model.addAttribute("skillsByCategory", skillsByCategory);
+
+        List<Tag> allTags = tagService.getAllTags();
+        model.addAttribute("allTags", allTags);
+
 
         return "self-assessment/self-assessment-admin";
     }
@@ -78,34 +87,80 @@ public class AdminController {
     }
 
     // Skill related actions
-
     @PostMapping("/skills/add")
-    public String addSkill(@RequestParam("categoryId") Long categoryId,
-                           @RequestParam("name") String name,
+    public String addSkill(@RequestParam("name") String name,
+                           @RequestParam("categoryId") Long categoryId,
+                           @RequestParam("questionType") String questionTypeStr,
+                           @RequestParam(value = "options", required = false) String options,
+                           @RequestParam(value = "tagIds", required = false) List<Long> tagIds,
                            RedirectAttributes redirectAttributes) {
-
         try {
-            saService.addSkill(name, categoryId);
-            redirectAttributes.addFlashAttribute("success", "Skill added successfully");
-        } catch (IllegalArgumentException e) {
+
+            QuestionType questionType = QuestionType.valueOf(questionTypeStr);
+
+            // Create the skill
+            SkillsEntity skill = saService.addSkill(name, categoryId, questionType, options);
+
+            // Attach tags
+            saService.updateSkillTags(skill.getId(), tagIds);
+
+            redirectAttributes.addFlashAttribute("success", "Question added successfully");
+
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
+
         return "redirect:/admin/self-assessment";
     }
+
 
     @PostMapping("/skills/{id}/edit")
     public String editSkill(@PathVariable Long id,
                             @RequestParam("name") String name,
+                            @RequestParam("questionType") String questionTypeStr,
+                            @RequestParam(value = "options", required = false) String options,
+                            @RequestParam(value = "tagIds", required = false) List<Long> tagIds,
                             RedirectAttributes redirectAttributes) {
-        saService.updateSkill(id, name);
-        redirectAttributes.addFlashAttribute("success", "Skill updated successfully");
+        try {
+            QuestionType questionType = QuestionType.valueOf(questionTypeStr);
+
+            saService.updateSkill(id, name, questionType, options);
+
+            // Save tags
+            saService.updateSkillTags(id, tagIds);
+
+            redirectAttributes.addFlashAttribute("success", "Question updated successfully");
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not update question.");
+        }
         return "redirect:/admin/self-assessment";
     }
+
 
     @PostMapping("/skills/{id}/deactivate")
     public String deactivateSkill(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         saService.deactivateSkill(id);
         redirectAttributes.addFlashAttribute("success", "Skill deactivated.");
         return "redirect:/admin/self-assessment";
+    }
+
+    @PostMapping("/tags/{id}/edit")
+    @ResponseBody
+    public Tag editTag(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        return tagService.updateTag(id, body.get("name"));
+    }
+
+    @PostMapping("/tags/{id}/deactivate")
+    @ResponseBody
+    public void deactivateTag(@PathVariable Long id) {
+        tagService.deactivateTag(id);
+    }
+
+    @PostMapping("/tags/create")
+    @ResponseBody
+    public Tag createTagAjax(@RequestBody Map<String, String> body) {
+        String name = body.get("name");
+        return saService.createTag(name);
     }
 }

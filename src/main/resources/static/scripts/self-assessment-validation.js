@@ -2,9 +2,21 @@ function getCategoryQuestions(sectionEl) {
     return Array.from(sectionEl.querySelectorAll(".govuk-form-group"));
 }
 
-// Returns true if ANy of the radio buttons inside this question are checked.
+// Returns true if the question has a valid answer (Radio, Checkbox, or Dropdown)
 function isQuestionAnswered(questionEl) {
-    return questionEl.querySelector("input[type='radio']:checked") !== null;
+    // Check for Radio or Checkbox (Rating Scale, Yes/No, Multiple Choice)
+    const checkedInput = questionEl.querySelector("input[type='radio']:checked, input[type='checkbox']:checked");
+    if (checkedInput) {
+        return true;
+    }
+
+    // Check for Dropdown (<select>)
+    const select = questionEl.querySelector("select");
+    if (select && select.value !== "") {
+        return true;
+    }
+
+    return false;
 }
 
 function getCategoryState(sectionEl) {
@@ -76,21 +88,24 @@ function getCategoryName(sectionEl) {
     return sectionEl.querySelector("h2").innerText.trim();
 }
 
-// Clear all radio inputs inside a category-section
+// Clear all inputs inside a category-section
 function clearCategory(sectionEl) {
-    const radios = sectionEl.querySelectorAll("input[type='radio']");
+    const inputs = sectionEl.querySelectorAll("input[type='radio'], input[type='checkbox'], select");
 
     // Load existing saved answers from localStorage
     const saved = JSON.parse(localStorage.getItem("selfAssessment") || "{}");
     saved.answers = saved.answers || {};
 
-    radios.forEach(r => {
-        // Uncheck in the UI
-        r.checked = false;
+    inputs.forEach(input => {
+        if (input.tagName === "SELECT") {
+            input.selectedIndex = 0;
+        } else {
+            input.checked = false;
+        }
 
-        // If this radio corresponds to a skill, remove it from saved answers
-        if (r.name && r.name.startsWith("answers[")) {
-            const skillId = r.name.replace("answers[", "").replace("]", "");
+        // Remove from saved answers
+        if (input.name && input.name.startsWith("answers[")) {
+            const skillId = input.name.replace("answers[", "").replace("]", "");
             delete saved.answers[skillId];
         }
     });
@@ -132,39 +147,56 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("selfAssessment.activeTab", targetId);
     }
 
-    // Progres bar update
+    // Progress bar update
     function updateProgress() {
-        const allQuestions = document.querySelectorAll(".govuk-form-group").length;
-        const answered = document.querySelectorAll("input[type='radio']:checked").length;
+        const allQuestions = document.querySelectorAll("#self-assessment-form .govuk-form-group");
+        let answeredCount = 0;
 
-        const percent = Math.round((answered / allQuestions) * 100);
+        allQuestions.forEach(q => {
+            if (isQuestionAnswered(q)) {
+                answeredCount++;
+            }
+        });
+
+        const percent = allQuestions.length > 0 ? Math.round((answeredCount / allQuestions.length) * 100) : 0;
 
         const bar = document.getElementById("progress-bar");
         const text = document.getElementById("progress-text");
 
-        bar.style.width = percent + "%";
-        text.textContent = `Progress: ${percent}% complete`;
+        if (bar && text) {
+            bar.style.width = percent + "%";
+            text.textContent = `Progress: ${percent}% complete`;
+        }
     }
 
     // call on load
     updateProgress();
 
+    // Select all input types
+    const allInputs = document.querySelectorAll("input[type='radio'], input[type='checkbox'], select");
+
     // call whenever an answer changes
-    document.querySelectorAll("input[type='radio']").forEach(r => {
-        r.addEventListener("change", updateProgress);
+    allInputs.forEach(input => {
+        input.addEventListener("change", updateProgress);
     });
 
-
-
     // auto-saving answers
-    document.querySelectorAll("input[type='radio']").forEach(radio => {
-        radio.addEventListener("change", () => {
-            const skillId = radio.name.replace("answers[", "").replace("]", "");
-            const value = radio.value;
+    allInputs.forEach(input => {
+        input.addEventListener("change", () => {
+            const skillId = input.name.replace("answers[", "").replace("]", "");
+            let value;
+
+            if (input.type === "checkbox") {
+                value = input.checked ? input.value : null;
+            } else {
+                value = input.value;
+            }
 
             const saved = JSON.parse(localStorage.getItem("selfAssessment") || "{}");
 
             saved.answers = saved.answers || {};
+            // Note: For checkbox groups (multiple choice), simple key-value overwrites.
+            // If strictly single-select per ID, this works.
             saved.answers[skillId] = value;
 
             localStorage.setItem("selfAssessment", JSON.stringify(saved));
@@ -176,8 +208,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (savedData.answers) {
         Object.entries(savedData.answers).forEach(([skillId, value]) => {
-            const radio = document.querySelector(`input[name="answers[${skillId}]"][value="${value}"]`);
-            if (radio) radio.checked = true;
+            // Restore radios or checkboxes
+            const input = document.querySelector(`input[name="answers[${skillId}]"][value="${value}"]`);
+            if (input) {
+                input.checked = true;
+            }
+
+            // Restore dropdowns
+            const select = document.querySelector(`select[name="answers[${skillId}]"]`);
+            if (select) {
+                select.value = value;
+            }
         });
 
         updateProgress();

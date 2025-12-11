@@ -30,7 +30,7 @@
                     <span class="govuk-caption-xl">Professional Development</span>
                     <h1 class="govuk-heading-xl">Digital Skills Self-Assessment</h1>
                     <p class="govuk-body-l">
-                        Rate your confidence level for each skill statement below on a scale of 1 to 5.
+                        Answer the questions below to assess your digital capabilities.
                     </p>
                 </div>
             </div>
@@ -69,7 +69,6 @@
                           th:object="${assessmentForm}"
                           method="post">
 
-                    <!-- Error Summary (initially hidden) -->
                         <div id="error-summary"
                              class="govuk-error-summary govuk-!-display-none"
                              aria-labelledby="error-summary-title"
@@ -84,13 +83,10 @@
 
                             <div class="govuk-error-summary__body">
                                 <ul class="govuk-list govuk-error-summary__list" id="error-summary-list">
-                                    <!-- SERVER-SIDE ERRORS -->
                                     <li th:each="msg : ${validationErrors?.partialCategories}"
                                         th:text="'Category is incomplete: ' + ${msg}"></li>
-
                                     <li th:each="msg : ${validationErrors?.noCompleteCategories}"
                                         th:text="${msg}"></li>
-
                                     <li th:each="msg : ${validationErrors?.incompleteQuestions}"
                                         th:text="'Unanswered question: ' + ${msg}"></li>
                                 </ul>
@@ -98,15 +94,11 @@
                         </div>
 
                         <div class="govuk-!-margin-bottom-8 govuk-!-margin-top-4" id="progress-wrapper">
-                            <p class="govuk-body govuk-!-margin-bottom-2" id="progress-text"
-                               aria-live="polite">
+                            <p class="govuk-body govuk-!-margin-bottom-2" id="progress-text" aria-live="polite">
                                 Progress: 0% complete
                             </p>
-
                             <div class="govuk-progress">
-                                <div id="progress-bar"
-                                     class="govuk-progress__bar"
-                                     style="width: 0%;"></div>
+                                <div id="progress-bar" class="govuk-progress__bar" style="width: 0%;"></div>
                             </div>
                         </div>
 
@@ -127,33 +119,77 @@
                             <div th:each="skill : ${entry.value}"
                                  class="govuk-form-group govuk-!-margin-bottom-6"
                                  th:classappend="${validationErrors?.incompleteQuestions?.contains(entry.key.name + ': ' + skill.name)} ? ' question-warning'">
-                            <fieldset class="govuk-fieldset" th:aria-describedby="'hint-' + ${skill.id}">
+                                <fieldset class="govuk-fieldset" th:aria-describedby="'hint-' + ${skill.id}">
 
                                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                                        <h3 class="govuk-fieldset__heading" th:text="${skill.name}">
-                                            Question Text
-                                        </h3>
+                                        <h3 class="govuk-fieldset__heading" th:text="${skill.name}">Question Text</h3>
                                     </legend>
 
-                                    <div th:id="'hint-' + ${skill.id}" class="govuk-hint govuk-!-font-size-16">
-                                        1 = I do not know this skill &nbsp;&mdash;&nbsp; 5 = I am proficient
-                                    </div>
-
-                                    <div class="govuk-radios govuk-radios--inline govuk-radios--small">
-                                        <div class="govuk-radios__item" th:each="i : ${#numbers.sequence(1, 5)}">
-                                            <input class="govuk-radios__input"
-                                                   type="radio"
-                                                   th:field="*{answers[__${skill.id}__]}"
-                                                   th:value="${i}"
-                                                   th:id="'skill-'+${skill.id}+'-val-'+${i}"
-                                                   >
-                                            <label class="govuk-label govuk-radios__label"
-                                                   th:for="'skill-'+${skill.id}+'-val-'+${i}"
-                                                   th:text="${i}">
-                                                1
-                                            </label>
+                                    <th:block th:if="${skill.questionType.name() == 'RATING_SCALE'}">
+                                        <div th:id="'hint-' + ${skill.id}" class="govuk-hint govuk-!-font-size-16">
+                                            1 = I do not know this skill &nbsp;&mdash;&nbsp; 5 = I am proficient
                                         </div>
-                                    </div>
+                                        <div class="govuk-radios govuk-radios--inline govuk-radios--small">
+                                            <div class="govuk-radios__item" th:each="i : ${#numbers.sequence(1, 5)}">
+                                                <input class="govuk-radios__input" type="radio"
+                                                       th:field="*{answers[__${skill.id}__]}"
+                                                       th:value="${i}"
+                                                       th:id="'skill-'+${skill.id}+'-val-'+${i}">
+                                                <label class="govuk-label govuk-radios__label"
+                                                       th:for="'skill-'+${skill.id}+'-val-'+${i}"
+                                                       th:text="${i}"></label>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${skill.questionType.name() == 'YES_NO'}">
+                                        <div class="govuk-radios govuk-radios--inline">
+                                            <div class="govuk-radios__item">
+                                                <input class="govuk-radios__input" type="radio"
+                                                       th:field="*{answers[__${skill.id}__]}"
+                                                       value="1"
+                                                       th:id="'skill-'+${skill.id}+'-yes'">
+                                                <label class="govuk-label govuk-radios__label"
+                                                       th:for="'skill-'+${skill.id}+'-yes'">Yes</label>
+                                            </div>
+                                            <div class="govuk-radios__item">
+                                                <input class="govuk-radios__input" type="radio"
+                                                       th:field="*{answers[__${skill.id}__]}"
+                                                       value="0"
+                                                       th:id="'skill-'+${skill.id}+'-no'">
+                                                <label class="govuk-label govuk-radios__label"
+                                                       th:for="'skill-'+${skill.id}+'-no'">No</label>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${skill.questionType.name() == 'MULTIPLE_CHOICE'}">
+                                        <div class="govuk-radios">
+                                            <div class="govuk-radios__item" th:each="option, iterStat : ${skill.optionsList}">
+                                                <input class="govuk-radios__input" type="radio"
+                                                       th:field="*{answers[__${skill.id}__]}"
+                                                       th:value="${iterStat.count}"
+                                                       th:id="'skill-'+${skill.id}+'-opt-'+${iterStat.index}">
+                                                <label class="govuk-label govuk-radios__label"
+                                                       th:for="'skill-'+${skill.id}+'-opt-'+${iterStat.index}"
+                                                       th:text="${option}"></label>
+                                            </div>
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${skill.questionType.name() == 'DROPDOWN'}">
+                                        <div class="govuk-form-group">
+                                            <select class="govuk-select"
+                                                    th:field="*{answers[__${skill.id}__]}"
+                                                    th:id="'skill-'+${skill.id}">
+                                                <option value="">Select an option</option>
+                                                <option th:each="option, iterStat : ${skill.optionsList}"
+                                                        th:value="${iterStat.count}"
+                                                        th:text="${option}"></option>
+                                            </select>
+                                        </div>
+                                    </th:block>
+
                                 </fieldset>
                             </div>
 
