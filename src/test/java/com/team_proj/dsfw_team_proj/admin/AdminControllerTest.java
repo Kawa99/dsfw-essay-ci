@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,18 @@ public class AdminControllerTest {
 
     @MockBean
     private AdminService adminService;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+    @MockBean
+    private com.team_proj.dsfw_team_proj.notifications.NotificationService notificationService;
+
+    @MockBean
+    private com.team_proj.dsfw_team_proj.auth.UserService userService;
+
+    @MockBean
+    private com.team_proj.dsfw_team_proj.auth.UserRepository userRepository;
 
     // the controller will load a page with categories + skills
     @Test
