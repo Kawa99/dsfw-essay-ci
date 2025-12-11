@@ -1,4 +1,13 @@
+function toggleNewTagInput(button) {
+    const container = button.nextElementSibling;
+    container.style.display =
+        container.style.display === "none" ? "block" : "none";
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
     // Auto-hide success banners after 5 seconds
     const successBanner = document.querySelector('.govuk-notification-banner[style*="00703c"]');
@@ -365,4 +374,155 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("create-tag-btn")) {
+            const input = e.target.closest(".new-tag-input").querySelector(".new-tag-name");
+            const tagName = input.value.trim();
+
+            if (!tagName) {
+                alert("Tag name cannot be empty.");
+                return;
+            }
+
+            fetch("/admin/self-assessment/tags/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify({ name: tagName })
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Failed to create tag");
+                    return res.json();
+                })
+                .then(tag => {
+                    addTagCheckboxToUI(tag);
+                    addTagToManageTable(tag);  // <<< NEW
+                    input.value = "";
+                })
+                .catch(err => alert(err.message));
+        }
+    });
+
+    function addTagCheckboxToUI(tag) {
+        const tagLists = document.querySelectorAll(".tag-list");
+
+        tagLists.forEach(list => {
+            const wrapper = document.createElement("div");
+            wrapper.innerHTML = `
+            <label class="govuk-checkboxes__item">
+                <input type="checkbox"
+                       class="govuk-checkboxes__input tag-checkbox"
+                       name="tagIds"
+                       value="${tag.id}" />
+                <span class="govuk-checkboxes__label">${tag.name}</span>
+            </label>
+        `;
+            list.appendChild(wrapper);
+        });
+    }
+
+    document.addEventListener("click", function (e) {
+
+        if (e.target.classList.contains("edit-tag-btn")) {
+            const row = e.target.closest("tr[data-tag-id]");
+            row.querySelector(".tag-name").style.display = "none";
+            row.querySelector(".tag-edit-input").style.display = "inline-block";
+            e.target.style.display = "none";
+            row.querySelector(".save-tag-btn").style.display = "inline-block";
+        }
+    });
+
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("save-tag-btn")) {
+
+            const row = e.target.closest("tr[data-tag-id]");
+            const id = row.getAttribute("data-tag-id");
+            const newName = row.querySelector(".tag-edit-input").value.trim();
+
+            fetch(`/admin/self-assessment/tags/${id}/edit`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify({ name: newName })
+            })
+                .then(res => res.json())
+                .then(tag => {
+                    row.querySelector(".tag-name").textContent = tag.name;
+
+                    // restore UI
+                    row.querySelector(".tag-name").style.display = "inline";
+                    row.querySelector(".tag-edit-input").style.display = "none";
+                    row.querySelector(".save-tag-btn").style.display = "none";
+                    row.querySelector(".edit-tag-btn").style.display = "inline-block";
+                })
+                .catch(err => alert("Error: " + err.message));
+        }
+    });
+
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("deactivate-tag-btn")) {
+
+            const row = e.target.closest("tr[data-tag-id]");
+            const id = row.getAttribute("data-tag-id");
+
+            fetch(`/admin/self-assessment/tags/${id}/deactivate`, {
+                method: "POST",
+                headers: {
+                    [csrfHeader]: csrfToken
+                }
+            })
+                .then(() => {
+                    row.remove();
+                    // Also remove tag from all tag-lists in skill forms
+                    document.querySelectorAll(`input.tag-checkbox[value="${id}"]`)
+                        .forEach(cb => cb.closest("label").remove());
+                })
+                .catch(err => alert("Error: " + err.message));
+        }
+    });
+
+    function addTagToManageTable(tag) {
+        const tbody = document.querySelector(".manage-tags-table-body");
+        if (!tbody) return;
+
+        const row = document.createElement("tr");
+        row.classList.add("govuk-table__row");
+        row.setAttribute("data-tag-id", tag.id);
+
+        row.innerHTML = `
+        <td class="govuk-table__cell">
+            <span class="tag-name">${tag.name}</span>
+            <input class="govuk-input tag-edit-input"
+                   type="text"
+                   value="${tag.name}"
+                   style="display:none; width:200px;" />
+        </td>
+
+        <td class="govuk-table__cell">
+            <button type="button"
+                    class="govuk-button govuk-button--secondary edit-tag-btn"
+                    style="margin-right: 10px;">
+                Edit
+            </button>
+
+            <button type="button"
+                    class="govuk-button save-tag-btn"
+                    style="display:none; margin-right: 10px;">
+                Save
+            </button>
+
+            <button type="button"
+                    class="govuk-button govuk-button--warning deactivate-tag-btn">
+                Deactivate
+            </button>
+        </td>
+    `;
+
+        tbody.appendChild(row);
+    }
 });

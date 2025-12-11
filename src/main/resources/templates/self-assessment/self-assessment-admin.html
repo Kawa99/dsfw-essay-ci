@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Self-Assessment Admin</title>
     <meta name="theme-color" content="#0b0c0c">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
@@ -117,8 +119,9 @@
                         <caption class="govuk-table__caption govuk-table__caption--m">Questions / Skills</caption>
                         <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header" style="width: 70%;">Skill / Question Text</th>
-                            <th scope="col" class="govuk-table__header">Actions</th>
+                            <th scope="col" class="govuk-table__header" style="width: 55%;">Skill / Question Text</th>
+                            <th scope="col" class="govuk-table__header" style="width: 25%;">Tags</th>
+                            <th scope="col" class="govuk-table__header" style="width: 20%;">Actions</th>
                         </tr>
                         </thead>
                         <tbody class="govuk-table__body">
@@ -185,6 +188,43 @@
                                         <input type="hidden" name="options" class="options-hidden-field" th:value="${skill.options}">
                                     </div>
 
+                                    <!-- tag selection -->
+                                    <div class="govuk-form-group tag-selector"
+                                         th:attr="data-skill-id=${skill.id}">
+
+                                        <label class="govuk-label">Tags (optional)</label>
+                                        <div class="govuk-hint">Select one or more tags for this question.</div>
+
+                                        <div class="tag-list">
+                                            <div th:each="tag : ${allTags}">
+                                                <label class="govuk-checkboxes__item">
+                                                    <input type="checkbox"
+                                                           class="govuk-checkboxes__input tag-checkbox"
+                                                           name="tagIds"
+                                                           th:value="${tag.id}"
+                                                           th:checked="${skill.tags.contains(tag)}" />
+                                                    <span class="govuk-checkboxes__label" th:text="${tag.name}"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Add new tag -->
+                                        <div class="add-tag-block govuk-!-margin-top-3">
+                                            <button type="button" class="govuk-link govuk-link--no-visited-state"
+                                                    onclick="toggleNewTagInput(this)">
+                                                + Add new tag
+                                            </button>
+
+                                            <div class="new-tag-input govuk-!-margin-top-2" style="display:none;">
+                                                <input class="govuk-input new-tag-name" type="text" placeholder="New tag name">
+                                                <button type="button"
+                                                        class="govuk-button govuk-button--secondary govuk-!-margin-left-2 create-tag-btn">
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="govuk-button-group">
                                         <button type="submit" class="govuk-button govuk-!-margin-bottom-0">Save</button>
                                         <button type="button"
@@ -193,6 +233,25 @@
                                     </div>
                                 </form>
                             </td>
+
+                            <td class="govuk-table__cell">
+                                <div class="skill-tag-list">
+
+                                    <!-- If no tags -->
+                                    <span class="govuk-hint"
+                                          th:if="${#lists.isEmpty(skill.tags)}">
+                                        No tags
+                                    </span>
+
+                                    <!-- If tags exist -->
+                                    <span th:each="tag : ${skill.tags}"
+                                          class="govuk-tag govuk-tag--blue govuk-!-margin-right-1 govuk-!-margin-bottom-1"
+                                          th:text="${tag.name}">
+
+                                    </span>
+                                </div>
+                            </td>
+
                             <td class="govuk-table__cell">
                                 <div class="action-buttons">
                                     <button type="button"
@@ -265,7 +324,7 @@
                                         <!-- When empty -->
                                         <p class="govuk-hint no-options-message">No choices added yet</p>
 
-                                        <!-- GOV.UK table for choices -->
+                                        <!-- choices -->
                                         <table class="govuk-table options-table govuk-!-display-none">
                                             <thead class="govuk-table__head">
                                             <tr class="govuk-table__row">
@@ -283,6 +342,110 @@
                                     <input type="hidden" name="options" class="options-hidden-field">
                                 </div>
 
+                                <details class="govuk-details" data-module="govuk-details">
+
+                                    <summary class="govuk-details__summary">
+                                        <span class="govuk-details__summary-text">
+                                            Manage Tags
+                                        </span>
+                                    </summary>
+                                    <div class="govuk-summary-card">
+                                        <div class="govuk-summary-card__title-wrapper">
+                                            <h3 class="govuk-summary-card__title">Manage Tags</h3>
+                                        </div>
+
+                                        <div class="govuk-summary-card__content">
+
+                                            <table class="govuk-table">
+                                                <thead class="govuk-table__head">
+                                                <tr class="govuk-table__row">
+                                                    <th scope="col" class="govuk-table__header">Tag Name</th>
+                                                    <th scope="col" class="govuk-table__header" style="width: 250px;">Actions</th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody class="govuk-table__body manage-tags-table-body">
+
+                                                <tr class="govuk-table__row" th:each="tag : ${allTags}" th:attr="data-tag-id=${tag.id}">
+
+                                                    <!-- tag name cell -->
+                                                    <td class="govuk-table__cell">
+                                                        <span class="tag-name" th:text="${tag.name}"></span>
+
+                                                        <input class="govuk-input tag-edit-input"
+                                                               type="text"
+                                                               th:value="${tag.name}"
+                                                               style="display:none; width: 200px;" />
+                                                    </td>
+
+                                                    <!-- action cells -->
+                                                    <td class="govuk-table__cell">
+
+                                                        <button type="button"
+                                                                class="govuk-button govuk-button--secondary edit-tag-btn"
+                                                                style="margin-right: 10px;">
+                                                            Edit
+                                                        </button>
+
+                                                        <button type="button"
+                                                                class="govuk-button save-tag-btn"
+                                                                style="display:none; margin-right: 10px;">
+                                                            Save
+                                                        </button>
+
+                                                        <button type="button"
+                                                                class="govuk-button govuk-button--warning deactivate-tag-btn">
+                                                            Deactivate
+                                                        </button>
+                                                    </td>
+
+                                                </tr>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <details class="govuk-details" data-module="govuk-details">
+
+                                    <summary class="govuk-details__summary">
+                                        <span class="govuk-details__summary-text">
+                                            Tags (Optional)
+                                        </span>
+                                    </summary>
+                                    <!-- TAG SELECTION -->
+                                    <div class="govuk-form-group tag-selector">
+                                    <label class="govuk-label">Tags (optional)</label>
+                                        <div class="govuk-hint">Select one or more tags for this question.</div>
+
+                                        <div class="tag-list">
+                                            <div th:each="tag : ${allTags}">
+                                                <label class="govuk-checkboxes__item">
+                                                    <input type="checkbox"
+                                                           class="govuk-checkboxes__input tag-checkbox"
+                                                           name="tagIds"
+                                                           th:value="${tag.id}" />
+                                                    <span class="govuk-checkboxes__label" th:text="${tag.name}"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Add new tag -->
+                                        <div class="add-tag-block govuk-!-margin-top-3">
+                                            <button type="button" class="govuk-button govuk-button--secondary" onclick="toggleNewTagInput(this)">
+                                                + Add new tag
+                                            </button>
+
+                                            <div class="new-tag-input govuk-!-margin-top-2" style="display:none;">
+                                                <input class="govuk-input new-tag-name" type="text" placeholder="New tag name">
+                                                <button type="button" class="govuk-button govuk-button--secondary govuk-!-margin-left-2 create-tag-btn">
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </details>
                                 <button type="submit" class="govuk-button">Add question</button>
                             </form>
                         </div>

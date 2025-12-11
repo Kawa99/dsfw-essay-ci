@@ -14,11 +14,14 @@ public class AdminServiceImpl implements AdminService {
 
     private final CategoryRepository categoryRepository;
     private final SkillRepository skillRepository;
+    private final TagService tagService;
 
     public AdminServiceImpl(CategoryRepository categoryRepository,
-                            SkillRepository skillRepository) {
+                            SkillRepository skillRepository,
+                            TagService tagService) {
         this.categoryRepository = categoryRepository;
         this.skillRepository = skillRepository;
+        this.tagService = tagService;
     }
 
     // Category related methods
@@ -151,6 +154,25 @@ public class AdminServiceImpl implements AdminService {
         }
         if (value.trim().length() > 255) {
             throw new IllegalArgumentException(fieldName + " is too long (max 255 chars)");
+        }
+    }
+
+    @Override
+    public List<Tag> getAllTags() {
+        return tagService.getAllTags();
+    }
+
+    @Override
+    public Tag createTag(String name) {
+        return tagService.createTag(name);
+    }
+
+    @Override
+    public void updateSkillTags(Long skillId, List<Long> tagIds) {
+        if (tagIds == null || tagIds.isEmpty()) {
+            tagService.clearTagsFromSkill(skillId);
+        } else {
+            tagService.assignTagsToSkill(skillId, tagIds);
         }
     }
 }
