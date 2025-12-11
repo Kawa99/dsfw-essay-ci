@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -93,5 +94,20 @@ public class TeamServiceUnitTest {
         assertThrows(RuntimeException.class, () ->
                 teamService.joinTeam("CODE12", "pass", user)
         );
+    }
+    @Test
+    public void shouldRetryGeneratingJoinCodeOnDatabaseCollision() {
+        String rawPassword = "StrongPassword1!";
+        when(passwordEncoder.encode(rawPassword)).thenReturn("encoded_hash");
+
+        when(teamRepository.save(any(TeamEntity.class)))
+                .thenThrow(new DataIntegrityViolationException("Duplicate Join Code"))
+                .thenReturn(new TeamEntity());
+
+        TeamEntity result = teamService.createTeam("Retry Team", "Desc", rawPassword, user);
+
+        assertNotNull(result);
+
+        verify(teamRepository, times(2)).save(any(TeamEntity.class));
     }
 }
