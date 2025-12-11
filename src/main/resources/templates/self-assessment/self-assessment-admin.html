@@ -8,13 +8,11 @@
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 
-    <!-- Stylesheets -->
     <link rel="stylesheet" th:href="@{/styles/govuk-frontend.css}">
     <link rel="stylesheet" th:href="@{/styles/global.css}">
     <link rel="stylesheet" th:href="@{/styles/header-footer.css}">
     <link rel="stylesheet" th:href="@{/styles/self-assessment/self-assessment-admin.css}">
 
-    <!-- Favicons -->
     <link rel="icon" type="image/x-icon" th:href="@{/govuk-assets/images/favicon.ico}">
     <link rel="mask-icon" color="#0b0c0c" th:href="@{/govuk-assets/images/govuk-mask-icon.svg}">
 </head>
@@ -28,7 +26,7 @@
     }
 
     .recommendation-wrapper.active {
-        max-height: 800px;
+        max-height: 1200px;
         opacity: 1;
     }
 </style>
@@ -70,7 +68,6 @@
             </div>
         </div>
 
-        <!-- Success message from server -->
         <div th:if="${success}" class="govuk-notification-banner" role="alert" style="border-color: #00703c;">
             <div class="govuk-notification-banner__header" style="background-color: #00703c;">
                 <h2 class="govuk-notification-banner__title">Success</h2>
@@ -151,7 +148,7 @@
                                     <div class="govuk-form-group">
                                         <label class="govuk-label" th:for="'edit-type-' + ${skill.id}">Question type</label>
                                         <select class="govuk-select question-type-select" th:id="'edit-type-' + ${skill.id}" name="questionType" required>
-                                                th:onchange="'toggleOptionsField(this, \'edit-options-group-' + ${skill.id} + '\')'">
+                                            th:onchange="'toggleOptionsField(this, \'edit-options-group-' + ${skill.id} + '\')'">
                                             <option value="RATING_SCALE" th:selected="${skill.questionType.name() == 'RATING_SCALE'}">Rating Scale (1-5)</option>
                                             <option value="YES_NO" th:selected="${skill.questionType.name() == 'YES_NO'}">Yes/No</option>
                                             <option value="MULTIPLE_CHOICE" th:selected="${skill.questionType.name() == 'MULTIPLE_CHOICE'}">Multiple Choice</option>
@@ -165,7 +162,6 @@
                                                   th:text="${skill.name}" required></textarea>
                                     </div>
 
-                                    <!-- Dynamic options interface for edit -->
                                     <div class="options-builder" style="display: none;">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label" th:for="'edit-option-input-' + ${skill.id}">Add choice</label>
@@ -178,14 +174,11 @@
                                             </div>
                                         </div>
 
-                                        <!-- List of added options -->
                                         <div class="options-list govuk-!-margin-bottom-6">
                                             <h4 class="govuk-heading-s">Choices added:</h4>
 
-                                            <!-- When empty -->
                                             <p class="govuk-hint no-options-message">No choices added yet</p>
 
-                                            <!-- GOV.UK table for choices -->
                                             <table class="govuk-table options-table govuk-!-display-none">
                                                 <thead class="govuk-table__head">
                                                 <tr class="govuk-table__row">
@@ -198,13 +191,11 @@
                                             </table>
                                         </div>
 
-                                        <!-- Hidden field to store options as newline-separated -->
                                         <input type="hidden" name="options" class="options-hidden-field" th:value="${skill.options}">
                                     </div>
 
                                     <div class="recommendation-block govuk-!-margin-top-4"></div>
 
-                                    <!-- tag selection -->
                                     <div class="govuk-form-group tag-selector"
                                          th:attr="data-skill-id=${skill.id}">
 
@@ -237,13 +228,11 @@
                             <td class="govuk-table__cell">
                                 <div class="skill-tag-list">
 
-                                    <!-- If no tags -->
                                     <span class="govuk-hint"
                                           th:if="${#lists.isEmpty(skill.tags)}">
                                         No tags
                                     </span>
 
-                                    <!-- If tags exist -->
                                     <span th:each="tag : ${skill.tags}"
                                           class="govuk-tag govuk-tag--blue govuk-!-margin-right-1 govuk-!-margin-bottom-1"
                                           th:text="${tag.name}">
@@ -304,7 +293,6 @@
                                     <textarea class="govuk-textarea" name="name" rows="3" required></textarea>
                                 </div>
 
-                                <!-- Dynamic options interface -->
                                 <div class="options-builder" style="display: none;">
                                     <div class="govuk-form-group">
                                         <label class="govuk-label" for="new-option-input">Add choice</label>
@@ -317,14 +305,11 @@
                                         </div>
                                     </div>
 
-                                    <!-- List of added options -->
                                     <div class="options-list govuk-!-margin-bottom-6">
                                         <h4 class="govuk-heading-s">Choices added:</h4>
 
-                                        <!-- When empty -->
                                         <p class="govuk-hint no-options-message">No choices added yet</p>
 
-                                        <!-- choices -->
                                         <table class="govuk-table options-table govuk-!-display-none">
                                             <thead class="govuk-table__head">
                                             <tr class="govuk-table__row">
@@ -338,11 +323,12 @@
                                     </div>
 
 
-                                    <!-- Hidden field to store options as newline-separated -->
                                     <input type="hidden" name="options" class="options-hidden-field">
                                 </div>
 
-                                <div class="recommendation-block govuk-!-margin-top-4"></div>
+                                <div class="recommendation-wrapper active">
+                                    <div class="recommendation-block govuk-!-margin-top-4"></div>
+                                </div>
 
                                 <details class="govuk-details" data-module="govuk-details">
 
@@ -370,7 +356,6 @@
 
                                                 <tr class="govuk-table__row" th:each="tag : ${allTags}" th:attr="data-tag-id=${tag.id}">
 
-                                                    <!-- tag name cell -->
                                                     <td class="govuk-table__cell">
                                                         <span class="tag-name" th:text="${tag.name}"></span>
 
@@ -380,7 +365,6 @@
                                                                style="display:none; width: 200px;" />
                                                     </td>
 
-                                                    <!-- action cells -->
                                                     <td class="govuk-table__cell">
 
                                                         <button type="button"
@@ -447,9 +431,8 @@
                                             Tags (Optional)
                                         </span>
                                     </summary>
-                                    <!-- TAG SELECTION -->
                                     <div class="govuk-form-group tag-selector">
-                                    <label class="govuk-label">Tags (optional)</label>
+                                        <label class="govuk-label">Tags (optional)</label>
                                         <div class="govuk-hint">Select one or more tags for this question.</div>
 
                                         <div class="tag-list">
@@ -465,80 +448,6 @@
                                         </div>
                                     </div>
                                 </details>
-                                <!-- RECOMMENDATIONS (OPTION 1 — GOV.UK SUMMARY CARD) -->
-                                <div class="govuk-summary-card recommendation-card govuk-!-margin-top-6">
-                                    <div class="govuk-summary-card__title-wrapper">
-                                        <h3 class="govuk-summary-card__title">Recommendations (optional)</h3>
-                                    </div>
-
-                                    <div class="govuk-summary-card__content">
-
-                                        <!-- RATING SCALE fields (hidden until selected) -->
-                                        <div class="recommendation-group rec-rating" style="display:none;">
-                                            <h4 class="govuk-heading-s">Rating Scale (1–5)</h4>
-
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label">Low score (1–2) recommendation URL</label>
-                                                <input class="govuk-input rec-input"
-                                                       name="rec_LOW"
-                                                       type="url"
-                                                       placeholder="https://example.com/resource">
-                                            </div>
-
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label">Medium score (3) recommendation URL</label>
-                                                <input class="govuk-input rec-input"
-                                                       name="rec_MEDIUM"
-                                                       type="url"
-                                                       placeholder="https://example.com/resource">
-                                            </div>
-
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label">High score (4–5) recommendation URL</label>
-                                                <input class="govuk-input rec-input"
-                                                       name="rec_HIGH"
-                                                       type="url"
-                                                       placeholder="https://example.com/resource">
-                                            </div>
-                                        </div>
-
-                                        <!-- YES/NO fields -->
-                                        <div class="recommendation-group rec-yesno" style="display:none;">
-                                            <h4 class="govuk-heading-s">Yes / No Question</h4>
-
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label">YES recommendation URL</label>
-                                                <input class="govuk-input rec-input"
-                                                       name="rec_YES"
-                                                       type="url"
-                                                       placeholder="https://example.com/resource">
-                                            </div>
-
-                                            <div class="govuk-form-group">
-                                                <label class="govuk-label">NO recommendation URL</label>
-                                                <input class="govuk-input rec-input"
-                                                       name="rec_NO"
-                                                       type="url"
-                                                       placeholder="https://example.com/resource">
-                                            </div>
-                                        </div>
-
-                                        <!-- MULTIPLE CHOICE / DROPDOWN fields (generated via JS) -->
-                                        <div class="recommendation-group rec-options" style="display:none;">
-                                            <h4 class="govuk-heading-s">Option-Based Recommendations</h4>
-
-                                            <p class="govuk-hint">A recommendation field will appear for each option you add.</p>
-
-                                            <div class="rec-options-container">
-                                                <!-- JS will inject fields here -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="recommendation-wrapper">
-                                    <div class="recommendation-block"></div>
-                                </div>
 
                                 <button type="submit" class="govuk-button">Add question</button>
                             </form>
@@ -565,7 +474,6 @@
                             <td class="govuk-table__cell">
                                 <span th:id="'cat-manage-name-' + ${category.id}" th:text="${category.name}"></span>
 
-                                <!-- Inline edit form for category in manage section -->
                                 <form th:id="'cat-manage-edit-' + ${category.id}"
                                       th:action="@{'/admin/self-assessment/categories/' + ${category.id} + '/edit'}"
                                       method="post"

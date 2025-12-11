@@ -107,11 +107,22 @@ public class AdminController {
             saService.updateSkillTags(skill.getId(), tagIds);
 
             Map<String, String[]> paramMap = request.getParameterMap();
-            Map<String, String> recMap = new java.util.HashMap<>();
+            Map<String, List<String>> recMap = new java.util.HashMap<>();
 
             for (String key : paramMap.keySet()) {
                 if (key.startsWith("rec_")) {
-                    recMap.put(key.substring(4), request.getParameter(key));
+                    String condition = key.substring(4);
+                    String[] urls = paramMap.get(key);
+
+                    List<String> urlList = new java.util.ArrayList<>();
+                    if (urls != null) {
+                        for (String url : urls) {
+                            if (url != null && !url.trim().isEmpty()) {
+                                urlList.add(url.trim());
+                            }
+                        }
+                    }
+                    recMap.put(condition, urlList);
                 }
             }
 
@@ -144,11 +155,22 @@ public class AdminController {
             saService.updateSkillTags(id, tagIds);
 
             Map<String, String[]> paramMap = request.getParameterMap();
-            Map<String, String> recMap = new java.util.HashMap<>();
+            Map<String, List<String>> recMap = new java.util.HashMap<>();
 
             for (String key : paramMap.keySet()) {
                 if (key.startsWith("rec_")) {
-                    recMap.put(key.substring(4), request.getParameter(key));
+                    String condition = key.substring(4);
+                    String[] urls = paramMap.get(key);
+
+                    List<String> urlList = new java.util.ArrayList<>();
+                    if (urls != null) {
+                        for (String url : urls) {
+                            if (url != null && !url.trim().isEmpty()) {
+                                urlList.add(url.trim());
+                            }
+                        }
+                    }
+                    recMap.put(condition, urlList);
                 }
             }
 

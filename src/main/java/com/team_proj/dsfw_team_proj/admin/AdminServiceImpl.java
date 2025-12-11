@@ -180,7 +180,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void updateSkillRecommendations(Long skillId, Map<String, String> conditionToUrlMap) {
+    public void updateSkillRecommendations(Long skillId, Map<String, List<String>> conditionToUrlMap) {
         recommendationService.saveRecommendations(skillId, conditionToUrlMap);
     }
 
@@ -189,9 +189,8 @@ public class AdminServiceImpl implements AdminService {
         return recommendationService.getRecommendations(skillId);
     }
 
-    // ADD THIS TO AdminServiceImpl.java (before the last closing brace '}')
     @Override
-    public void saveRecommendations(Long skillId, Map<String, String> recMap) {
+    public void saveRecommendations(Long skillId, Map<String, List<String>> recMap) {
         recommendationService.saveRecommendations(skillId, recMap);
     }
 }
