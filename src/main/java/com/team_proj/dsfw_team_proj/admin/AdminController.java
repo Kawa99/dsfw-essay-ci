@@ -1,6 +1,7 @@
 package com.team_proj.dsfw_team_proj.admin;
 
 import com.team_proj.dsfw_team_proj.selfassessment.Category;
+import com.team_proj.dsfw_team_proj.selfassessment.QuestionType;
 import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -80,15 +81,19 @@ public class AdminController {
     // Skill related actions
 
     @PostMapping("/skills/add")
-    public String addSkill(@RequestParam("categoryId") Long categoryId,
-                           @RequestParam("name") String name,
+    public String addSkill(@RequestParam("name") String name,
+                           @RequestParam("categoryId") Long categoryId,
+                           @RequestParam("questionType") String questionTypeStr,
+                           @RequestParam(value = "options", required = false) String options,
                            RedirectAttributes redirectAttributes) {
-
         try {
-            saService.addSkill(name, categoryId);
-            redirectAttributes.addFlashAttribute("success", "Skill added successfully");
+            QuestionType questionType = QuestionType.valueOf(questionTypeStr);
+            saService.addSkill(name, categoryId, questionType, options);
+            redirectAttributes.addFlashAttribute("success", "Question added successfully");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not add question.");
         }
         return "redirect:/admin/self-assessment";
     }
@@ -96,9 +101,16 @@ public class AdminController {
     @PostMapping("/skills/{id}/edit")
     public String editSkill(@PathVariable Long id,
                             @RequestParam("name") String name,
+                            @RequestParam("questionType") String questionTypeStr,
+                            @RequestParam(value = "options", required = false) String options,
                             RedirectAttributes redirectAttributes) {
-        saService.updateSkill(id, name);
-        redirectAttributes.addFlashAttribute("success", "Skill updated successfully");
+        try {
+            QuestionType questionType = QuestionType.valueOf(questionTypeStr);
+            saService.updateSkill(id, name, questionType, options);
+            redirectAttributes.addFlashAttribute("success", "Question updated successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not update question.");
+        }
         return "redirect:/admin/self-assessment";
     }
 

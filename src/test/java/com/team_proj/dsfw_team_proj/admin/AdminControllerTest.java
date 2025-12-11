@@ -1,6 +1,7 @@
 package com.team_proj.dsfw_team_proj.admin;
 
 import com.team_proj.dsfw_team_proj.selfassessment.Category;
+import com.team_proj.dsfw_team_proj.selfassessment.QuestionType;
 import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -120,16 +121,17 @@ public class AdminControllerTest {
         skill.setName("New Skill");
         skill.setCategory(category);
 
-        when(adminService.addSkill("New Skill", 1L)).thenReturn(skill);
+        when(adminService.addSkill("New Skill", 1L, QuestionType.RATING_SCALE, null)).thenReturn(skill);
 
         // Act & Assert
         mockMvc.perform(post("/admin/self-assessment/skills/add")
                         .with(csrf())
                         .param("categoryId", "1")
-                        .param("name", "New Skill"))
+                        .param("name", "New Skill")
+                        .param("questionType", "RATING_SCALE"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/admin/self-assessment"))
-                .andExpect(flash().attribute("success", "Skill added successfully"));
+                .andExpect(flash().attribute("success", "Question added successfully"));
     }
 
     @Test
@@ -137,14 +139,15 @@ public class AdminControllerTest {
     @DisplayName("Should redirect with error when adding skill to non-existent category")
     void addSkill_POST_RedirectsWithError_WhenCategoryNotFound() throws Exception {
         // Arrange
-        when(adminService.addSkill("Test Skill", 999L))
+        when(adminService.addSkill("Test Skill", 999L, QuestionType.RATING_SCALE, null))
                 .thenThrow(new IllegalArgumentException("Category not found"));
 
         // Act & Assert
         mockMvc.perform(post("/admin/self-assessment/skills/add")
                         .with(csrf())
                         .param("categoryId", "999")
-                        .param("name", "Test Skill"))
+                        .param("name", "Test Skill")
+                        .param("questionType", "RATING_SCALE"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/admin/self-assessment"))
                 .andExpect(flash().attribute("error", "Category not found"));

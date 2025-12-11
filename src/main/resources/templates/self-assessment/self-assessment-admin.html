@@ -129,11 +129,63 @@
                                 <form th:id="'skill-edit-' + ${skill.id}"
                                       th:action="@{'/admin/self-assessment/skills/' + ${skill.id} + '/edit'}"
                                       method="post"
-                                      class="inline-edit-form govuk-inset-text govuk-!-margin-top-0">
+                                      class="inline-edit-form govuk-inset-text govuk-!-margin-top-0 edit-skill-form">
+
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label" th:for="'edit-type-' + ${skill.id}">Question type</label>
+                                        <select class="govuk-select question-type-select" th:id="'edit-type-' + ${skill.id}" name="questionType" required>
+                                                th:onchange="'toggleOptionsField(this, \'edit-options-group-' + ${skill.id} + '\')'">
+                                            <option value="RATING_SCALE" th:selected="${skill.questionType.name() == 'RATING_SCALE'}">Rating Scale (1-5)</option>
+                                            <option value="YES_NO" th:selected="${skill.questionType.name() == 'YES_NO'}">Yes/No</option>
+                                            <option value="MULTIPLE_CHOICE" th:selected="${skill.questionType.name() == 'MULTIPLE_CHOICE'}">Multiple Choice</option>
+                                            <option value="DROPDOWN" th:selected="${skill.questionType.name() == 'DROPDOWN'}">Dropdown</option>
+                                            <option value="TEXT_INPUT" th:selected="${skill.questionType.name() == 'TEXT_INPUT'}">Text Input</option>
+                                        </select>
+                                    </div>
+
                                     <div class="govuk-form-group">
                                         <label class="govuk-label" th:for="'input-skill-' + ${skill.id}">Edit question text</label>
-                                        <input class="govuk-input" th:id="'input-skill-' + ${skill.id}" type="text" name="name" th:value="${skill.name}" required />
+                                        <textarea class="govuk-textarea" th:id="'input-skill-' + ${skill.id}" name="name" rows="3"
+                                                  th:text="${skill.name}" required></textarea>
                                     </div>
+
+                                    <!-- Dynamic options interface for edit -->
+                                    <div class="options-builder" style="display: none;">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label" th:for="'edit-option-input-' + ${skill.id}">Add choice</label>
+                                            <div class="govuk-hint">
+                                                Enter a choice and click "Add choice" to add it to the list
+                                            </div>
+                                            <div style="display: flex; gap: 10px;">
+                                                <input class="govuk-input option-input" th:id="'edit-option-input-' + ${skill.id}" type="text" placeholder="e.g., Beginner">
+                                                <button type="button" class="govuk-button govuk-button--secondary add-option-btn">Add choice</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- List of added options -->
+                                        <div class="options-list govuk-!-margin-bottom-6">
+                                            <h4 class="govuk-heading-s">Choices added:</h4>
+
+                                            <!-- When empty -->
+                                            <p class="govuk-hint no-options-message">No choices added yet</p>
+
+                                            <!-- GOV.UK table for choices -->
+                                            <table class="govuk-table options-table govuk-!-display-none">
+                                                <thead class="govuk-table__head">
+                                                <tr class="govuk-table__row">
+                                                    <th class="govuk-table__header">#</th>
+                                                    <th class="govuk-table__header">Choice</th>
+                                                    <th class="govuk-table__header">Actions</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody class="govuk-table__body options-table-body"></tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- Hidden field to store options as newline-separated -->
+                                        <input type="hidden" name="options" class="options-hidden-field" th:value="${skill.options}">
+                                    </div>
+
                                     <div class="govuk-button-group">
                                         <button type="submit" class="govuk-button govuk-!-margin-bottom-0">Save</button>
                                         <button type="button"
@@ -173,18 +225,67 @@
                             <h3 class="govuk-summary-card__title">Add new skill</h3>
                         </div>
                         <div class="govuk-summary-card__content">
-                            <form th:action="@{'/admin/self-assessment/skills/add'}" method="post">
+                            <form th:action="@{'/admin/self-assessment/skills/add'}" method="post" class="add-skill-form">
                                 <input type="hidden" name="categoryId" th:value="${category.id}" />
+
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label" for="new-skill-type">Question type</label>
+                                    <select class="govuk-select question-type-select" id="new-skill-type" name="questionType" required>
+                                        <option value="RATING_SCALE">Rating Scale (1-5)</option>
+                                        <option value="YES_NO">Yes/No</option>
+                                        <option value="MULTIPLE_CHOICE">Multiple Choice</option>
+                                        <option value="DROPDOWN">Dropdown</option>
+                                        <option value="TEXT_INPUT">Text Input</option>
+                                    </select>
+                                </div>
+
                                 <div class="govuk-form-group">
                                     <label class="govuk-label">Question text</label>
                                     <div id="skill-hint" class="govuk-hint">
                                         Enter the text as it should appear to the user.
                                     </div>
-                                    <div class="flex-row">
-                                        <input class="govuk-input" type="text" name="name" aria-describedby="skill-hint" required />
-                                        <button type="submit" class="govuk-button govuk-!-margin-bottom-0">Add</button>
-                                    </div>
+                                    <textarea class="govuk-textarea" name="name" rows="3" required></textarea>
                                 </div>
+
+                                <!-- Dynamic options interface -->
+                                <div class="options-builder" style="display: none;">
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label" for="new-option-input">Add choice</label>
+                                        <div class="govuk-hint">
+                                            Enter a choice and click "Add choice" to add it to the list
+                                        </div>
+                                        <div style="display: flex; gap: 10px;">
+                                            <input class="govuk-input option-input" id="new-option-input" type="text" placeholder="e.g., Beginner">
+                                            <button type="button" class="govuk-button govuk-button--secondary add-option-btn">Add choice</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- List of added options -->
+                                    <div class="options-list govuk-!-margin-bottom-6">
+                                        <h4 class="govuk-heading-s">Choices added:</h4>
+
+                                        <!-- When empty -->
+                                        <p class="govuk-hint no-options-message">No choices added yet</p>
+
+                                        <!-- GOV.UK table for choices -->
+                                        <table class="govuk-table options-table govuk-!-display-none">
+                                            <thead class="govuk-table__head">
+                                            <tr class="govuk-table__row">
+                                                <th class="govuk-table__header">#</th>
+                                                <th class="govuk-table__header">Choice</th>
+                                                <th class="govuk-table__header">Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class="govuk-table__body options-table-body"></tbody>
+                                        </table>
+                                    </div>
+
+
+                                    <!-- Hidden field to store options as newline-separated -->
+                                    <input type="hidden" name="options" class="options-hidden-field">
+                                </div>
+
+                                <button type="submit" class="govuk-button">Add question</button>
                             </form>
                         </div>
                     </div>

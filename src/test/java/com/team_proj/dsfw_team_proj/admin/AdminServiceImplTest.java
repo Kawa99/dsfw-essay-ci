@@ -1,9 +1,6 @@
 package com.team_proj.dsfw_team_proj.admin;
 
-import com.team_proj.dsfw_team_proj.selfassessment.Category;
-import com.team_proj.dsfw_team_proj.selfassessment.CategoryRepository;
-import com.team_proj.dsfw_team_proj.selfassessment.SkillRepository;
-import com.team_proj.dsfw_team_proj.selfassessment.SkillsEntity;
+import com.team_proj.dsfw_team_proj.selfassessment.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -85,7 +82,7 @@ public class AdminServiceImplTest {
         when(categoryRepository.findById(999L)).thenReturn(Optional.empty());
 
         // Act n Assert
-        assertThatThrownBy(() -> service.addSkill("Test Skill", 999L))
+        assertThatThrownBy(() -> service.addSkill("Test Skill", 999L, QuestionType.RATING_SCALE, null))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Category not found");
     }
@@ -138,7 +135,7 @@ public class AdminServiceImplTest {
         when(skillRepository.existsByName("Duplicate Skill")).thenReturn(true);
 
         // Act n Assert
-        assertThatThrownBy(() -> service.addSkill("Duplicate Skill", 1L))
+        assertThatThrownBy(() -> service.addSkill("Duplicate Skill", 1L, QuestionType.RATING_SCALE, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("already exists");
     }

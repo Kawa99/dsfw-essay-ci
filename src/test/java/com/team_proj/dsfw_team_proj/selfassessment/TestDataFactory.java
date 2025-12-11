@@ -1,6 +1,7 @@
 package com.team_proj.dsfw_team_proj.selfassessment;
 
 import java.util.*;
+import com.team_proj.dsfw_team_proj.selfassessment.QuestionType;
 
 public class TestDataFactory {
 
@@ -8,6 +9,7 @@ public class TestDataFactory {
         SkillsEntity skill = new SkillsEntity();
         skill.setId(id);
         skill.setName(name);
+        skill.setQuestionType(QuestionType.RATING_SCALE);
         return skill;
     }
 

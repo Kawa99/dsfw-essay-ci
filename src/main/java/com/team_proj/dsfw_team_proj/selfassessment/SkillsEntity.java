@@ -22,4 +22,11 @@ public class SkillsEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "question_type", nullable = false, length = 50)
+    private QuestionType questionType = QuestionType.RATING_SCALE;
+
+    @Column(name = "options", columnDefinition = "TEXT")
+    private String options; // Stores options as newline-separated text for MULTIPLE_CHOICE and DROPDOWN
 }
