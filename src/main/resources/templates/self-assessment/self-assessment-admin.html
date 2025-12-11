@@ -199,7 +199,7 @@
                                     <div class="govuk-form-group tag-selector"
                                          th:attr="data-skill-id=${skill.id}">
 
-                                        <label class="govuk-label">Tags (optional)</label>
+                                        <label class="govuk-label">Apply Outcomes</label>
                                         <div class="govuk-hint">Select one or more tags for this question.</div>
 
                                         <div class="tag-list">
@@ -334,12 +334,12 @@
 
                                     <summary class="govuk-details__summary">
                                         <span class="govuk-details__summary-text">
-                                            Manage Tags
+                                            Manage Outcomes
                                         </span>
                                     </summary>
                                     <div class="govuk-summary-card">
                                         <div class="govuk-summary-card__title-wrapper">
-                                            <h3 class="govuk-summary-card__title">Manage Tags</h3>
+                                            <h3 class="govuk-summary-card__title">Manage Outcomes</h3>
                                         </div>
 
                                         <div class="govuk-summary-card__content">
@@ -347,7 +347,7 @@
                                             <table class="govuk-table">
                                                 <thead class="govuk-table__head">
                                                 <tr class="govuk-table__row">
-                                                    <th scope="col" class="govuk-table__header">Tag Name</th>
+                                                    <th scope="col" class="govuk-table__header">Outcome Name</th>
                                                     <th scope="col" class="govuk-table__header" style="width: 250px;">Actions</th>
                                                 </tr>
                                                 </thead>
@@ -395,7 +395,7 @@
                                         <button type="button"
                                                 class="govuk-button govuk-button--secondary"
                                                 onclick="toggleNewTagInput(this)">
-                                            Add new tag
+                                            Add Outcome
                                         </button>
 
                                         <div class="new-tag-input govuk-!-margin-top-2 govuk-!-padding-4"
@@ -428,12 +428,12 @@
 
                                     <summary class="govuk-details__summary">
                                         <span class="govuk-details__summary-text">
-                                            Tags (Optional)
+                                            Apply Outcomes
                                         </span>
                                     </summary>
                                     <div class="govuk-form-group tag-selector">
-                                        <label class="govuk-label">Tags (optional)</label>
-                                        <div class="govuk-hint">Select one or more tags for this question.</div>
+                                        <label class="govuk-label">Apply Outcomes</label>
+                                        <div class="govuk-hint">Select one or more outcome for this question.</div>
 
                                         <div class="tag-list">
                                             <div th:each="tag : ${allTags}">
