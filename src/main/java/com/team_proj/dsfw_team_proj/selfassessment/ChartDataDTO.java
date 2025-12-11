@@ -22,4 +22,11 @@ public class ChartDataDTO {
         private String borderColor;
         private int borderWidth;
     }
+
+    @Data
+    @Builder
+    public static class SummaryStats {
+        private double overallAverageScore;
+        private long totalSubmissions;
+    }
 }

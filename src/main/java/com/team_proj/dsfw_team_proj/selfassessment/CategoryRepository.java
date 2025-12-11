@@ -7,7 +7,12 @@ import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
+    List<Category> findAll();
+
      List<Category> findByIsActiveTrue();
 
     Optional<Category> findByName(String name);
+
+
+
 }
