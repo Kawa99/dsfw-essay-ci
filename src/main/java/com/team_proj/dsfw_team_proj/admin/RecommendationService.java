@@ -10,4 +10,5 @@ public interface RecommendationService {
 
     // Load all recommendations for a skill
     Map<String, String> getRecommendations(Long skillId);
+    Map<String, List<String>> getRecommendationsGrouped(Long skillId);
 }

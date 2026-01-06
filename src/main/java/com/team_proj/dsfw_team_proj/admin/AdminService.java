@@ -31,4 +31,5 @@ public interface AdminService {
     void updateSkillRecommendations(Long skillId, Map<String, List<String>> conditionToUrlMap);
     Map<String, String> getSkillRecommendations(Long skillId);
     void saveRecommendations(Long skillId, Map<String, List<String>> recMap);
+    Map<String, List<String>> getSkillRecommendationsGrouped(Long skillId);
 }

@@ -193,4 +193,9 @@ public class AdminServiceImpl implements AdminService {
     public void saveRecommendations(Long skillId, Map<String, List<String>> recMap) {
         recommendationService.saveRecommendations(skillId, recMap);
     }
+
+    @Override
+    public Map<String, List<String>> getSkillRecommendationsGrouped(Long skillId) {
+        return recommendationService.getRecommendationsGrouped(skillId);
+    }
 }

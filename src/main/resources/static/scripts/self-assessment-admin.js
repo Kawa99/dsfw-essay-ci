@@ -102,7 +102,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.closest('.edit-skill-btn')) {
             e.preventDefault();
             const btn = e.target.closest('.edit-skill-btn');
-            toggleEditMode(btn.dataset.skillId, true, 'skill');
+            const skillId = btn.dataset.skillId;
+            toggleEditMode(skillId, true, 'skill');
+            loadSkillRecommendations(skillId);
         }
         // Cancel Skill
         if (e.target.classList.contains('cancel-edit-skill')) {
@@ -138,6 +140,18 @@ document.addEventListener('DOMContentLoaded', function() {
         let options = [];
         if (hiddenField && hiddenField.value.trim()) {
             options = hiddenField.value.split('\n').filter(opt => opt.trim());
+
+            // Find where the form is submitted and add this before submission:
+            form.addEventListener('submit', function(e) {
+                console.log('Form submitting...');
+                console.log('Form data:', new FormData(form));
+
+                // Log all form fields
+                const formData = new FormData(form);
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+            });
         }
 
         // Logic to update UI based on Question Type
@@ -353,6 +367,145 @@ document.addEventListener('DOMContentLoaded', function() {
                 </td>`;
             tbody.appendChild(row);
         }
+    }
+
+    async function loadSkillRecommendations(skillId) {
+        try {
+            const response = await fetch(`/admin/self-assessment/skills/${skillId}/recommendations`);
+            if (!response.ok) {
+                console.error('Failed to load recommendations');
+                return;
+            }
+
+            const recommendations = await response.json();
+
+            // Wait for the form to be visible and recommendation fields to render
+            setTimeout(() => {
+                const form = document.getElementById(`skill-edit-${skillId}`);
+                if (form) {
+                    fillRecommendationFields(form, recommendations);
+                }
+            }, 200);
+
+        } catch (error) {
+            console.error('Error loading recommendations:', error);
+        }
+    }
+
+    function fillRecommendationFields(form, recommendations) {
+        if (!recommendations || Object.keys(recommendations).length === 0) {
+            return;
+        }
+
+        // Get question type from the form
+        const questionType = form.querySelector('.question-type-select').value;
+
+        if (questionType === 'RATING_SCALE') {
+            fillRatingScaleRecommendations(form, recommendations);
+        } else if (questionType === 'YES_NO') {
+            fillYesNoRecommendations(form, recommendations);
+        } else if (questionType === 'DROPDOWN' || questionType === 'MULTIPLE_CHOICE') {
+            fillDropdownRecommendations(form, recommendations);
+        }
+    }
+
+    function fillRatingScaleRecommendations(form, recommendations) {
+        // Group by BEGINNER (rating_1, rating_2), INTERMEDIATE (rating_3), ADVANCED (rating_4, rating_5)
+        const grouped = {
+            BEGINNER: [],
+            INTERMEDIATE: [],
+            ADVANCED: []
+        };
+
+        Object.keys(recommendations).forEach(key => {
+            if (key === 'rating_1' || key === 'rating_2') {
+                grouped.BEGINNER.push(...recommendations[key]);
+            } else if (key === 'rating_3') {
+                grouped.INTERMEDIATE.push(...recommendations[key]);
+            } else if (key === 'rating_4' || key === 'rating_5') {
+                grouped.ADVANCED.push(...recommendations[key]);
+            }
+        });
+
+        // Remove duplicates
+        grouped.BEGINNER = [...new Set(grouped.BEGINNER)];
+        grouped.INTERMEDIATE = [...new Set(grouped.INTERMEDIATE)];
+        grouped.ADVANCED = [...new Set(grouped.ADVANCED)];
+
+        fillUrlInputs(form, 'rec_BEGINNER', grouped.BEGINNER);
+        fillUrlInputs(form, 'rec_INTERMEDIATE', grouped.INTERMEDIATE);
+        fillUrlInputs(form, 'rec_ADVANCED', grouped.ADVANCED);
+    }
+
+    function fillYesNoRecommendations(form, recommendations) {
+        fillUrlInputs(form, 'rec_YES', recommendations['yes'] || []);
+        fillUrlInputs(form, 'rec_NO', recommendations['no'] || []);
+    }
+
+    function fillDropdownRecommendations(form, recommendations) {
+        // Get the options from the hidden field
+        const hiddenField = form.querySelector('.options-hidden-field');
+        if (!hiddenField) return;
+
+        const optionsArray = hiddenField.value.split('\n').filter(o => o.trim());
+
+        Object.keys(recommendations).forEach(conditionKey => {
+            // conditionKey format: "option_1", "option_2", etc.
+            const match = conditionKey.match(/option_(\d+)/);
+            if (match) {
+                const optionIndex = parseInt(match[1]) - 1; // Convert to 0-based
+                if (optionIndex >= 0 && optionIndex < optionsArray.length) {
+                    const optionText = optionsArray[optionIndex];
+                    const safeKey = optionText.replace(/[^a-zA-Z0-9-_]/g, "_");
+                    fillUrlInputs(form, `rec_${safeKey}`, recommendations[conditionKey]);
+                }
+            }
+        });
+    }
+
+    function fillUrlInputs(form, inputName, urls) {
+        if (!urls || urls.length === 0) return;
+
+        // Find the first input with this name
+        const firstInput = form.querySelector(`input[name="${inputName}"]`);
+        if (!firstInput) return;
+
+        // Fill the first input
+        firstInput.value = urls[0];
+
+        // Add additional inputs for remaining URLs
+        if (urls.length > 1) {
+            const container = firstInput.closest('.url-container') || firstInput.parentElement;
+
+            for (let i = 1; i < urls.length; i++) {
+                addAdditionalUrlInput(container, inputName, urls[i]);
+            }
+        }
+    }
+
+    function addAdditionalUrlInput(container, inputName, value) {
+        const wrapper = document.createElement('div');
+        wrapper.style.display = "flex";
+        wrapper.style.gap = "10px";
+        wrapper.className = "govuk-!-margin-bottom-2";
+
+        const input = document.createElement('input');
+        input.className = "govuk-input";
+        input.type = "url";
+        input.name = inputName;
+        input.value = value;
+        input.placeholder = "https://...";
+        input.autocomplete = "off";
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = "button";
+        removeBtn.className = "govuk-button govuk-button--warning govuk-!-margin-bottom-0";
+        removeBtn.innerText = "Remove";
+        removeBtn.onclick = function() { wrapper.remove(); };
+
+        wrapper.appendChild(input);
+        wrapper.appendChild(removeBtn);
+        container.appendChild(wrapper);
     }
 });
 

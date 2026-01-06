@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Controller
 @RequestMapping("/admin/self-assessment")
@@ -109,9 +112,15 @@ public class AdminController {
             Map<String, String[]> paramMap = request.getParameterMap();
             Map<String, List<String>> recMap = new java.util.HashMap<>();
 
+            // Get question type and options to map condition keys properly
+            String[] optionsArray = null;
+            if (options != null && !options.trim().isEmpty()) {
+                optionsArray = options.split("\n");
+            }
+
             for (String key : paramMap.keySet()) {
                 if (key.startsWith("rec_")) {
-                    String condition = key.substring(4);
+                    String formKey = key.substring(4); // e.g., "BEGINNER", "Strongly_Disagree", "YES"
                     String[] urls = paramMap.get(key);
 
                     List<String> urlList = new java.util.ArrayList<>();
@@ -122,7 +131,15 @@ public class AdminController {
                             }
                         }
                     }
-                    recMap.put(condition, urlList);
+
+                    if (urlList.isEmpty()) continue; // Skip empty URL lists
+
+                    // Convert form key to database condition key
+                    List<String> conditionKeys = mapFormKeyToConditionKeys(formKey, questionType, optionsArray);
+                    for (String conditionKey : conditionKeys) {
+                        // Merge URLs if the condition key already exists
+                        recMap.computeIfAbsent(conditionKey, k -> new ArrayList<>()).addAll(urlList);
+                    }
                 }
             }
 
@@ -157,9 +174,14 @@ public class AdminController {
             Map<String, String[]> paramMap = request.getParameterMap();
             Map<String, List<String>> recMap = new java.util.HashMap<>();
 
+            String[] optionsArray = null;
+            if (options != null && !options.trim().isEmpty()) {
+                optionsArray = options.split("\n");
+            }
+
             for (String key : paramMap.keySet()) {
                 if (key.startsWith("rec_")) {
-                    String condition = key.substring(4);
+                    String formKey = key.substring(4); // e.g., "BEGINNER", "Strongly_Disagree", "YES"
                     String[] urls = paramMap.get(key);
 
                     List<String> urlList = new java.util.ArrayList<>();
@@ -170,7 +192,15 @@ public class AdminController {
                             }
                         }
                     }
-                    recMap.put(condition, urlList);
+
+                    if (urlList.isEmpty()) continue; // Skip empty URL lists
+
+                    // Convert form key to database condition key
+                    List<String> conditionKeys = mapFormKeyToConditionKeys(formKey, questionType, optionsArray);
+                    for (String conditionKey : conditionKeys) {
+                        // Merge URLs if the condition key already exists
+                        recMap.computeIfAbsent(conditionKey, k -> new ArrayList<>()).addAll(urlList);
+                    }
                 }
             }
 
@@ -209,5 +239,53 @@ public class AdminController {
     public Tag createTagAjax(@RequestBody Map<String, String> body) {
         String name = body.get("name");
         return saService.createTag(name);
+    }
+
+    @GetMapping("/skills/{id}/recommendations")
+    @ResponseBody
+    public Map<String, List<String>> getSkillRecommendations(@PathVariable Long id) {
+        return saService.getSkillRecommendationsGrouped(id);
+    }
+
+    private List<String> mapFormKeyToConditionKeys(String formKey, QuestionType questionType, String[] options) {
+        List<String> keys = new ArrayList<>();
+
+        switch (questionType) {
+            case RATING_SCALE:
+                if ("BEGINNER".equals(formKey)) {
+                    keys.add("rating_1");
+                    keys.add("rating_2");
+                } else if ("INTERMEDIATE".equals(formKey)) {
+                    keys.add("rating_3");
+                } else if ("ADVANCED".equals(formKey)) {
+                    keys.add("rating_4");
+                    keys.add("rating_5");
+                }
+                break;
+
+            case YES_NO:
+                if ("YES".equals(formKey)) {
+                    keys.add("yes");
+                } else if ("NO".equals(formKey)) {
+                    keys.add("no");
+                }
+                break;
+
+            case DROPDOWN:
+            case MULTIPLE_CHOICE:
+                // Find which option index this corresponds to
+                if (options != null) {
+                    for (int i = 0; i < options.length; i++) {
+                        String optionSafeKey = options[i].trim().replaceAll("[^a-zA-Z0-9-_]", "_");
+                        if (optionSafeKey.equals(formKey)) {
+                            keys.add("option_" + (i + 1));
+                            break;
+                        }
+                    }
+                }
+                break;
+        }
+
+        return keys;
     }
 }
