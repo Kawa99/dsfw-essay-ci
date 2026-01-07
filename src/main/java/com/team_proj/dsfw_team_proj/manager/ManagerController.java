@@ -74,11 +74,23 @@ public class ManagerController {
 
     @GetMapping("teamReport/{teamId}")
     public String showTeamReport(@PathVariable Long teamId, Model model, Principal principal) {
+        UserEntity user = userService.findByEmail(principal.getName());
+
+        if (!teamService.isManager(user, teamId)) {
+            return "redirect:/home";
+        }
 
         TeamEntity team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new RuntimeException("Team not found"));
 
+        List<TeamMemberDTO> members = managerService.getTeamMembers(teamId);
+        Map<String, Object> stats = managerService.getTeamStats(teamId);
+        List<Map<String, Object>> skillGaps = managerService.getSkillGaps(teamId);
+
         model.addAttribute("team", team);
+        model.addAttribute("members", members);
+        model.addAttribute("stats", stats);
+        model.addAttribute("skillGaps", skillGaps);
 
         return "manager/team-result-page";
     }
