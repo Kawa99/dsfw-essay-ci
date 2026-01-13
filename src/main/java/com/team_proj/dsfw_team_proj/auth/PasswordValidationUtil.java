@@ -11,9 +11,6 @@ import java.util.regex.Pattern;
  * - Adds safer user-identifier checks.
  * - Adds better weak-pattern detection (ascending/descending sequences + common keyboard walks).
  * - Allows spaces and Unicode; does NOT trim user input (trimming would change the secret).
- *
- * IMPORTANT (outside this class):
- * - Make sure you hash passwords with Argon2id/bcrypt/scrypt via Spring Security PasswordEncoder.
  */
 public final class PasswordValidationUtil {
 
@@ -41,10 +38,6 @@ public final class PasswordValidationUtil {
             "qwerty", "asdf", "zxcv",
             "1234567890"
     );
-
-    private PasswordValidationUtil() {
-        // Utility class
-    }
 
     public static List<String> validatePassword(String password) {
         return validatePassword(password, null, null, null);
@@ -86,8 +79,7 @@ public final class PasswordValidationUtil {
             errors.add("This password is too common and easily guessed. Please choose a more unique password");
         }
 
-        // Optional: warn about leading/trailing spaces (do not reject by default).
-        // If you DO want to reject, change to errors.add(...)
+        // warn about leading/trailing spaces (do not reject by default).
         if (!password.equals(password.strip())) {
             errors.add("Password has leading or trailing spaces (this is allowed, but easy to mistype). Consider removing them");
         }
@@ -159,7 +151,7 @@ public final class PasswordValidationUtil {
     }
 
     /**
-     * Detects ascending OR descending sequential runs of length >= runLength
+     * Detects ascending or descending sequential runs of length >= runLength
      * using Unicode code points (works for ASCII letters/digits; “best effort” for other scripts).
      */
     private static boolean hasSequentialRun(String password, int runLength) {

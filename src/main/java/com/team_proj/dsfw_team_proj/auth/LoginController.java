@@ -28,7 +28,7 @@ public class LoginController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") UserEntity user, Model model) {
         try {
-            // SERVER-SIDE PASSWORD VALIDATION (NIST SP 800-63B compliant)
+            // server-side validation (NIST SP 800-63B compliant)
             List<String> passwordErrors = PasswordValidationUtil.validatePassword(
                     user.getPassword(),
                     user.getEmail(),
