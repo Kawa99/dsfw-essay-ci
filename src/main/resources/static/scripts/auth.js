@@ -18,7 +18,7 @@ function checkPassword() {
 
     if (!passwordInput || !feedbackText || !submitBtn) return;
 
-    const minLength = Number(passwordInput.getAttribute("minlength")) || 9;
+    const minLength = Number(passwordInput.getAttribute("minlength")) || 12;
     const isValid = passwordInput.value.trim().length >= minLength;
 
     if (isValid) {

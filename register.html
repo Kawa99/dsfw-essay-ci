@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Create account - Digital Skills for Wales</title>
+
+    <link rel="icon" type="image/x-icon" href="/govuk-assets/images/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/govuk-assets/images/govuk-logotype-crown.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/govuk-assets/images/govuk-apple-touch-icon-180x180.png">
+    <link rel="mask-icon" color="#0b0c0c" href="/govuk-assets/images/govuk-mask-icon.svg">
+    <meta name="theme-color" content="#0b0c0c">
+
+    <link rel="stylesheet" href="/styles/govuk-frontend.css">
+    <link rel="stylesheet" href="/styles/global.css">
+    <link rel="stylesheet" href="/styles/header-footer.css">
+</head>
+<body class="govuk-template__body">
+
+<a class="govuk-skip-link" href="#main-content">Skip to main content</a>
+
+<div class="dsfw-page">
+    <div>
+    <header class="govuk-header" role="banner" data-module="govuk-header">
+        <div class="govuk-header__container govuk-width-container">
+            <div class="govuk-header__logo">
+                <a class="govuk-header__link govuk-header__link--homepage" href="/">
+                    <img src="/images/thumbnail_image252147.png"
+                         alt="Digital Skills for Wales"
+                         class="govuk-header__logotype-crown header-logo-image">
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="navigation-bar">
+        <div class="govuk-width-container">
+            <nav aria-label="Primary navigation">
+                <ul class="navigation-list">
+                    <li class="navigation-item">
+                        <a class="navigation-link" href="/">Home</a>
+                    </li>
+                    
+                    <li class="navigation-item">
+                        <a class="navigation-link" href="/self-assessment">Self Assessment</a>
+                    </li>
+                    <li class="navigation-item">
+                        <a class="navigation-link" href="/self-assessment/results">Assessment Results</a>
+                    </li>
+                    
+                    <li class="navigation-item">
+                        <a class="navigation-link" href="/notification">Notifications
+                            
+                        </a>
+                    </li>
+
+                    
+
+                    <li class="navigation-item navigation-item--right">
+                        <a class="login-button-styled" href="/login">Login</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-xl">Create an account</h1>
+                    <p class="govuk-body">Use your work email to sign up and access Digital Skills for Wales.</p>
+
+                    
+
+                    
+
+                    <form id="register-form" action="/register" method="post" novalidate><input type="hidden" name="_csrf" value="da1d44RCcSYjrYfJRAjT4OTj5bjSevGg3hBtQlXwswkfJ3s5Eck4guF2RRcOm-StcyXnhN3TyIG3QpKN7yNVdzCShDt8F0gP"/>
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="firstName">First name</label>
+                            <input class="govuk-input govuk-!-width-two-thirds" id="firstName" type="text" autocomplete="given-name" required name="firstName" value="">
+                        </div>
+
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="lastName">Last name</label>
+                            <input class="govuk-input govuk-!-width-two-thirds" id="lastName" type="text" autocomplete="family-name" required name="lastName" value="">
+                        </div>
+
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="email">Email address</label>
+                            <div id="email-hint" class="govuk-hint">Use your public sector work email.</div>
+                            <input class="govuk-input govuk-!-width-two-thirds" id="email" type="email" autocomplete="email" spellcheck="false" aria-describedby="email-hint" required name="email" value="">
+                        </div>
+
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="reg-password">Password</label>
+                            <div id="password-hint" class="govuk-hint">Must be at least 12 characters.</div>
+                            <input
+                                    class="govuk-input govuk-!-width-two-thirds"
+                                    id="reg-password"
+                                    type="password"
+                                    minlength="9"
+                                    autocomplete="new-password"
+                                    aria-describedby="password-hint length-feedback"
+                                    oninput="checkPassword()"
+                                    required name="password" value="">
+                            <p id="length-feedback" class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0" aria-live="polite">Must be at least 12 characters.</p>
+                            <button type="button" class="govuk-link govuk-link--no-visited-state govuk-!-margin-top-1" id="reg-password-toggle" onclick="togglePasswordVisibility('reg-password','reg-password-toggle-label')">
+                                <span id="reg-password-toggle-label">Show password</span>
+                            </button>
+                        </div>
+
+                        <button type="submit" id="reg-submit-btn" class="govuk-button" data-module="govuk-button" disabled aria-disabled="true">Create account</button>
+
+                        <p class="govuk-body govuk-!-margin-top-6">
+                            Already registered?
+                            <a href="/login" class="govuk-link">Sign in</a>.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div>
+    <footer class="govuk-footer" role="contentinfo">
+        <div class="govuk-width-container">
+            <div class="govuk-footer__meta">
+                <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+                    <h2 class="govuk-visually-hidden">Support links</h2>
+                    <ul class="govuk-footer__inline-list">
+                        <li class="govuk-footer__inline-list-item">
+                            <a class="govuk-footer__link" href="/">Home</a>
+                        </li>
+                  <!--      <li class="govuk-footer__inline-list-item">
+                            <a class="govuk-footer__link" th:href="@{/admin/self-assessment}">Admin</a>
+                        </li> -->
+                    </ul>
+                    <span class="govuk-footer__licence-description">
+                        2025 Digital Skills for Wales Team Project
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+</div>
+
+<script src="/scripts/govuk-frontend.js"></script>
+<script src="/scripts/gov-init.js"></script>
+<script src="/scripts/auth.js"></script>
+</body>
+</html>

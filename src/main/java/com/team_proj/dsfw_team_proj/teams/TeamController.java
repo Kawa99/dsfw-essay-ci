@@ -1,5 +1,6 @@
 package com.team_proj.dsfw_team_proj.teams;
 
+import com.team_proj.dsfw_team_proj.auth.PasswordValidationUtil;
 import org.springframework.ui.Model;
 import com.team_proj.dsfw_team_proj.auth.UserEntity;
 import com.team_proj.dsfw_team_proj.auth.UserService;
@@ -38,6 +39,15 @@ public class TeamController {
             Principal principal,
             Model model
     ) {
+        // SERVER-SIDE PASSWORD VALIDATION (ADDED)
+        List<String> passwordErrors = PasswordValidationUtil.validatePassword(password);
+
+        if (!passwordErrors.isEmpty()) {
+            String errorMessage = String.join(". ", passwordErrors);
+            model.addAttribute("error", errorMessage);
+            return "teams/create-team";
+        }
+
         if (!password.equals(passwordConfirm)) {
             model.addAttribute("error", "Passwords do not match");
             return "teams/create-team";
@@ -50,7 +60,6 @@ public class TeamController {
             model.addAttribute("team", newTeam);
             return "manager/manager-homepage";
         } catch (RuntimeException e) {
-            // Show any validation errors from the service on the same page
             model.addAttribute("error", e.getMessage());
             return "teams/create-team";
         }
