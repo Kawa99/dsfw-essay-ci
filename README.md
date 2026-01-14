@@ -195,7 +195,7 @@ USE dsfw_team_proj;
 -- Create admin account (password: SecureAdmin2024!)
 INSERT INTO user_details (first_name, last_name, email, password, role)
 VALUES ('Admin', 'Assessor', 'admin@cardiff.ac.uk', 
-        '$2a$12$LQI.eBfTXHjOtmHvCYNcQO7YzT2ZqXGhQvz4JLMkiLMR5L6Hy5rC6',
+        '$2b$12$4TSCB8W4thu/smntAOUJLO3drIL1n2oPXf4fPMxRSkfevuaj8FLDW',
         'ADMIN');
 ```
 
