@@ -122,7 +122,11 @@
                                 <fieldset class="govuk-fieldset" th:aria-describedby="'hint-' + ${skill.id}">
 
                                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                                        <h3 class="govuk-fieldset__heading" th:utext="${skill.name}">Question Text</h3>
+                                        <!-- VULNERABLE: th:utext renders raw HTML/JavaScript -->
+                                        <!-- <h3 class="govuk-fieldset__heading" th:utext="${skill.name}">Question Text</h3> -->
+
+                                        <!-- SECURE: th:text escapes HTML entities -->
+                                        <h3 class="govuk-fieldset__heading" th:text="${skill.name}">Question Text</h3>
                                     </legend>
 
                                     <th:block th:if="${skill.questionType.name() == 'RATING_SCALE'}">
