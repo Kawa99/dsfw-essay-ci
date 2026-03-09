@@ -33,10 +33,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-
-    // OPTION B: Uncomment this for the real database
-//    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-
     testRuntimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 

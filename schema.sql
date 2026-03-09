@@ -20,6 +20,11 @@
 -- Table structure for table `assessment_responses`
 --
 
+CREATE DATABASE IF NOT EXISTS dsfw_team_proj
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+USE dsfw_team_proj;
+
 DROP TABLE IF EXISTS `assessment_responses`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
