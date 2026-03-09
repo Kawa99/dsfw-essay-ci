@@ -355,19 +355,19 @@ VALUES (15, 'rating_2', 'https://www.gov.uk/service-manual/agile-delivery/runnin
 INSERT IGNORE INTO skill_recommendations (skill_id, condition_key, recommended_url)
 VALUES (15, 'rating_3', 'https://www.gov.uk/service-manual/agile-delivery/agile-tools-techniques');
 
--- -- ============================================================================
--- -- ADMIN USER - Commented Out
--- -- ============================================================================
--- INSERT INTO user_details (first_name, last_name, email, password, role)
--- VALUES (
---            'Admin',
---            'User',
---            'admin@test.com',
---            '$2b$12$OEVQ6zyfoZRYP7XvTB6Qyu7Z7ojRtitSEYq45QQzv4Mfcz98Vibj6',
---            'ADMIN'
---        )
--- ON DUPLICATE KEY UPDATE
---                      first_name = VALUES(first_name),
---                      last_name = VALUES(last_name),
---                      password = VALUES(password),
---                      role = VALUES(role);
+-- ============================================================================
+-- ADMIN USER - password is: Admin1234@@
+-- ============================================================================
+INSERT INTO user_details (first_name, last_name, email, password, role)
+VALUES (
+           'Admin',
+           'User',
+           'admin@test.com',
+           '$2b$12$OEVQ6zyfoZRYP7XvTB6Qyu7Z7ojRtitSEYq45QQzv4Mfcz98Vibj6',
+           'ADMIN'
+       )
+ON DUPLICATE KEY UPDATE
+                     first_name = VALUES(first_name),
+                     last_name = VALUES(last_name),
+                     password = VALUES(password),
+                     role = VALUES(role);
